@@ -35,11 +35,19 @@ public class User {
     private String imagePath;
     @Enumerated(EnumType.STRING)
     private Gender gender;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private Set<Event> events;
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private Set<EventComment> eventComments;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<UserRole> userRoles;
+
     @Formula("(SELECT COUNT(e.id) FROM event e WHERE e.user_id = id)")
     private int reportsNumber;
 

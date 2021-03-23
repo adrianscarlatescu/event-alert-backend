@@ -75,7 +75,7 @@ public class EventService {
                     "The end date must be after the start date");
         }
 
-        if (body.getEndDate().getYear() - body.getStartDate().getYear() >= MAX_YEARS) {
+        if (body.getEndDate().getYear() - body.getStartDate().getYear() > MAX_YEARS) {
             throw new IllegalActionException(
                     "The difference between the start year " + body.getStartDate().getYear() +
                             " and the end year " + body.getEndDate().getYear() +

@@ -21,9 +21,11 @@ public class EventComment {
     private LocalDateTime dateTime;
     private String comment;
     @JsonIgnore
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "event_id", nullable = false)
     private Event event;
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
 }

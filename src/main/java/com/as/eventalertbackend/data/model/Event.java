@@ -1,11 +1,13 @@
 package com.as.eventalertbackend.data.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -21,12 +23,20 @@ public class Event {
     private Double longitude;
     private String imagePath;
     private String description;
-    @OneToOne
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "event")
+    private Set<EventComment> eventComments;
+    @ManyToOne
+    @JoinColumn(name = "severity_id", nullable = false)
     private EventSeverity severity;
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "tag_id", nullable = false)
     private EventTag tag;
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
     @Transient
     private double distance;
 
