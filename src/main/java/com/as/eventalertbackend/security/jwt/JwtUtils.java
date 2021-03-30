@@ -75,6 +75,9 @@ public class JwtUtils {
         String headerAuth = request.getHeader(SecurityConstants.HEADER_STRING);
 
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith(SecurityConstants.TOKEN_PREFIX)) {
+            if (headerAuth.contains("\"")) {
+                headerAuth = headerAuth.replaceAll("\"", "");
+            }
             return headerAuth.substring(SecurityConstants.TOKEN_PREFIX.length());
         }
 
