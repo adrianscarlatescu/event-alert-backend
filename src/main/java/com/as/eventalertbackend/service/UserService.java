@@ -6,18 +6,30 @@ import com.as.eventalertbackend.enums.Role;
 import com.as.eventalertbackend.handler.exception.IllegalActionException;
 import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository repository;
 
     @Autowired
     public UserService(UserRepository repository) {
         this.repository = repository;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        try {
+            return findByEmail(username);
+        } catch (RecordNotFoundException e) {
+            throw new UsernameNotFoundException(username);
+        }
     }
 
     public Boolean existsByEmail(String email) {
@@ -82,5 +94,4 @@ public class UserService {
                     "User not found");
         }
     }
-
 }

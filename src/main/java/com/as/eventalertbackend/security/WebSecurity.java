@@ -2,7 +2,7 @@ package com.as.eventalertbackend.security;
 
 import com.as.eventalertbackend.security.jwt.AuthEntryPointJwt;
 import com.as.eventalertbackend.security.jwt.AuthTokenFilter;
-import com.as.eventalertbackend.security.user.UserDetailsServiceImpl;
+import com.as.eventalertbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,12 +25,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class WebSecurity extends WebSecurityConfigurerAdapter {
 
-    private UserDetailsServiceImpl userDetailsService;
+    private UserService userService;
     private AuthEntryPointJwt unauthorizedHandler;
 
     @Autowired
-    public WebSecurity(UserDetailsServiceImpl userDetailsService, AuthEntryPointJwt unauthorizedHandler) {
-        this.userDetailsService = userDetailsService;
+    public WebSecurity(UserService userService, AuthEntryPointJwt unauthorizedHandler) {
+        this.userService = userService;
         this.unauthorizedHandler = unauthorizedHandler;
     }
 
@@ -41,7 +41,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-        authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+        authenticationManagerBuilder.userDetailsService(userService).passwordEncoder(passwordEncoder());
     }
 
     @Bean
@@ -58,8 +58,10 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
-                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, SecurityConstants.AUTH_REGISTER_URL).permitAll()
                 .antMatchers(HttpMethod.POST, SecurityConstants.AUTH_LOGIN_URL).permitAll()

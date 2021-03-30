@@ -5,7 +5,6 @@ import com.as.eventalertbackend.controller.request.AuthRegisterBody;
 import com.as.eventalertbackend.controller.response.AuthRefreshTokenResponse;
 import com.as.eventalertbackend.controller.response.AuthTokensResponse;
 import com.as.eventalertbackend.data.model.User;
-import com.as.eventalertbackend.security.user.UserDetailsImpl;
 import com.as.eventalertbackend.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -43,8 +42,8 @@ public class AuthController {
 
     @PostMapping("/logout")
     public void logout() {
-        UserDetailsImpl principal =
-                (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User principal =
+                (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         service.logout(principal.getId());
     }
 

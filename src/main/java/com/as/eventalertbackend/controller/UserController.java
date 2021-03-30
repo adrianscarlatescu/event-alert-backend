@@ -1,7 +1,6 @@
 package com.as.eventalertbackend.controller;
 
 import com.as.eventalertbackend.data.model.User;
-import com.as.eventalertbackend.security.user.UserDetailsImpl;
 import com.as.eventalertbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -46,15 +45,15 @@ public class UserController {
 
     @GetMapping("/profile")
     public ResponseEntity<User> getProfile() {
-        UserDetailsImpl principal =
-                (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User principal =
+                (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(service.findById(principal.getId()));
     }
 
     @PutMapping("/profile")
     public ResponseEntity<User> updateProfile(@Valid @RequestBody User user) {
-        UserDetailsImpl principal =
-                (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User principal =
+                (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(service.updateById(user, principal.getId()));
     }
 
