@@ -11,7 +11,7 @@ The technology stack consits of:
 * [Project Lombok](https://projectlombok.org/) - The library used to minimize boilerplate code and save timeduring development.
 
 ## Project scope
-The purpose of this project is to provide all the required features for users that may want to be aware of the incidents around them.  
+The purpose of this project is to provide all the required features for users that may want to be aware of the incidents reported around them.  
 A user must be registered and authenticated in order to access these features.  
 Afterwards he can update his profile and report an event if needed.  
 Also, he can search for the events reported by other users around his location.  
