@@ -18,12 +18,12 @@ Also, he can search for the events reported by other users around his location.
 A user who is an admin can also modify or delete other users, the events reported by them, the comments posted by them, etc.  
 
 ## Database schema
-<img src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/database_schema.png" width="600">  
+<img src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/database_schema_v2.png" width="600">  
 
 * Note: dummy data was added with the following [script](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/database_query.sql).
 
 ## Authorization diagram
-<img src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/authorization_diagram.png" width="800">
+<img src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/authorization_diagram_v2.png" width="800">
 
 ## Request - response example
 The target is to get all the events filtered by the following *body*:
