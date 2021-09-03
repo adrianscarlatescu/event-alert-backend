@@ -1,6 +1,7 @@
 ## Getting Started
 Event Alert - Backend is a REST API server that provides the required endpoints for the client applications.  
 The technology stack consits of:
+* [Java](https://www.oracle.com/java/) - The programming language used to develop the application.
 * [Spring Boot](https://spring.io/projects/spring-boot#overview) - The base framework used for the REST controllers, services, dependency injection, Tomcat server and everything else needed by a stand-alone application.
 * [Spring Security](https://spring.io/projects/spring-security) - The framework used to secure the application and provide both authentication and authorization.
 * [Spring Data JPA](https://spring.io/projects/spring-data-jpa) - The framework used to provide Data Access Object interfaces by extending its repositories.
@@ -10,7 +11,7 @@ The technology stack consits of:
 * [Project Lombok](https://projectlombok.org/) - The library used to minimize boilerplate code and save timeduring development.
 
 ## Project scope
-The purpose of this project is to provide all the required features for users that may want to be aware of the incidents around them.  
+The purpose of this project is to provide all the required features for users that may want to be aware of the incidents reported around them.  
 A user must be registered and authenticated in order to access these features.  
 Afterwards he can update his profile and report an event if needed.  
 Also, he can search for the events reported by other users around his location.  
@@ -154,3 +155,4 @@ The variables *{{url}}*, *{{accessToken}}* and *{{refreshToken}}* have to be dec
 
 ## Client applications
 * [event-alert-android](https://github.com/adrianscarlatescu/event-alert-android)
+* [event-alert-frontend](https://github.com/adrianscarlatescu/event-alert-frontend)
