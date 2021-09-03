@@ -153,8 +153,6 @@ public class EventService {
                         .ifPresent(eventProjection -> event.setDistance(eventProjection.getDistance()))
         );
 
-        log.info("Result: {}", eventPages.getContent().toString());
-
         PagedResponse<Event> pagedResponse = new PagedResponse<>();
         pagedResponse.setTotalPages(eventPages.getTotalPages());
         pagedResponse.setTotalElements(eventPages.getTotalElements());

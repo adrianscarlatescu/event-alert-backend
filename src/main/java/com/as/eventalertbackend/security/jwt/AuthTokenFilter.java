@@ -30,8 +30,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         try {
             String token = jwtUtils.parseJwt(request);
             if (token != null &&
-                    jwtUtils.validateJwtToken(token) &&
-                    jwtUtils.isAccessToken(token)) {
+                    jwtUtils.isAccessToken(token) &&
+                    jwtUtils.validateJwtToken(token)) {
 
                 String email = jwtUtils.getEmailFromJwtToken(token);
                 UserDetails userDetails = userService.loadUserByUsername(email);
@@ -40,6 +40,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
+            } else {
+                log.error("Invalid token: {}", token);
             }
         } catch (Exception e) {
             log.error("Cannot set user authentication: {}", e);

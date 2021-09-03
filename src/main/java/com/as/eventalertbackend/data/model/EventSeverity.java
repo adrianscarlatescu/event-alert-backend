@@ -2,6 +2,7 @@ package com.as.eventalertbackend.data.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -12,6 +13,7 @@ import java.util.Set;
 @Table(name = "severity")
 @Getter
 @Setter
+@NoArgsConstructor
 public class EventSeverity {
 
     @Id

@@ -4,20 +4,17 @@ import com.as.eventalertbackend.controller.request.AuthLoginBody;
 import com.as.eventalertbackend.controller.request.AuthRegisterBody;
 import com.as.eventalertbackend.controller.response.AuthRefreshTokenResponse;
 import com.as.eventalertbackend.controller.response.AuthTokensResponse;
-import com.as.eventalertbackend.data.model.AuthRefreshToken;
 import com.as.eventalertbackend.data.model.User;
 import com.as.eventalertbackend.data.model.UserRole;
-import com.as.eventalertbackend.data.reopsitory.AuthRefreshTokenRepository;
 import com.as.eventalertbackend.enums.Role;
 import com.as.eventalertbackend.handler.exception.IllegalActionException;
-import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
 import com.as.eventalertbackend.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,22 +26,19 @@ public class AuthService {
 
     private final UserService userService;
     private final UserRoleService userRoleService;
-    private final AuthRefreshTokenRepository refreshTokenRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
 
     @Autowired
     public AuthService(UserService userService,
                        UserRoleService userRoleService,
-                       BCryptPasswordEncoder bCryptPasswordEncoder,
-                       AuthRefreshTokenRepository refreshTokenRepository,
+                       PasswordEncoder passwordEncoder,
                        AuthenticationManager authenticationManager,
                        JwtUtils jwtUtils) {
         this.userService = userService;
         this.userRoleService = userRoleService;
-        this.refreshTokenRepository = refreshTokenRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
     }
@@ -66,7 +60,7 @@ public class AuthService {
         UserRole role = userRoleService.findByName(Role.ROLE_USER);
 
         User user = new User(body.getEmail(),
-                bCryptPasswordEncoder.encode(body.getPassword()),
+                passwordEncoder.encode(body.getPassword()),
                 Collections.singleton(role));
 
         return userService.save(user);
@@ -85,21 +79,13 @@ public class AuthService {
         String accessToken = jwtUtils.generateAccessToken(email);
         String refreshToken = jwtUtils.generateRefreshToken(email);
 
-        User user = userService.findByEmail(email);
-        refreshTokenRepository.deleteByUserId(user.getId());
-
-        AuthRefreshToken model = new AuthRefreshToken(refreshToken, user);
-        refreshTokenRepository.save(model);
-
         return new AuthTokensResponse(accessToken, refreshToken);
     }
 
     public AuthRefreshTokenResponse refreshToken(HttpServletRequest request) {
         String token = jwtUtils.parseJwt(request);
-        if (!refreshTokenRepository.existsByRefreshToken(token)) {
-            throw new RecordNotFoundException(
-                    "The refresh token doesn't exist " + token,
-                    "Refresh token not found");
+        if (token != null && !jwtUtils.validateJwtToken(token)) {
+            throw new IllegalActionException("Invalid token: " + token, "Invalid token");
         }
 
         String email = jwtUtils.getEmailFromJwtToken(token);
@@ -109,8 +95,7 @@ public class AuthService {
     }
 
     @Transactional
-    public void logout(Long userId) {
-        refreshTokenRepository.deleteByUserId(userId);
+    public void logout() {
         SecurityContextHolder.getContext().setAuthentication(null);
     }
 

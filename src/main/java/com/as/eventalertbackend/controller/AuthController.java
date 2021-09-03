@@ -8,7 +8,6 @@ import com.as.eventalertbackend.data.model.User;
 import com.as.eventalertbackend.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,9 +41,7 @@ public class AuthController {
 
     @PostMapping("/logout")
     public void logout() {
-        User principal =
-                (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        service.logout(principal.getId());
+        service.logout();
     }
 
 }
