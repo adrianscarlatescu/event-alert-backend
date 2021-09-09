@@ -59,7 +59,7 @@ class EventTagServiceTest {
         // given
         Long id = 1L;
         String name = "name";
-        String imagePath = "imagePath";
+        String imagePath = "img/tag_1.png";
 
         EventTag mockTag = new EventTag();
         mockTag.setId(id);
@@ -88,8 +88,8 @@ class EventTagServiceTest {
     public void shouldUpdateById() {
         // given
         Long id = 1L;
-        String updatedName = "updatedName";
-        String updatedImagePath = "updatedImagePath";
+        String updatedName = "name";
+        String updatedImagePath = "img/tag_1.png";
 
         EventTag mockTag = new EventTag();
         mockTag.setId(id);

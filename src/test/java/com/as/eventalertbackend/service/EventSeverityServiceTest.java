@@ -88,7 +88,7 @@ class EventSeverityServiceTest {
     public void shouldUpdateById() {
         // given
         Long id = 1L;
-        String updatedName = "updatedName";
+        String updatedName = "name";
         int updatedColor = 99999;
 
         EventSeverity mockSeverity = new EventSeverity();

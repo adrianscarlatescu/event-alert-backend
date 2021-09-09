@@ -45,7 +45,7 @@ class EventRepositoryTest {
 
         EventTag tag = new EventTag();
         tag.setName("test");
-        tag.setImagePath("/path");
+        tag.setImagePath("img/tag_1.png");
         EventTag savedTag = tagRepository.save(tag);
         tagId = tag.getId();
 

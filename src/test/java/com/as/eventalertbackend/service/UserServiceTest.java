@@ -118,8 +118,8 @@ class UserServiceTest {
     public void shouldUpdateById() {
         // given
         Long id = 1L;
-        String updatedFirstName = "updatedFirstName";
-        String updatedLastName = "updatedLastName";
+        String updatedFirstName = "firstName";
+        String updatedLastName = "lastName";
         LocalDate updatedDateOfBirth = LocalDate.of(2000, Month.SEPTEMBER, 10);
         String updatedPhoneNumber = "0777555333";
         String updatedImagePath = "/img/user_1.png";

@@ -49,19 +49,19 @@ class EventServiceTest {
 
     private static final int MOCK_EVENTS_NUMBER = 3;
 
-    private Long eventId = 1L;
-    private Long userId = 1L;
-    private Long tagId = 1L;
-    private Long severityId = 1L;
-    private String imagePath = "imagePath";
-    private Double latitude = 44.4555611;
-    private Double longitude = 26.0404115;
-    private String description = "description";
-    private int radius = 100;
-    private LocalDate startDate = LocalDate.of(2020, Month.APRIL, 1);
-    private LocalDate endDate = LocalDate.of(2021, Month.APRIL, 1);
-    private long[] tagsIds = {1L};
-    private long[] severitiesIds = {1L};
+    private final Long eventId = 1L;
+    private final Long userId = 1L;
+    private final Long tagId = 1L;
+    private final Long severityId = 1L;
+    private final String imagePath = "img/event_1.png";
+    private final Double latitude = 44.4555611;
+    private final Double longitude = 26.0404115;
+    private final String description = "description";
+    private final int radius = 100;
+    private final LocalDate startDate = LocalDate.of(2020, Month.APRIL, 1);
+    private final LocalDate endDate = LocalDate.of(2021, Month.APRIL, 1);
+    private final long[] tagsIds = {1L};
+    private final long[] severitiesIds = {1L};
 
     @Test
     public void shouldFindById() {
@@ -328,7 +328,7 @@ class EventServiceTest {
         EventTag tag = new EventTag();
         tag.setId(1L);
         tag.setName("name");
-        tag.setImagePath("imagePath");
+        tag.setImagePath("img/tag_1.png");
         return tag;
     }
 
