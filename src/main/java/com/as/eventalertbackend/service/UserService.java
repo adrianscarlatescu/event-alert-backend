@@ -74,10 +74,6 @@ public class UserService implements UserDetailsService {
         dbObj.setImagePath(user.getImagePath());
         dbObj.setGender(user.getGender());
 
-        if (dbObj.getUserRoles().stream()
-                .anyMatch(userRole -> userRole.getName() == Role.ROLE_ADMIN)) {
-            dbObj.setUserRoles(user.getUserRoles());
-        }
         return repository.save(dbObj);
     }
 

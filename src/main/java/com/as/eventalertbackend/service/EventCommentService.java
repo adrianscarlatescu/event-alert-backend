@@ -32,7 +32,7 @@ public class EventCommentService {
     }
 
     public List<EventComment> findByEventId(Long id) {
-        return repository.getByEventIdOrderByDateTimeDesc(id);
+        return repository.findByEventIdOrderByDateTimeDesc(id);
     }
 
     public EventComment save(EventCommentBody body) {
