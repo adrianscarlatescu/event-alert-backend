@@ -2,8 +2,10 @@ package com.as.eventalertbackend.controller;
 
 import com.as.eventalertbackend.data.model.User;
 import com.as.eventalertbackend.enums.Gender;
-import com.as.eventalertbackend.enums.Role;
+import com.as.eventalertbackend.service.UserService;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,17 +13,19 @@ import java.time.Month;
 import java.util.Collections;
 
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WebMvcTest(controllers = UserController.class)
 class UserControllerTest extends AbstractControllerTest {
 
+    @MockBean
+    protected UserService userService;
+
     private static final String USERS_PATH = "/users";
-    private static final String PROFILE_PATH = "/profile";
 
     private final Long id = 1L;
     private final String email = "test@test.com";
@@ -82,44 +86,6 @@ class UserControllerTest extends AbstractControllerTest {
     public void shouldDeleteById() throws Exception {
         mockMvc.perform(delete(USERS_PATH + "/{id}", id).headers(httpHeaders))
                 .andExpect(status().isOk());
-    }
-
-    @Test
-    public void shouldGetProfile() throws Exception {
-        // given
-        given(userService.findById(authUser.getId())).willReturn(authUser);
-
-        // when
-        // then
-        mockMvc.perform(get(PROFILE_PATH).headers(httpHeaders))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(authUser.getId().intValue())))
-                .andExpect(jsonPath("$.email", is(authUser.getEmail())));
-    }
-
-    @Test
-    public void shouldUpdateProfile() throws Exception {
-        // given
-        User user = new User();
-        user.setId(authUser.getId());
-        user.setEmail(authUser.getEmail());
-        user.setUserRoles(authUser.getUserRoles());
-        user.setFirstName("firstName");
-        user.setLastName("lastName");
-
-        String jsonBody = objectMapper.writeValueAsString(user);
-
-        given(userService.updateById(any(), anyLong())).willReturn(user);
-
-        // when
-        // then
-        mockMvc.perform(put(PROFILE_PATH).headers(httpHeaders).content(jsonBody))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(authUser.getId().intValue())))
-                .andExpect(jsonPath("$.email", is(authUser.getEmail())))
-                .andExpect(jsonPath("$.userRoles[0].name", is(Role.ROLE_ADMIN.name())))
-                .andExpect(jsonPath("$.firstName", is("firstName")))
-                .andExpect(jsonPath("$.lastName", is("lastName")));
     }
 
     private User getMockUser() {

@@ -3,6 +3,7 @@ package com.as.eventalertbackend.controller;
 import com.as.eventalertbackend.data.model.EventTag;
 import com.as.eventalertbackend.service.EventTagService;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.Collections;
@@ -14,6 +15,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WebMvcTest(controllers = EventTagController.class)
 class EventTagControllerTest extends AbstractControllerTest {
 
     @MockBean

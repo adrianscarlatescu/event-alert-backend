@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
@@ -29,10 +30,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
-@AutoConfigureMockMvc
-@RunWith(SpringRunner.class)
-class AuthControllerTest {
+@WebMvcTest(controllers = AuthController.class)
+class AuthControllerTest extends AbstractControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -45,16 +44,6 @@ class AuthControllerTest {
     private final Long id = 1L;
     private final String email = "test@test.com";
     private final String password = "password";
-
-    private ObjectMapper objectMapper;
-    private HttpHeaders httpHeaders;
-
-    @BeforeEach
-    void setUp() {
-        objectMapper = new ObjectMapper();
-        httpHeaders = new HttpHeaders();
-        httpHeaders.add("Content-Type", "application/json");
-    }
 
     @Test
     public void shouldRegister() throws Exception {

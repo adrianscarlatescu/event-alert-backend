@@ -3,6 +3,7 @@ package com.as.eventalertbackend.controller;
 import com.as.eventalertbackend.data.model.EventSeverity;
 import com.as.eventalertbackend.service.EventSeverityService;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.Collections;
@@ -14,6 +15,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WebMvcTest(controllers = EventSeverityController.class)
 class EventSeverityControllerTest extends AbstractControllerTest {
 
     @MockBean

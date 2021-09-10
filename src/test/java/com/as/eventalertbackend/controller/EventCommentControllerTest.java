@@ -4,6 +4,7 @@ import com.as.eventalertbackend.controller.request.EventCommentBody;
 import com.as.eventalertbackend.data.model.EventComment;
 import com.as.eventalertbackend.service.EventCommentService;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@WebMvcTest(controllers = EventCommentController.class)
 class EventCommentControllerTest extends AbstractControllerTest {
 
     @MockBean
@@ -77,7 +79,6 @@ class EventCommentControllerTest extends AbstractControllerTest {
         mockMvc.perform(post(COMMENTS_PATH).headers(httpHeaders).content(jsonBody))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(containsString("The comment is mandatory")));
-        ;
     }
 
     @Test
