@@ -17,7 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import javax.annotation.PostConstruct;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import static org.mockito.BDDMockito.given;

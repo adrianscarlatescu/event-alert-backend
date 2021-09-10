@@ -25,14 +25,14 @@ class UserControllerTest extends AbstractControllerTest {
 
     private final Long id = 1L;
     private final String email = "test@test.com";
-    private final String joinDateTime = "2020-06-20T14:30:00";
-    private final String dateOfBirth = "2000-03-10";
     private final String firstName = "firstName";
     private final String lastName = "lastName";
     private final String phoneNumber = "0777555333";
     private final String imagePath = "img/user_1.png";
     private final String gender = "MALE";
     private final int reportsNumber = 0;
+    private final LocalDateTime joinDateTime = LocalDateTime.of(2020, Month.JUNE, 20, 14, 30, 45);
+    private final LocalDate dateOfBirth = LocalDate.of(2000, Month.MARCH, 10);
 
     @Test
     public void shouldGetAll() throws Exception {
@@ -46,8 +46,8 @@ class UserControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id", is(id.intValue())))
                 .andExpect(jsonPath("$[0].email", is(email)))
-                .andExpect(jsonPath("$[0].joinDateTime", is(joinDateTime)))
-                .andExpect(jsonPath("$[0].dateOfBirth", is(dateOfBirth)))
+                .andExpect(jsonPath("$[0].joinDateTime", is(joinDateTime.toString())))
+                .andExpect(jsonPath("$[0].dateOfBirth", is(dateOfBirth.toString())))
                 .andExpect(jsonPath("$[0].firstName", is(firstName)))
                 .andExpect(jsonPath("$[0].lastName", is(lastName)))
                 .andExpect(jsonPath("$[0].phoneNumber", is(phoneNumber)))
@@ -68,8 +68,8 @@ class UserControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(id.intValue())))
                 .andExpect(jsonPath("$.email", is(email)))
-                .andExpect(jsonPath("$.joinDateTime", is(joinDateTime)))
-                .andExpect(jsonPath("$.dateOfBirth", is(dateOfBirth)))
+                .andExpect(jsonPath("$.joinDateTime", is(joinDateTime.toString())))
+                .andExpect(jsonPath("$.dateOfBirth", is(dateOfBirth.toString())))
                 .andExpect(jsonPath("$.firstName", is(firstName)))
                 .andExpect(jsonPath("$.lastName", is(lastName)))
                 .andExpect(jsonPath("$.phoneNumber", is(phoneNumber)))
@@ -130,8 +130,8 @@ class UserControllerTest extends AbstractControllerTest {
         user.setEmail(email);
         user.setPhoneNumber(phoneNumber);
         user.setImagePath(imagePath);
-        user.setJoinDateTime(LocalDateTime.of(2020, Month.JUNE, 20, 14, 30, 0));
-        user.setDateOfBirth(LocalDate.of(2000, Month.MARCH, 10));
+        user.setJoinDateTime(joinDateTime);
+        user.setDateOfBirth(dateOfBirth);
         user.setGender(Gender.MALE);
         return user;
     }

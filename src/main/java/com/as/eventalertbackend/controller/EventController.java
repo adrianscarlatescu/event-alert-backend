@@ -26,7 +26,7 @@ public class EventController {
     }
 
     @PostMapping("/filter")
-    public PagedResponse<Event> getByFilter(@RequestBody EventFilterBody body,
+    public PagedResponse<Event> getByFilter(@Valid @RequestBody EventFilterBody body,
                                             @RequestParam("pageSize") int pageSize,
                                             @RequestParam("pageNumber") int pageNumber,
                                             @RequestParam(required = false, value = "order") Order order) {

@@ -34,10 +34,14 @@ class EventCommentRepositoryTest {
     @BeforeEach
     void setUp() {
         User user = new User();
+        user.setEmail("test@test.com");
+        user.setFirstName("test");
+        user.setLastName("test");
         userRepository.save(user);
 
         EventSeverity severity = new EventSeverity();
         severity.setName("test");
+        severity.setColor(999);
         severityRepository.save(severity);
 
         EventTag tag = new EventTag();
@@ -56,7 +60,9 @@ class EventCommentRepositoryTest {
             EventComment comment = new EventComment();
             comment.setUser(user);
             comment.setEvent(event);
+            comment.setComment("test");
             EventComment savedComment = commentRepository.save(comment);
+
             // Update creation timestamp
             savedComment.setDateTime(LocalDateTime.of(2020, Month.SEPTEMBER, 1 + i, 10, 30, 0));
             commentRepository.save(savedComment);
@@ -81,6 +87,7 @@ class EventCommentRepositoryTest {
         // then
         assertNotNull(comments);
         assertEquals(MOCK_COMMENTS_NUMBER, comments.size());
+        assertTrue(comments.stream().allMatch(c -> c.getComment().equals("test")));
         assertTrue(comments.get(0).getDateTime().isAfter(comments.get(1).getDateTime()));
     }
 
