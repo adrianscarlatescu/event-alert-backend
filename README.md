@@ -1,14 +1,16 @@
 ## Getting Started
 Event Alert - Backend is a REST API server that provides the required endpoints for the client applications.  
-The technology stack consits of:
+The technology stack consists of:
 * [Java](https://www.oracle.com/java/) - The programming language used to develop the application.
 * [Spring Boot](https://spring.io/projects/spring-boot#overview) - The base framework used for the REST controllers, services, dependency injection, Tomcat server and everything else needed by a stand-alone application.
 * [Spring Security](https://spring.io/projects/spring-security) - The framework used to secure the application and provide both authentication and authorization.
 * [Spring Data JPA](https://spring.io/projects/spring-data-jpa) - The framework used to provide Data Access Object interfaces by extending its repositories.
 * [Hibernate](https://hibernate.org/) - The Object-Relational Mapping framework used to map the object-oriented domain models to the relational database.
 * [MySQL Server](https://dev.mysql.com/doc/refman/5.7/en/) - The database server.
+* [JUnit](https://junit.org/junit4/) - The framework used to write repeatable tests.
+* [Mockito](https://site.mockito.org/) - The mocking framework used to add dummy functionality that is used in unit testing.
 * [JWT](https://jwt.io/introduction/) - The standard used to securely transmit the information.
-* [Project Lombok](https://projectlombok.org/) - The library used to minimize boilerplate code and save timeduring development.
+* [Project Lombok](https://projectlombok.org/) - The library used to minimize boilerplate code and save development time.
 
 ## Project scope
 The purpose of this project is to provide all the required features for users that may want to be aware of the incidents reported around them.  
