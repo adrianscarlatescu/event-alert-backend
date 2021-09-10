@@ -5,6 +5,7 @@ import com.as.eventalertbackend.security.jwt.AuthTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -23,21 +24,25 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true)
-public class WebSecurity extends WebSecurityConfigurerAdapter {
+@EnableGlobalMethodSecurity
+@Profile("dev")
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private UserDetailsService userService;
-    private AuthEntryPointJwt unauthorizedHandler;
 
     @Autowired
-    public WebSecurity(UserDetailsService userService, AuthEntryPointJwt unauthorizedHandler) {
+    public WebSecurityConfig(UserDetailsService userService) {
         this.userService = userService;
-        this.unauthorizedHandler = unauthorizedHandler;
     }
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
         return new AuthTokenFilter();
+    }
+
+    @Bean
+    public AuthEntryPointJwt authenticationEntryPointJwt() {
+        return new AuthEntryPointJwt();
     }
 
     @Override
@@ -59,7 +64,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
-                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
+                .exceptionHandling().authenticationEntryPoint(authenticationEntryPointJwt())
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
