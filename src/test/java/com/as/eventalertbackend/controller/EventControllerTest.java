@@ -69,8 +69,8 @@ class EventControllerTest extends AbstractControllerTest {
         body.setRadius(100);
         body.setStartDate(LocalDate.of(2020, Month.APRIL, 1));
         body.setEndDate(LocalDate.of(2020, Month.SEPTEMBER, 1));
-        body.setLatitude(0);
-        body.setLongitude(0);
+        body.setLatitude(0.0);
+        body.setLongitude(0.0);
         body.setTagsIds(new long[]{1});
         body.setSeveritiesIds(new long[]{1});
         String jsonBody = jackson2ObjectMapper.writeValueAsString(body);

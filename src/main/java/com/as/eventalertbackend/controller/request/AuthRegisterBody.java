@@ -17,7 +17,10 @@ public class AuthRegisterBody {
     private String email;
 
     @NotNull(message = "The password is mandatory")
-    @Size(min = 8, max = 40, message = "The password must have between 8 and 40 characters")
+    @Size(min = RequestConstants.MIN_PASSWORD_LENGTH, max = RequestConstants.MAX_PASSWORD_LENGTH,
+            message = "The password must have between " +
+                    RequestConstants.MIN_PASSWORD_LENGTH + " and " +
+                    RequestConstants.MAX_PASSWORD_LENGTH + " characters")
     private String password;
     private String confirmPassword;
 

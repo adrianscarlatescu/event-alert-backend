@@ -53,6 +53,9 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<UserRole> userRoles;
+    @JsonIgnore
+    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private Subscription subscription;
 
     @Formula("(SELECT COUNT(e.id) FROM event e WHERE e.user_id = id)")
     private int reportsNumber;

@@ -137,22 +137,6 @@ class EventServiceTest {
     }
 
     @Test
-    public void shouldNotFindByFilterForMaxRadius() {
-        // given
-        EventFilterBody body = getMockEventFilterBody();
-        body.setRadius(20000);
-
-        int pageSize = 20;
-        int pageNumber = 0;
-        Order order = Order.BY_DATE_DESCENDING;
-
-        // when
-        // then
-        assertThrows(IllegalActionException.class,
-                () -> eventService.findByFilter(body, pageSize, pageNumber, order));
-    }
-
-    @Test
     public void shouldFindByFilter() {
         // given
         EventFilterBody body = getMockEventFilterBody();
@@ -161,10 +145,10 @@ class EventServiceTest {
         int pageNumber = 0;
         Order order = Order.BY_DISTANCE_DESCENDING;
 
-        List<EventRepository.EventProjection> eventProjections = getMockEventProjections();
+        List<EventRepository.DistanceProjection> distanceProjections = getMockEventProjections();
 
         given(eventRepository.findByFilter(anyDouble(), anyDouble(), anyInt(), any(), any(), any(), any()))
-                .willReturn(eventProjections);
+                .willReturn(distanceProjections);
 
         List<Event> events = getMockEvents();
         Page<Event> eventPages = new PageImpl(events);
@@ -214,6 +198,7 @@ class EventServiceTest {
     @Test
     public void shouldSaveNewEvent() {
         // given
+        // Notification variable is already false
         EventBody newEventBody = getMockEventBody();
         Event mockEvent = getMockEvent();
 
@@ -348,11 +333,11 @@ class EventServiceTest {
         return user;
     }
 
-    private List<EventRepository.EventProjection> getMockEventProjections() {
-        List<EventRepository.EventProjection> eventProjections = new ArrayList<>();
+    private List<EventRepository.DistanceProjection> getMockEventProjections() {
+        List<EventRepository.DistanceProjection> distanceProjections = new ArrayList<>();
         for (int i = 0; i < MOCK_EVENTS_NUMBER; i++) {
             final long index = i + 1;
-            eventProjections.add(new EventRepository.EventProjection() {
+            distanceProjections.add(new EventRepository.DistanceProjection() {
                 @Override
                 public Long getId() {
                     return index;
@@ -364,7 +349,7 @@ class EventServiceTest {
                 }
             });
         }
-        return eventProjections;
+        return distanceProjections;
     }
 
     private List<Event> getMockEvents() {

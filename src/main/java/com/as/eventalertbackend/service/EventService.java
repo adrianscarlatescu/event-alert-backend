@@ -2,6 +2,7 @@ package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.controller.request.EventBody;
 import com.as.eventalertbackend.controller.request.EventFilterBody;
+import com.as.eventalertbackend.controller.request.RequestConstants;
 import com.as.eventalertbackend.controller.response.PagedResponse;
 import com.as.eventalertbackend.data.model.Event;
 import com.as.eventalertbackend.data.model.EventSeverity;
@@ -13,6 +14,7 @@ import com.as.eventalertbackend.handler.exception.IllegalActionException;
 import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -29,25 +31,27 @@ import java.util.List;
 @Slf4j
 public class EventService {
 
-    private static final int MAX_PAGE_SIZE = 100;
-    private static final int MAX_RADIUS = 10_000;
-    private static final int MAX_YEARS = 1;
-
     private final EventRepository repository;
 
     private final EventSeverityService eventSeverityService;
     private final EventTagService eventTagService;
     private final UserService userService;
+    private final NotificationService notificationService;
+
+    @Value("${app.notification.enabled}")
+    private boolean isNotificationEnabled;
 
     @Autowired
     public EventService(EventRepository repository,
                         EventSeverityService eventSeverityService,
                         EventTagService eventTagService,
-                        UserService userService) {
+                        UserService userService,
+                        NotificationService notificationService) {
         this.repository = repository;
         this.eventSeverityService = eventSeverityService;
         this.eventTagService = eventTagService;
         this.userService = userService;
+        this.notificationService = notificationService;
     }
 
     public Event findById(Long id) {
@@ -63,10 +67,10 @@ public class EventService {
 
     @Transactional
     public PagedResponse<Event> findByFilter(EventFilterBody body, int pageSize, int pageNumber, Order order) {
-        if (pageSize > MAX_PAGE_SIZE) {
+        if (pageSize > RequestConstants.MAX_PAGES) {
             throw new IllegalActionException(
-                    "The page size " + pageNumber + " is greater than maximum allowed " + MAX_PAGE_SIZE,
-                    "The page size must be less than " + MAX_PAGE_SIZE);
+                    "The page size " + pageSize + " is greater than maximum allowed " + RequestConstants.MAX_PAGES,
+                    "The page size must be less than " + RequestConstants.MAX_PAGES);
         }
 
         if (body.getStartDate().isAfter(body.getEndDate())) {
@@ -75,18 +79,12 @@ public class EventService {
                     "The end date must be after the start date");
         }
 
-        if (body.getEndDate().getYear() - body.getStartDate().getYear() > MAX_YEARS) {
+        if (body.getEndDate().getYear() - body.getStartDate().getYear() > RequestConstants.MAX_YEARS_DIFFERENCE) {
             throw new IllegalActionException(
                     "The difference between the start year " + body.getStartDate().getYear() +
                             " and the end year " + body.getEndDate().getYear() +
-                            " is greater than maximum allowed " + MAX_YEARS,
-                    "The years interval must be maximum " + MAX_YEARS);
-        }
-
-        if (body.getRadius() > MAX_RADIUS) {
-            throw new IllegalActionException(
-                    "Radius " + body.getRadius() + " greater than maximum allowed " + MAX_RADIUS,
-                    "The radius must be less than " + MAX_RADIUS);
+                            " is greater than maximum allowed " + RequestConstants.MAX_YEARS_DIFFERENCE,
+                    "The years interval must be maximum " + RequestConstants.MAX_YEARS_DIFFERENCE);
         }
 
         if (order == null) {
@@ -101,17 +99,17 @@ public class EventService {
                 startDateTime, endDateTime,
                 body.getTagsIds(), body.getSeveritiesIds());
 
-        List<EventRepository.EventProjection> eventProjections = repository.findByFilter(
+        List<EventRepository.DistanceProjection> distanceProjections = repository.findByFilter(
                 body.getLatitude(), body.getLongitude(), body.getRadius(),
                 startDateTime, endDateTime,
                 body.getTagsIds(), body.getSeveritiesIds());
 
         if (order == Order.BY_DISTANCE_DESCENDING) {
-            Collections.reverse(eventProjections);
+            Collections.reverse(distanceProjections);
         }
 
-        long[] eventsIds = eventProjections.stream()
-                .mapToLong(EventRepository.EventProjection::getId)
+        long[] eventsIds = distanceProjections.stream()
+                .mapToLong(EventRepository.DistanceProjection::getId)
                 .toArray();
 
         PageRequest pageRequest;
@@ -147,16 +145,21 @@ public class EventService {
         );
 
         eventPages.get().forEach(event ->
-                eventProjections.stream()
-                        .filter(eventProjection -> eventProjection.getId().longValue() == event.getId().longValue())
+                distanceProjections.stream()
+                        .filter(distanceProjection -> distanceProjection.getId().longValue() == event.getId().longValue())
                         .findFirst()
-                        .ifPresent(eventProjection -> event.setDistance(eventProjection.getDistance()))
+                        .ifPresent(distanceProjection -> event.setDistance(distanceProjection.getDistance()))
         );
 
         PagedResponse<Event> pagedResponse = new PagedResponse<>();
         pagedResponse.setTotalPages(eventPages.getTotalPages());
         pagedResponse.setTotalElements(eventPages.getTotalElements());
         pagedResponse.setContent(eventPages.getContent());
+
+        log.info("Retrieved pages: {}, elements: {}, events: {}",
+                eventPages.getTotalPages(),
+                eventPages.getTotalElements(),
+                eventPages.getContent().stream().mapToLong(Event::getId).toArray());
 
         return pagedResponse;
     }
@@ -215,7 +218,13 @@ public class EventService {
         dbObj.setTag(tag);
         dbObj.setUser(user);
 
-        return repository.save(dbObj);
+        Event newEvent = repository.save(dbObj);
+
+        if (isNotificationEnabled) {
+            notificationService.send(newEvent);
+        }
+
+        return newEvent;
     }
 
     private boolean isNullOrEmpty(String s) {

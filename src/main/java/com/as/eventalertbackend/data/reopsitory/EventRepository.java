@@ -19,7 +19,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "HAVING distance <= ?3 " +
             "ORDER BY distance ASC",
             nativeQuery = true)
-    List<EventProjection> findByFilter(
+    List<DistanceProjection> findByFilter(
             double latitude, double longitude, int radius,
             LocalDateTime startDate, LocalDateTime endDate,
             long[] tagsIds, long[] severitiesIds);
@@ -35,7 +35,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     List<Event> findByUserIdOrderByDateTimeDesc(Long userId);
 
-    interface EventProjection {
+    interface DistanceProjection {
         Long getId();
 
         Double getDistance();
