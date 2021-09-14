@@ -22,21 +22,28 @@ public class SubscriptionController {
         this.service = service;
     }
 
-    @PostMapping("/subscribe")
+    @GetMapping
+    public ResponseEntity<Subscription> find() {
+        return ResponseEntity.ok(service.findByUserId(getPrincipalId()));
+    }
+
+    @PostMapping
     public ResponseEntity<Subscription> subscribe(@Valid @RequestBody SubscriptionBody body) {
-        User principal =
-                (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return ResponseEntity.ok(service.subscribe(body, principal.getId()));
+        return ResponseEntity.ok(service.subscribe(body, getPrincipalId()));
     }
 
-    @PutMapping("/update/{userId}")
-    public ResponseEntity<Subscription> update(@Valid @RequestBody SubscriptionBody body, @PathVariable("userId") Long userId) {
-        return ResponseEntity.ok(service.update(body, userId));
+    @PutMapping
+    public ResponseEntity<Subscription> update(@Valid @RequestBody SubscriptionBody body) {
+        return ResponseEntity.ok(service.update(body, getPrincipalId()));
     }
 
-    @DeleteMapping("/unsubscribe/{userId}")
-    public void unsubscribe(@PathVariable("userId") Long userId) {
-        service.deleteByUserId(userId);
+    @DeleteMapping
+    public void unsubscribe() {
+        service.deleteByUserId(getPrincipalId());
+    }
+
+    private Long getPrincipalId() {
+        return ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
     }
 
 }
