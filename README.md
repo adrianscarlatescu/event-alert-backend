@@ -5,6 +5,7 @@ The technology stack consists of:
 * [Spring Boot](https://spring.io/projects/spring-boot#overview) - The base framework used for the REST controllers, services, dependency injection, Tomcat server and everything else needed by a stand-alone application.
 * [Spring Security](https://spring.io/projects/spring-security) - The framework used to secure the application and provide both authentication and authorization.
 * [Spring Data JPA](https://spring.io/projects/spring-data-jpa) - The framework used to provide Data Access Object interfaces by extending its repositories.
+* [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) - The cross-platform messaging solution to send notifications.
 * [Hibernate](https://hibernate.org/) - The Object-Relational Mapping framework used to map the object-oriented domain models to the relational database.
 * [MySQL Server](https://dev.mysql.com/doc/refman/5.7/en/) - The database server.
 * [JUnit](https://junit.org/junit4/) - The framework used to write repeatable tests.
@@ -20,12 +21,12 @@ Also, he can search for the events reported by other users around his location.
 A user who is an admin can also modify or delete other users, the events reported by them, the comments posted by them, etc.  
 
 ## Database schema
-<img src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/database_schema_v2.png" width="600">  
+<img src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/database_schema.png" width="600">  
 
 * Note: dummy data was added with the following [script](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/database_query.sql).
 
 ## Authorization diagram
-<img src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/authorization_diagram_v2.png" width="800">
+<img src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/authorization_diagram.png" width="800">
 
 ## Request - response example
 The target is to get all the events filtered by the following *body*:
