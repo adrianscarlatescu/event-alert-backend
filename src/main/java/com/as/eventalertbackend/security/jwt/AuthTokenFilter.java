@@ -29,19 +29,32 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
         try {
             String token = jwtUtils.parseJwt(request);
-            if (token != null &&
-                    jwtUtils.isAccessToken(token) &&
-                    jwtUtils.validateJwtToken(token)) {
 
+            boolean isNull = token == null;
+            boolean isAccessToken = false;
+            boolean isValid = false;
+
+            if (isNull) {
+                log.error("Null token, request URI: {}", request.getRequestURI());
+            } else {
+                isAccessToken = jwtUtils.isAccessToken(token);
+                if (!isAccessToken) {
+                    log.error("Invalid access token signature: {}, request URI: {}", token, request.getRequestURI());
+                }
+
+                isValid = jwtUtils.validateJwtToken(token);
+                if (!isValid) {
+                    log.error("Invalid token: {}, request URI: {}", token, request.getRequestURI());
+                }
+            }
+
+            if (!isNull && isAccessToken && isValid) {
                 String email = jwtUtils.getEmailFromJwtToken(token);
                 UserDetails userDetails = userService.loadUserByUsername(email);
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            } else {
-                log.error("Invalid token: {}", token);
             }
         } catch (Exception e) {
             log.error("Cannot set user authentication: {}", e);

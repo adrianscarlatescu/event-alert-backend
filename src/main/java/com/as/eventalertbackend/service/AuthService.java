@@ -9,6 +9,7 @@ import com.as.eventalertbackend.data.model.UserRole;
 import com.as.eventalertbackend.enums.Role;
 import com.as.eventalertbackend.handler.exception.IllegalActionException;
 import com.as.eventalertbackend.security.jwt.JwtUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 
 @Service
+@Slf4j
 public class AuthService {
 
     private final UserService userService;
@@ -84,13 +86,14 @@ public class AuthService {
 
     public AuthRefreshTokenResponse refreshToken(HttpServletRequest request) {
         String token = jwtUtils.parseJwt(request);
-        if (token != null && !jwtUtils.validateJwtToken(token)) {
+        if (token == null || !jwtUtils.validateJwtToken(token) || !jwtUtils.isRefreshToken(token)) {
             throw new IllegalActionException("Invalid token: " + token, "Invalid token");
         }
 
         String email = jwtUtils.getEmailFromJwtToken(token);
         String accessToken = jwtUtils.generateAccessToken(email);
 
+        log.info("New access token generated for user with email: {}, access token: {}", email, accessToken);
         return new AuthRefreshTokenResponse(accessToken);
     }
 

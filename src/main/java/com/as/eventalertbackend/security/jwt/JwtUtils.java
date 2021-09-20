@@ -44,6 +44,15 @@ public class JwtUtils {
                 .equals(SecurityConstants.ACCESS_TOKEN_ID);
     }
 
+    public boolean isRefreshToken(String token) {
+        return Jwts.parser()
+                .setSigningKey(SecurityConstants.SECRET)
+                .parseClaimsJws(token)
+                .getBody()
+                .getId()
+                .equals(SecurityConstants.REFRESH_TOKEN_ID);
+    }
+
     public String getEmailFromJwtToken(String token) {
         return Jwts.parser()
                 .setSigningKey(SecurityConstants.SECRET)

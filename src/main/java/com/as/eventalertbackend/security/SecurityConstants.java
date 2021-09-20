@@ -3,8 +3,8 @@ package com.as.eventalertbackend.security;
 public abstract class SecurityConstants {
 
     public static final String SECRET = "SecretKeyToGenerateJWTs";
-    public static final long ACCESS_TOKEN_EXPIRATION_TIME = 1_200_000L; // 20 minutes
-    public static final long REFRESH_TOKEN_EXPIRATION_TIME = 2_592_000_000L; // 30 days
+    public static final long ACCESS_TOKEN_EXPIRATION_TIME = 60 * 1000;//1_200_000L; // 20 minutes
+    public static final long REFRESH_TOKEN_EXPIRATION_TIME =  2_592_000_000L; // 30 days
     public static final String ACCESS_TOKEN_ID = "AccessTokenId";
     public static final String REFRESH_TOKEN_ID = "RefreshTokenId";
     public static final String TOKEN_PREFIX = "Bearer ";
