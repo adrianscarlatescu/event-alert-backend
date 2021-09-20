@@ -11,17 +11,16 @@ import java.util.Optional;
 @Repository
 public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
 
-    @Query(value = "SELECT user_id " +
+    @Query(value = "SELECT * " +
             "FROM subscription " +
-            "WHERE ST_Distance_Sphere(point(latitude, longitude),point(?1, ?2)) / 1000 <= radius " +
-            "AND user_id != ?3",
+            "WHERE ST_Distance_Sphere(point(latitude, longitude),point(?1, ?2)) / 1000 <= radius",
             nativeQuery = true)
-    List<Long> findUsersIdsByFilter(double eventLatitude, double eventLongitude, long excludedUserId);
+    List<Subscription> findByLocation(double eventLatitude, double eventLongitude);
 
-    boolean existsByUserId(Long id);
+    boolean existsByUserIdAndDeviceToken(Long userId, String deviceToken);
 
-    Optional<Subscription> findByUserId(Long id);
+    Optional<Subscription> findByUserIdAndDeviceToken(Long userId, String deviceToken);
 
-    void deleteByUserId(Long id);
+    void deleteByUserIdAndDeviceToken(Long userId, String deviceToken);
 
 }

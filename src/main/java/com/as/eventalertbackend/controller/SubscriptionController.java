@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/subscription")
+@RequestMapping("/subscriptions")
 public class SubscriptionController {
 
     private final SubscriptionService service;
@@ -23,23 +23,23 @@ public class SubscriptionController {
     }
 
     @GetMapping
-    public ResponseEntity<Subscription> find() {
-        return ResponseEntity.ok(service.findByUserId(getPrincipalId()));
+    public ResponseEntity<Subscription> find(@RequestParam("deviceToken") String deviceToken) {
+        return ResponseEntity.ok(service.find(getPrincipalId(), deviceToken));
     }
 
     @PostMapping
     public ResponseEntity<Subscription> subscribe(@Valid @RequestBody SubscriptionBody body) {
-        return ResponseEntity.ok(service.subscribe(body, getPrincipalId()));
+        return ResponseEntity.ok(service.subscribe(getPrincipalId(), body));
     }
 
     @PutMapping
     public ResponseEntity<Subscription> update(@Valid @RequestBody SubscriptionBody body) {
-        return ResponseEntity.ok(service.update(body, getPrincipalId()));
+        return ResponseEntity.ok(service.update(getPrincipalId(), body));
     }
 
     @DeleteMapping
-    public void unsubscribe() {
-        service.deleteByUserId(getPrincipalId());
+    public void unsubscribe(@RequestParam("deviceToken") String deviceToken) {
+        service.delete(getPrincipalId(), deviceToken);
     }
 
     private Long getPrincipalId() {

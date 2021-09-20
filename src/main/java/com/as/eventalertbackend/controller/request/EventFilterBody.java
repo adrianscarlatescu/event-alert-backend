@@ -1,5 +1,6 @@
 package com.as.eventalertbackend.controller.request;
 
+import com.as.eventalertbackend.AppConstants;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,8 +13,8 @@ import java.time.LocalDate;
 @Setter
 public class EventFilterBody {
 
-    @Min(value = RequestConstants.MIN_RADIUS, message = "The radius must be greater than " + RequestConstants.MIN_RADIUS + " km")
-    @Max(value = RequestConstants.MAX_RADIUS, message = "The radius must be less than " + RequestConstants.MAX_RADIUS + " km")
+    @Min(value = AppConstants.MIN_RADIUS, message = "The radius must be greater than " + AppConstants.MIN_RADIUS + " km")
+    @Max(value = AppConstants.MAX_RADIUS, message = "The radius must be less than " + AppConstants.MAX_RADIUS + " km")
     public int radius;
     @NotNull(message = "The start date is mandatory")
     public LocalDate startDate;

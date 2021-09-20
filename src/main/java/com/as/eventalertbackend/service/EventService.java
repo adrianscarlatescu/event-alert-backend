@@ -1,8 +1,8 @@
 package com.as.eventalertbackend.service;
 
+import com.as.eventalertbackend.AppConstants;
 import com.as.eventalertbackend.controller.request.EventBody;
 import com.as.eventalertbackend.controller.request.EventFilterBody;
-import com.as.eventalertbackend.controller.request.RequestConstants;
 import com.as.eventalertbackend.controller.response.PagedResponse;
 import com.as.eventalertbackend.data.model.Event;
 import com.as.eventalertbackend.data.model.EventSeverity;
@@ -67,10 +67,10 @@ public class EventService {
 
     @Transactional
     public PagedResponse<Event> findByFilter(EventFilterBody body, int pageSize, int pageNumber, Order order) {
-        if (pageSize > RequestConstants.MAX_PAGES) {
+        if (pageSize > AppConstants.MAX_PAGES) {
             throw new IllegalActionException(
-                    "The page size " + pageSize + " is greater than maximum allowed " + RequestConstants.MAX_PAGES,
-                    "The page size must be less than " + RequestConstants.MAX_PAGES);
+                    "The page size " + pageSize + " is greater than maximum allowed " + AppConstants.MAX_PAGES,
+                    "The page size must be less than " + AppConstants.MAX_PAGES);
         }
 
         if (body.getStartDate().isAfter(body.getEndDate())) {
@@ -79,12 +79,12 @@ public class EventService {
                     "The end date must be after the start date");
         }
 
-        if (body.getEndDate().getYear() - body.getStartDate().getYear() > RequestConstants.MAX_YEARS_DIFFERENCE) {
+        if (body.getEndDate().getYear() - body.getStartDate().getYear() > AppConstants.MAX_YEARS_INTERVAL) {
             throw new IllegalActionException(
                     "The difference between the start year " + body.getStartDate().getYear() +
                             " and the end year " + body.getEndDate().getYear() +
-                            " is greater than maximum allowed " + RequestConstants.MAX_YEARS_DIFFERENCE,
-                    "The years interval must be maximum " + RequestConstants.MAX_YEARS_DIFFERENCE);
+                            " is greater than maximum allowed " + AppConstants.MAX_YEARS_INTERVAL,
+                    "The years interval must be maximum " + AppConstants.MAX_YEARS_INTERVAL);
         }
 
         if (order == null) {

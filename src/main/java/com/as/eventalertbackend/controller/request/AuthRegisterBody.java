@@ -1,5 +1,6 @@
 package com.as.eventalertbackend.controller.request;
 
+import com.as.eventalertbackend.AppConstants;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,10 +18,10 @@ public class AuthRegisterBody {
     private String email;
 
     @NotNull(message = "The password is mandatory")
-    @Size(min = RequestConstants.MIN_PASSWORD_LENGTH, max = RequestConstants.MAX_PASSWORD_LENGTH,
+    @Size(min = AppConstants.MIN_PASSWORD_LENGTH, max = AppConstants.MAX_PASSWORD_LENGTH,
             message = "The password must have between " +
-                    RequestConstants.MIN_PASSWORD_LENGTH + " and " +
-                    RequestConstants.MAX_PASSWORD_LENGTH + " characters")
+                    AppConstants.MIN_PASSWORD_LENGTH + " and " +
+                    AppConstants.MAX_PASSWORD_LENGTH + " characters")
     private String password;
     private String confirmPassword;
 
