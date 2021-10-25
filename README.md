@@ -22,8 +22,13 @@ A user who is an admin can also modify or delete other users, the events reporte
 
 ## Run prerequisites
 In order to run the application locally, the following steps must be set:
-* Run the commands highlighted in this [script](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/database_query.sql#L1,L6) in order to have the database ready. The connection details are specified in [application.properties](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.properties#L4,L6).
-* Create a Firebase project and generate the service account private key. This key must be put in [firebase-service-account.json](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/firebase-service-account.json).
+* Run the commands highlighted in this [script](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/database_query.sql#L1,L6) in order to have the database ready.
+The connection details are specified in [application.properties](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.properties#L4,L6).
+* Push notifications feature:
+    * To skip this feature, set [app.notification.enabled](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.properties#L23) to `false`.
+    * In order to send push notifications, create a Firebase project and generate the service account private key.
+This key must be put in [firebase-service-account.json](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/firebase-service-account.json).
+
 
 ## Database schema
 <img src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/database_schema.png" width="600">  
