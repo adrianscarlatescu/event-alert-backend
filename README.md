@@ -31,7 +31,7 @@ This key must be put in [firebase-service-account.json](https://github.com/adria
 
 
 ## Database schema
-<img src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/database_schema.png" width="600">  
+<img src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/database_schema.png" width="800">  
 
 * Note: dummy data was added with the following [script](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/database_query.sql).
 
