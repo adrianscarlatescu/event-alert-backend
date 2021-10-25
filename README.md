@@ -13,17 +13,17 @@ The technology stack consists of:
 * [JWT](https://jwt.io/introduction/) - The standard used to securely transmit the information.
 * [Project Lombok](https://projectlombok.org/) - The library used to minimize boilerplate code and save development time.
 
-## Run prerequisites
-In order to run the application locally, the following steps must be set:
-* Run the commands highlighted in this [script](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/database_query.sql#L1,L6) in order to have the database ready. The connection details are specified in [application.properties](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.properties#L4,L6).
-* Create a Firebase project and generate the service account private key. This key must be put in [firebase-service-account.json](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/firebase-service-account.json).
-
 ## Project scope
 The purpose of this project is to provide all the required features for users that may want to be aware of the incidents reported around them.  
 A user must be registered and authenticated in order to access these features.  
 Afterwards he can update his profile and report an event if needed.  
 Also, he can search for the events reported by other users around his location.  
 A user who is an admin can also modify or delete other users, the events reported by them, the comments posted by them, etc.  
+
+## Run prerequisites
+In order to run the application locally, the following steps must be set:
+* Run the commands highlighted in this [script](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/database_query.sql#L1,L6) in order to have the database ready. The connection details are specified in [application.properties](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.properties#L4,L6).
+* Create a Firebase project and generate the service account private key. This key must be put in [firebase-service-account.json](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/firebase-service-account.json).
 
 ## Database schema
 <img src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/database_schema.png" width="600">  
