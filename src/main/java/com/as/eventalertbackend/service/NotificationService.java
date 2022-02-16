@@ -72,6 +72,11 @@ public class NotificationService {
                         .build())
                 .collect(Collectors.toList());
 
+        if (messages.isEmpty()) {
+            log.info("Messages list is empty");
+            return;
+        }
+
         try {
             BatchResponse batchResponse = firebaseMessaging.sendAll(messages);
             log.info("Notifications sent, success: {}, fail: {}", batchResponse.getSuccessCount(), batchResponse.getFailureCount());
