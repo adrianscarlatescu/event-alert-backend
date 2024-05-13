@@ -168,6 +168,7 @@ class AuthServiceTest {
 
         given(jwtUtils.parseJwt(any())).willReturn(refreshToken);
         given(jwtUtils.validateJwtToken(refreshToken)).willReturn(true);
+        given(jwtUtils.isRefreshToken(refreshToken)).willReturn(true);
         given(jwtUtils.getEmailFromJwtToken(refreshToken)).willReturn(email);
         given(jwtUtils.generateAccessToken(email)).willReturn(accessToken);
 

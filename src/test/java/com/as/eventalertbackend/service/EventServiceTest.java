@@ -151,7 +151,7 @@ class EventServiceTest {
                 .willReturn(distanceProjections);
 
         List<Event> events = getMockEvents();
-        Page<Event> eventPages = new PageImpl(events);
+        Page<Event> eventPages = new PageImpl<>(events);
 
         given(eventRepository.findByFilter(any(), any(), any(), any(), any(), any()))
                 .willReturn(eventPages);

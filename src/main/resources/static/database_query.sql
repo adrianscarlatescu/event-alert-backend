@@ -1,4 +1,4 @@
-create table event_alert;
+create database event_alert;
 create user 'event_alert_user' identified by '1234qwer';
 grant all on event_alert.* to 'event_alert_user';
 
@@ -166,9 +166,3 @@ insert into comment(date_time, event_id, user_id, comment)
   values("2020-04-15 14:18:37", 15, 5, "#$@!%*@*$@!#");
 insert into comment(date_time, event_id, user_id, comment)
   values("2020-05-02 18:15:11", 24, 5, "Snow in April? Lol.");
-
-
-
-
-
-
