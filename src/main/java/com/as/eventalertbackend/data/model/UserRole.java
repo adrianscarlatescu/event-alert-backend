@@ -19,8 +19,10 @@ public class UserRole {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Enumerated(EnumType.STRING)
     private Role name;
+
     @JsonIgnore
     @ManyToMany(mappedBy = "userRoles")
     private Set<User> users;

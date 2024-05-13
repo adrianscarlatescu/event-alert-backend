@@ -82,13 +82,13 @@ public class NotificationService {
             log.info("Notifications sent, success: {}, fail: {}", batchResponse.getSuccessCount(), batchResponse.getFailureCount());
             batchResponse.getResponses().forEach(sendResponse -> {
                 if (!sendResponse.isSuccessful()) {
-                    log.error("Could not send notification, reason: {}", sendResponse.getException());
+                    log.error("Could not send notification", sendResponse.getException());
                 } else {
                     log.info("Notification sent, identifier: {}", sendResponse.getMessageId());
                 }
             });
         } catch (FirebaseMessagingException e) {
-            log.error("Could not send notifications, reason: {}", e);
+            log.error("Could not send notifications", e);
         }
     }
 

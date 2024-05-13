@@ -16,9 +16,11 @@ public class Subscription {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
     private Double latitude;
     private Double longitude;
     private Integer radius;

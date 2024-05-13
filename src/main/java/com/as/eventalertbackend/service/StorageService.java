@@ -40,7 +40,7 @@ public class StorageService {
         String name = file.getOriginalFilename() + dateTime.format(formatter) + ".jpg";
 
         String serverImgPath = SERVER_PATH + IMG_PATH;
-        log.info("Begin image write request, directory: " + serverImgPath);
+        log.info("Begin image write request, directory: {}", serverImgPath);
 
         File directory = new File(serverImgPath);
         if (!directory.exists()) {
@@ -57,7 +57,7 @@ public class StorageService {
             byte[] bytes = file.getBytes();
             Path path = Paths.get(serverImgPath + name);
             Files.write(path, bytes);
-            log.info("Image write successful: " + name);
+            log.info("Image write successful: {}", name);
         } catch (IOException e) {
             throw new StorageFailException(
                     "Could not write the image " + file.getOriginalFilename(),

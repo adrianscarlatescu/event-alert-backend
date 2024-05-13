@@ -28,31 +28,39 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @CreationTimestamp
     private LocalDateTime joinDateTime;
+
     @Column(unique = true)
     private String email;
+
     @JsonIgnore
     private String password;
+
     private String firstName;
     private String lastName;
     private LocalDate dateOfBirth;
     private String phoneNumber;
     private String imagePath;
+
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<Event> events;
+
     @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<EventComment> eventComments;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<UserRole> userRoles;
+
     @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<Subscription> subscriptions;

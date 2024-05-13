@@ -19,8 +19,10 @@ public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @CreationTimestamp
     private LocalDateTime dateTime;
+
     private Double latitude;
     private Double longitude;
     private String imagePath;
@@ -29,12 +31,15 @@ public class Event {
     @JsonIgnore
     @OneToMany(mappedBy = "event")
     private Set<EventComment> eventComments;
+
     @ManyToOne
     @JoinColumn(name = "severity_id", nullable = false)
     private EventSeverity severity;
+
     @ManyToOne
     @JoinColumn(name = "tag_id", nullable = false)
     private EventTag tag;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
