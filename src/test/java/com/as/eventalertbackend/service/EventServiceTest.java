@@ -1,15 +1,14 @@
 package com.as.eventalertbackend.service;
 
-import com.as.eventalertbackend.controller.request.EventBody;
-import com.as.eventalertbackend.controller.request.EventFilterBody;
-import com.as.eventalertbackend.controller.response.PagedResponse;
+import com.as.eventalertbackend.controller.request.EventFilterRequestDto;
+import com.as.eventalertbackend.controller.request.EventRequestDto;
 import com.as.eventalertbackend.data.model.Event;
 import com.as.eventalertbackend.data.model.EventSeverity;
 import com.as.eventalertbackend.data.model.EventTag;
 import com.as.eventalertbackend.data.model.User;
 import com.as.eventalertbackend.data.reopsitory.EventRepository;
 import com.as.eventalertbackend.enums.Order;
-import com.as.eventalertbackend.handler.exception.IllegalActionException;
+import com.as.eventalertbackend.handler.exception.InvalidActionException;
 import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,65 +49,65 @@ class EventServiceTest {
     private static final int MOCK_EVENTS_NUMBER = 3;
 
     private final Long eventId = 1L;
+    private final String eventImagePath = "img/event_1.png";
+    private final Double eventLatitude = 44.4555611;
+    private final Double eventLongitude = 26.0404115;
+    private final String eventDescription = "test";
+    private final int radius = 100;
+    private final LocalDate eventStartDate = LocalDate.of(2020, Month.APRIL, 1);
+    private final LocalDate eventEndDate = LocalDate.of(2021, Month.APRIL, 1);
+    private final long[] eventTagsIds = {1L};
+    private final long[] eventSeveritiesIds = {1L};
+
     private final Long userId = 1L;
     private final Long tagId = 1L;
     private final Long severityId = 1L;
-    private final String imagePath = "img/event_1.png";
-    private final Double latitude = 44.4555611;
-    private final Double longitude = 26.0404115;
-    private final String description = "description";
-    private final int radius = 100;
-    private final LocalDate startDate = LocalDate.of(2020, Month.APRIL, 1);
-    private final LocalDate endDate = LocalDate.of(2021, Month.APRIL, 1);
-    private final long[] tagsIds = {1L};
-    private final long[] severitiesIds = {1L};
 
     @Test
     public void shouldFindById() {
         // given
-        Long id = 1L;
         Event mockEvent = new Event();
-        mockEvent.setId(id);
+        mockEvent.setId(eventId);
 
-        given(eventRepository.findById(id)).willReturn(Optional.of(mockEvent));
+        given(eventRepository.findById(eventId)).willReturn(Optional.of(mockEvent));
 
         // when
-        Event event = eventService.findById(id);
+        Event event = eventService.findById(eventId);
 
         // then
         assertNotNull(event);
-        assertEquals(id, event.getId());
+        assertEquals(eventId, event.getId());
     }
 
     @Test
     public void shouldNotFindById() {
         // given
-        given(eventRepository.findById(any())).willThrow(RecordNotFoundException.class);
+        given(eventRepository.findById(eventId)).willThrow(RecordNotFoundException.class);
 
         // when
         // then
-        assertThrows(RecordNotFoundException.class, () -> eventService.findById(any()));
+        assertThrows(RecordNotFoundException.class, () -> eventService.findById(eventId));
     }
 
     @Test
     public void shouldNotFindByFilterForMaxPageSize() {
         // given
-        EventFilterBody body = getMockEventFilterBody();
+        EventFilterRequestDto filterRequestDto = getMockEventFilterRequestDto();
         int pageSize = 101;
         int pageNumber = 0;
         Order order = Order.BY_DATE_DESCENDING;
 
         // when
         // then
-        assertThrows(IllegalActionException.class,
-                () -> eventService.findByFilter(body, pageSize, pageNumber, order));
+        assertThrows(InvalidActionException.class,
+                () -> eventService.findByFilter(filterRequestDto, pageSize, pageNumber, order));
     }
 
     @Test
     public void shouldNotFindByFilterForStartDateAfterEndDate() {
         // given
-        EventFilterBody body = getMockEventFilterBody();
-        body.setStartDate(LocalDate.of(2021, Month.JULY, 1));
+        EventFilterRequestDto filterRequestDto = getMockEventFilterRequestDto();
+        filterRequestDto.setStartDate(LocalDate.of(2021, Month.JULY, 1));
 
         int pageSize = 20;
         int pageNumber = 0;
@@ -116,15 +115,15 @@ class EventServiceTest {
 
         // when
         // then
-        assertThrows(IllegalActionException.class,
-                () -> eventService.findByFilter(body, pageSize, pageNumber, order));
+        assertThrows(InvalidActionException.class,
+                () -> eventService.findByFilter(filterRequestDto, pageSize, pageNumber, order));
     }
 
     @Test
     public void shouldNotFindByFilterForMaxDateDifference() {
         // given
-        EventFilterBody body = getMockEventFilterBody();
-        body.setEndDate(LocalDate.of(2022, Month.JULY, 1));
+        EventFilterRequestDto filterRequestDto = getMockEventFilterRequestDto();
+        filterRequestDto.setEndDate(LocalDate.of(2022, Month.JULY, 1));
 
         int pageSize = 20;
         int pageNumber = 0;
@@ -132,20 +131,20 @@ class EventServiceTest {
 
         // when
         // then
-        assertThrows(IllegalActionException.class,
-                () -> eventService.findByFilter(body, pageSize, pageNumber, order));
+        assertThrows(InvalidActionException.class,
+                () -> eventService.findByFilter(filterRequestDto, pageSize, pageNumber, order));
     }
 
     @Test
     public void shouldFindByFilter() {
         // given
-        EventFilterBody body = getMockEventFilterBody();
+        EventFilterRequestDto filterRequestDto = getMockEventFilterRequestDto();
 
         int pageSize = 20;
         int pageNumber = 0;
         Order order = Order.BY_DISTANCE_DESCENDING;
 
-        List<EventRepository.DistanceProjection> distanceProjections = getMockEventProjections();
+        List<EventRepository.DistanceProjection> distanceProjections = getMockDistanceProjections();
 
         given(eventRepository.findByFilter(anyDouble(), anyDouble(), anyInt(), any(), any(), any(), any()))
                 .willReturn(distanceProjections);
@@ -153,11 +152,10 @@ class EventServiceTest {
         List<Event> events = getMockEvents();
         Page<Event> eventPages = new PageImpl<>(events);
 
-        given(eventRepository.findByFilter(any(), any(), any(), any(), any(), any()))
-                .willReturn(eventPages);
+        given(eventRepository.findByIds(any(), any())).willReturn(eventPages);
 
         // when
-        PagedResponse<Event> response = eventService.findByFilter(body, pageSize, pageNumber, order);
+        Page<Event> response = eventService.findByFilter(filterRequestDto, pageSize, pageNumber, order);
 
         // then
         assertNotNull(response);
@@ -175,11 +173,10 @@ class EventServiceTest {
     @Test
     public void shouldSave() {
         // given
-        Long id = 1L;
         Event mockEvent = new Event();
-        mockEvent.setId(id);
+        mockEvent.setId(eventId);
 
-        given(eventRepository.save(mockEvent)).willReturn(mockEvent);
+        given(eventRepository.save(any())).willReturn(mockEvent);
 
         // when
         Event event = eventService.save(mockEvent);
@@ -192,14 +189,14 @@ class EventServiceTest {
 
         assertEquals(mockEvent, capturedEvent);
         assertNotNull(event);
-        assertEquals(id, event.getId());
+        assertEquals(eventId, event.getId());
     }
 
     @Test
     public void shouldSaveNewEvent() {
         // given
         // Notification variable is already false
-        EventBody newEventBody = getMockEventBody();
+        EventRequestDto eventRequestDto = getMockEventRequestDto();
         Event mockEvent = getMockEvent();
 
         given(userService.findById(userId)).willReturn(mockEvent.getUser());
@@ -208,7 +205,7 @@ class EventServiceTest {
         given(eventRepository.save(any())).willReturn(mockEvent);
 
         // when
-        Event event = eventService.save(newEventBody);
+        Event event = eventService.save(eventRequestDto);
 
         // then
         ArgumentCaptor<Event> argumentCaptor = ArgumentCaptor.forClass(Event.class);
@@ -221,16 +218,16 @@ class EventServiceTest {
         assertEquals(userId, capturedEvent.getUser().getId());
         assertEquals(tagId, capturedEvent.getTag().getId());
         assertEquals(severityId, capturedEvent.getSeverity().getId());
-        assertEquals(latitude, capturedEvent.getLatitude());
-        assertEquals(longitude, capturedEvent.getLongitude());
-        assertEquals(imagePath, capturedEvent.getImagePath());
-        assertEquals(description, capturedEvent.getDescription());
+        assertEquals(eventLatitude, capturedEvent.getLatitude());
+        assertEquals(eventLongitude, capturedEvent.getLongitude());
+        assertEquals(eventImagePath, capturedEvent.getImagePath());
+        assertEquals(eventDescription, capturedEvent.getDescription());
     }
 
     @Test
     public void shouldNotSaveNewEventWithoutUserData() {
         // given
-        EventBody newEventBody = getMockEventBody();
+        EventRequestDto eventRequestDto = getMockEventRequestDto();
         Event mockEvent = getMockEvent();
 
         User mockUser = mockEvent.getUser();
@@ -243,57 +240,55 @@ class EventServiceTest {
 
         // when
         // then
-        assertThrows(IllegalActionException.class, () -> eventService.save(newEventBody));
+        assertThrows(InvalidActionException.class, () -> eventService.save(eventRequestDto));
         verify(eventRepository, times(0)).save(any());
     }
 
     @Test
     public void shouldDeleteById() {
         // given
-        Long id = 1L;
-        given(eventRepository.existsById(id)).willReturn(true);
+        given(eventRepository.existsById(eventId)).willReturn(true);
 
         // when
-        eventService.deleteById(id);
+        eventService.deleteById(eventId);
 
         // then
-        verify(eventRepository).deleteById(id);
+        verify(eventRepository).deleteById(eventId);
     }
 
     @Test
     public void shouldNotDeleteById() {
         // given
-        Long id = 1L;
-        given(eventRepository.existsById(id)).willReturn(false);
+        given(eventRepository.existsById(eventId)).willReturn(false);
 
         // when
         // then
-        assertThrows(RecordNotFoundException.class, () -> eventService.deleteById(id));
-        verify(eventRepository, times(0)).deleteById(id);
+        assertThrows(RecordNotFoundException.class, () -> eventService.deleteById(eventId));
+        verify(eventRepository, times(0)).deleteById(eventId);
     }
 
-    private EventFilterBody getMockEventFilterBody() {
-        EventFilterBody body = new EventFilterBody();
-        body.setRadius(radius);
-        body.setStartDate(startDate);
-        body.setEndDate(endDate);
-        body.setLatitude(latitude);
-        body.setLongitude(longitude);
-        body.setTagsIds(tagsIds);
-        body.setSeveritiesIds(severitiesIds);
-        return body;
+    private EventFilterRequestDto getMockEventFilterRequestDto() {
+        EventFilterRequestDto filterRequestDto = new EventFilterRequestDto();
+        filterRequestDto.setRadius(radius);
+        filterRequestDto.setStartDate(eventStartDate);
+        filterRequestDto.setEndDate(eventEndDate);
+        filterRequestDto.setLatitude(eventLatitude);
+        filterRequestDto.setLongitude(eventLongitude);
+        filterRequestDto.setTagsIds(eventTagsIds);
+        filterRequestDto.setSeveritiesIds(eventSeveritiesIds);
+        return filterRequestDto;
     }
 
-    private EventBody getMockEventBody() {
-        EventBody body = new EventBody();
-        body.setUserId(userId);
-        body.setTagId(tagId);
-        body.setSeverityId(severityId);
-        body.setImagePath(imagePath);
-        body.setLatitude(latitude);
-        body.setLongitude(longitude);
-        body.setDescription(description);
-        return body;
+    private EventRequestDto getMockEventRequestDto() {
+        EventRequestDto eventRequestDto = new EventRequestDto();
+        eventRequestDto.setUserId(userId);
+        eventRequestDto.setTagId(tagId);
+        eventRequestDto.setSeverityId(severityId);
+        eventRequestDto.setImagePath(eventImagePath);
+        eventRequestDto.setLatitude(eventLatitude);
+        eventRequestDto.setLongitude(eventLongitude);
+        eventRequestDto.setDescription(eventDescription);
+        return eventRequestDto;
     }
 
     private Event getMockEvent() {
@@ -302,10 +297,10 @@ class EventServiceTest {
         event.setUser(getMockUser());
         event.setTag(getMockTag());
         event.setSeverity(getMockSeverity());
-        event.setLatitude(latitude);
-        event.setLongitude(longitude);
-        event.setImagePath(imagePath);
-        event.setDescription(description);
+        event.setLatitude(eventLatitude);
+        event.setLongitude(eventLongitude);
+        event.setImagePath(eventImagePath);
+        event.setDescription(eventDescription);
         return event;
     }
 
@@ -333,7 +328,7 @@ class EventServiceTest {
         return user;
     }
 
-    private List<EventRepository.DistanceProjection> getMockEventProjections() {
+    private List<EventRepository.DistanceProjection> getMockDistanceProjections() {
         List<EventRepository.DistanceProjection> distanceProjections = new ArrayList<>();
         for (int i = 0; i < MOCK_EVENTS_NUMBER; i++) {
             final long index = i + 1;

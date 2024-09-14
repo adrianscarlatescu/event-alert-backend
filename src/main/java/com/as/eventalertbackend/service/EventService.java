@@ -1,16 +1,15 @@
 package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.AppConstants;
-import com.as.eventalertbackend.controller.request.EventBody;
-import com.as.eventalertbackend.controller.request.EventFilterBody;
-import com.as.eventalertbackend.controller.response.PagedResponse;
+import com.as.eventalertbackend.controller.request.EventFilterRequestDto;
+import com.as.eventalertbackend.controller.request.EventRequestDto;
 import com.as.eventalertbackend.data.model.Event;
 import com.as.eventalertbackend.data.model.EventSeverity;
 import com.as.eventalertbackend.data.model.EventTag;
 import com.as.eventalertbackend.data.model.User;
 import com.as.eventalertbackend.data.reopsitory.EventRepository;
 import com.as.eventalertbackend.enums.Order;
-import com.as.eventalertbackend.handler.exception.IllegalActionException;
+import com.as.eventalertbackend.handler.exception.InvalidActionException;
 import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,10 +29,10 @@ import java.util.List;
 @Slf4j
 public class EventService {
 
-    private final EventRepository repository;
+    private final EventRepository eventRepository;
 
-    private final EventSeverityService eventSeverityService;
-    private final EventTagService eventTagService;
+    private final EventSeverityService severityService;
+    private final EventTagService tagService;
     private final UserService userService;
     private final NotificationService notificationService;
 
@@ -42,67 +40,57 @@ public class EventService {
     private boolean isNotificationEnabled;
 
     @Autowired
-    public EventService(EventRepository repository,
-                        EventSeverityService eventSeverityService,
-                        EventTagService eventTagService,
+    public EventService(EventRepository eventRepository,
+                        EventSeverityService severityService,
+                        EventTagService tagService,
                         UserService userService,
                         NotificationService notificationService) {
-        this.repository = repository;
-        this.eventSeverityService = eventSeverityService;
-        this.eventTagService = eventTagService;
+        this.eventRepository = eventRepository;
+        this.severityService = severityService;
+        this.tagService = tagService;
         this.userService = userService;
         this.notificationService = notificationService;
     }
 
     public Event findById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "No record for event " + id,
-                        "Event not found"));
+        return eventRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Event not found"));
     }
 
-    public List<Event> findByUserId(Long userId) {
-        return repository.findByUserIdOrderByDateTimeDesc(userId);
+    public List<Event> findAllByUserId(Long userId) {
+        return eventRepository.findByUserIdOrderByDateTimeDesc(userId);
     }
 
     @Transactional
-    public PagedResponse<Event> findByFilter(EventFilterBody body, int pageSize, int pageNumber, Order order) {
+    public Page<Event> findByFilter(EventFilterRequestDto filterRequestDto, int pageSize, int pageNumber, Order order) {
         if (pageSize > AppConstants.MAX_PAGES) {
-            throw new IllegalActionException(
-                    "The page size " + pageSize + " is greater than maximum allowed " + AppConstants.MAX_PAGES,
-                    "The page size must be less than " + AppConstants.MAX_PAGES);
+            throw new InvalidActionException("The page size must be less than " + AppConstants.MAX_PAGES);
         }
 
-        if (body.getStartDate().isAfter(body.getEndDate())) {
-            throw new IllegalActionException(
-                    "Start date " + body.getStartDate().toString() + " is after end date " + body.getEndDate().toString(),
-                    "The end date must be after the start date");
+        if (filterRequestDto.getStartDate().isAfter(filterRequestDto.getEndDate())) {
+            throw new InvalidActionException("The end date must be after the start date");
         }
 
-        if (body.getEndDate().getYear() - body.getStartDate().getYear() > AppConstants.MAX_YEARS_INTERVAL) {
-            throw new IllegalActionException(
-                    "The difference between the start year " + body.getStartDate().getYear() +
-                            " and the end year " + body.getEndDate().getYear() +
-                            " is greater than maximum allowed " + AppConstants.MAX_YEARS_INTERVAL,
-                    "The years interval must be maximum " + AppConstants.MAX_YEARS_INTERVAL);
+        if (filterRequestDto.getEndDate().getYear() - filterRequestDto.getStartDate().getYear() > AppConstants.MAX_YEARS_INTERVAL) {
+            throw new InvalidActionException("The years interval must be maximum " + AppConstants.MAX_YEARS_INTERVAL);
         }
 
         if (order == null) {
             order = Order.BY_DATE_DESCENDING;
         }
 
-        LocalDateTime startDateTime = body.getStartDate().atStartOfDay();
-        LocalDateTime endDateTime = body.getEndDate().atTime(23, 59, 59);
+        LocalDateTime startDateTime = filterRequestDto.getStartDate().atStartOfDay();
+        LocalDateTime endDateTime = filterRequestDto.getEndDate().atTime(23, 59, 59);
 
         log.info("Starting events retrieval; latitude: {}, longitude: {}, radius: {}, start date: {}, end date: {}, tags: {}, severities: {}",
-                body.getLatitude(), body.getLongitude(), body.getRadius(),
+                filterRequestDto.getLatitude(), filterRequestDto.getLongitude(), filterRequestDto.getRadius(),
                 startDateTime, endDateTime,
-                body.getTagsIds(), body.getSeveritiesIds());
+                filterRequestDto.getTagsIds(), filterRequestDto.getSeveritiesIds());
 
-        List<EventRepository.DistanceProjection> distanceProjections = repository.findByFilter(
-                body.getLatitude(), body.getLongitude(), body.getRadius(),
+        List<EventRepository.DistanceProjection> distanceProjections = eventRepository.findByFilter(
+                filterRequestDto.getLatitude(), filterRequestDto.getLongitude(), filterRequestDto.getRadius(),
                 startDateTime, endDateTime,
-                body.getTagsIds(), body.getSeveritiesIds());
+                filterRequestDto.getTagsIds(), filterRequestDto.getSeveritiesIds());
 
         if (order == Order.BY_DISTANCE_DESCENDING) {
             Collections.reverse(distanceProjections);
@@ -134,88 +122,68 @@ public class EventService {
                 break;
         }
 
-        Page<Event> eventPages = repository.findByFilter(
-                eventsIds,
-                startDateTime, endDateTime,
-                body.getTagsIds(), body.getSeveritiesIds(),
-                pageRequest
-        );
+        Page<Event> eventsPage = eventRepository.findByIds(eventsIds, pageRequest);
 
-        eventPages.get().forEach(event ->
+        eventsPage.get().forEach(event ->
                 distanceProjections.stream()
                         .filter(distanceProjection -> distanceProjection.getId().longValue() == event.getId().longValue())
                         .findFirst()
                         .ifPresent(distanceProjection -> event.setDistance(distanceProjection.getDistance()))
         );
 
-        PagedResponse<Event> pagedResponse = new PagedResponse<>();
-        pagedResponse.setTotalPages(eventPages.getTotalPages());
-        pagedResponse.setTotalElements(eventPages.getTotalElements());
-        pagedResponse.setContent(eventPages.getContent());
-
         log.info("Retrieved pages: {}, elements: {}, events: {}",
-                eventPages.getTotalPages(),
-                eventPages.getTotalElements(),
-                eventPages.getContent().stream().mapToLong(Event::getId).toArray());
+                eventsPage.getTotalPages(),
+                eventsPage.getTotalElements(),
+                eventsPage.getContent().stream().mapToLong(Event::getId).toArray());
 
-        return pagedResponse;
+        return eventsPage;
     }
 
     public Event save(Event event) {
-        return repository.save(event);
+        return eventRepository.save(event);
     }
 
-    public Event save(EventBody body) {
-        return save(new Event(), body);
+    public Event save(EventRequestDto eventRequestDto) {
+        return save(new Event(), eventRequestDto);
     }
 
-    public Event updateById(EventBody body, Long id) {
-        Event dbObj = findById(id);
-        return save(dbObj, body);
+    public Event updateById(EventRequestDto eventRequestDto, Long id) {
+        Event event = findById(id);
+        return save(event, eventRequestDto);
     }
 
     public void deleteById(Long id) {
-        if (repository.existsById(id)) {
-            repository.deleteById(id);
+        if (eventRepository.existsById(id)) {
+            eventRepository.deleteById(id);
         } else {
-            throw new RecordNotFoundException(
-                    "No record for event " + id,
-                    "Event not found");
+            throw new RecordNotFoundException("Event not found");
         }
     }
 
-    private Event save(Event dbObj, EventBody body) {
-        User user = userService.findById(body.getUserId());
-        EventTag tag = eventTagService.findById(body.getTagId());
-        EventSeverity severity = eventSeverityService.findById(body.getSeverityId());
+    private Event save(Event event, EventRequestDto eventRequestDto) {
+        User user = userService.findById(eventRequestDto.getUserId());
+        EventTag tag = tagService.findById(eventRequestDto.getTagId());
+        EventSeverity severity = severityService.findById(eventRequestDto.getSeverityId());
 
-        List<String> descriptions = new ArrayList<>();
-        boolean isFirstNameInvalid = isNullOrEmpty(user.getFirstName());
-        boolean isLastNameInvalid = isNullOrEmpty(user.getLastName());
-        if (isFirstNameInvalid) {
-            descriptions.add("The first name is mandatory");
+        if (isNullOrEmpty(user.getFirstName())) {
+            throw new InvalidActionException("User first name is mandatory");
         }
-        if (isLastNameInvalid) {
-            descriptions.add("The last name is mandatory");
+        if (isNullOrEmpty(user.getLastName())) {
+            throw new InvalidActionException("User last name is mandatory");
         }
 
-        if (!descriptions.isEmpty()) {
-            String message = "Could not create the event, missing user " + user.getId() + " mandatory data";
-            throw new IllegalActionException(message, descriptions);
-        }
+        String description = eventRequestDto.getDescription() == null ?
+                null : eventRequestDto.getDescription().replaceAll("\n", " ");
 
-        String description = body.getDescription() == null ?
-                null : body.getDescription().replaceAll("\n", " ");
+        event.setLatitude(eventRequestDto.getLatitude());
+        event.setLongitude(eventRequestDto.getLongitude());
+        event.setImagePath(eventRequestDto.getImagePath());
+        event.setDescription(description);
+        event.setSeverity(severity);
+        event.setTag(tag);
+        event.setUser(user);
 
-        dbObj.setLatitude(body.getLatitude());
-        dbObj.setLongitude(body.getLongitude());
-        dbObj.setImagePath(body.getImagePath());
-        dbObj.setDescription(description);
-        dbObj.setSeverity(severity);
-        dbObj.setTag(tag);
-        dbObj.setUser(user);
-
-        Event newEvent = repository.save(dbObj);
+        Event newEvent = eventRepository.save(event);
 
         if (isNotificationEnabled) {
             notificationService.send(newEvent);

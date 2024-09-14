@@ -1,5 +1,6 @@
 package com.as.eventalertbackend.service;
 
+import com.as.eventalertbackend.controller.request.EventTagRequestDto;
 import com.as.eventalertbackend.data.model.EventTag;
 import com.as.eventalertbackend.data.reopsitory.EventTagRepository;
 import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
@@ -11,46 +12,41 @@ import java.util.List;
 @Service
 public class EventTagService {
 
-    private final EventTagRepository repository;
+    private final EventTagRepository tagRepository;
 
     @Autowired
-    public EventTagService(EventTagRepository repository) {
-        this.repository = repository;
-    }
-
-    public Boolean existsById(Long id) {
-        return repository.existsById(id);
+    public EventTagService(EventTagRepository tagRepository) {
+        this.tagRepository = tagRepository;
     }
 
     public List<EventTag> findAll() {
-        return repository.findAll();
+        return tagRepository.findAll();
     }
 
     public EventTag findById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "No record for tag " + id,
-                        "Tag not found"));
+        return tagRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Tag not found"));
     }
 
-    public EventTag updateById(EventTag tag, Long id) {
-        EventTag dbObj = findById(id);
-        dbObj.setName(tag.getName());
-        dbObj.setImagePath(tag.getImagePath());
-        return repository.save(dbObj);
+    public EventTag updateById(EventTagRequestDto tagRequestDto, Long id) {
+        EventTag tag = findById(id);
+        tag.setName(tagRequestDto.getName());
+        tag.setImagePath(tagRequestDto.getImagePath());
+        return tagRepository.save(tag);
     }
 
-    public EventTag save(EventTag tag) {
-        return repository.save(tag);
+    public EventTag save(EventTagRequestDto tagRequestDto) {
+        EventTag tag = new EventTag();
+        tag.setName(tagRequestDto.getName());
+        tag.setImagePath(tagRequestDto.getImagePath());
+        return tagRepository.save(tag);
     }
 
     public void deleteById(Long id) {
-        if (repository.existsById(id)) {
-            repository.deleteById(id);
+        if (tagRepository.existsById(id)) {
+            tagRepository.deleteById(id);
         } else {
-            throw new RecordNotFoundException(
-                    "No record for tag " + id,
-                    "Tag not found");
+            throw new RecordNotFoundException("Tag not found");
         }
     }
 

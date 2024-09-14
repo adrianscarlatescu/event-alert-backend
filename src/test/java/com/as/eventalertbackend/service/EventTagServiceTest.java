@@ -1,5 +1,6 @@
 package com.as.eventalertbackend.service;
 
+import com.as.eventalertbackend.controller.request.EventTagRequestDto;
 import com.as.eventalertbackend.data.model.EventTag;
 import com.as.eventalertbackend.data.reopsitory.EventTagRepository;
 import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
@@ -22,118 +23,112 @@ import static org.mockito.Mockito.verify;
 class EventTagServiceTest {
 
     @Mock
-    private EventTagRepository repository;
+    private EventTagRepository tagRepository;
 
     @InjectMocks
-    private EventTagService service;
+    private EventTagService tagService;
+
+    private final Long tagId = 1L;
+    private final String tagName = "name";
+    private final String tagImagePath = "img/tag_1.png";
 
     @Test
     public void shouldFindById() {
         // given
-        Long id = 1L;
         EventTag mockTag = new EventTag();
-        mockTag.setId(id);
+        mockTag.setId(tagId);
 
-        given(repository.findById(id)).willReturn(Optional.of(mockTag));
+        given(tagRepository.findById(tagId)).willReturn(Optional.of(mockTag));
 
         // when
-        EventTag tag = service.findById(id);
+        EventTag tag = tagService.findById(tagId);
 
         // then
         assertNotNull(tag);
-        assertEquals(id, tag.getId());
+        assertEquals(tagId, tag.getId());
     }
 
     @Test
     public void shouldNotFindById() {
         // given
-        given(repository.findById(any())).willThrow(RecordNotFoundException.class);
+        given(tagRepository.findById(tagId)).willThrow(RecordNotFoundException.class);
 
         // when
         // then
-        assertThrows(RecordNotFoundException.class, () -> service.findById(any()));
+        assertThrows(RecordNotFoundException.class, () -> tagService.findById(tagId));
     }
 
     @Test
     public void shouldSave() {
         // given
-        Long id = 1L;
-        String name = "name";
-        String imagePath = "img/tag_1.png";
+        EventTagRequestDto tagRequestDto = new EventTagRequestDto();
+        tagRequestDto.setName(tagName);
+        tagRequestDto.setImagePath(tagImagePath);
 
         EventTag mockTag = new EventTag();
-        mockTag.setId(id);
-        mockTag.setName(name);
-        mockTag.setImagePath(imagePath);
+        mockTag.setId(tagId);
+        mockTag.setName(tagName);
+        mockTag.setImagePath(tagImagePath);
 
-        given(repository.save(mockTag)).willReturn(mockTag);
+        given(tagRepository.save(any())).willReturn(mockTag);
 
         // when
-        EventTag tag = service.save(mockTag);
+        EventTag tag = tagService.save(tagRequestDto);
 
         // then
         ArgumentCaptor<EventTag> argumentCaptor = ArgumentCaptor.forClass(EventTag.class);
-        verify(repository).save(argumentCaptor.capture());
+        verify(tagRepository).save(argumentCaptor.capture());
 
-        EventTag capturedEventTag = argumentCaptor.getValue();
+        EventTag capturedTag = argumentCaptor.getValue();
 
-        assertEquals(mockTag, capturedEventTag);
+        assertEquals(mockTag.getName(), capturedTag.getName());
+        assertEquals(mockTag.getImagePath(), capturedTag.getImagePath());
         assertNotNull(tag);
-        assertEquals(id, tag.getId());
-        assertEquals(name, tag.getName());
-        assertEquals(imagePath, tag.getImagePath());
     }
 
     @Test
     public void shouldUpdateById() {
         // given
-        Long id = 1L;
-        String updatedName = "name";
-        String updatedImagePath = "img/tag_1.png";
+        EventTagRequestDto tagRequestDto = new EventTagRequestDto();
+        tagRequestDto.setName(tagName);
+        tagRequestDto.setImagePath(tagImagePath);
 
-        EventTag mockTag = new EventTag();
-        mockTag.setId(id);
-        mockTag.setName(updatedName);
-        mockTag.setImagePath(updatedImagePath);
+        EventTag eventTag = new EventTag();
+        eventTag.setId(tagId);
 
-        EventTag mockDbObjTag = new EventTag();
-        mockDbObjTag.setId(id);
-
-        given(repository.findById(id)).willReturn(Optional.of(mockDbObjTag));
-        given(repository.save(mockDbObjTag)).willReturn(mockDbObjTag);
+        given(tagRepository.findById(tagId)).willReturn(Optional.of(eventTag));
+        given(tagRepository.save(eventTag)).willReturn(eventTag);
 
         // when
-        EventTag tag = service.updateById(mockTag, id);
+        EventTag tag = tagService.updateById(tagRequestDto, tagId);
 
         // then
         assertNotNull(tag);
-        assertEquals(updatedName, tag.getName());
-        assertEquals(updatedImagePath, tag.getImagePath());
+        assertEquals(tagName, tag.getName());
+        assertEquals(tagImagePath, tag.getImagePath());
     }
 
     @Test
     public void shouldDeleteById() {
         // given
-        Long id = 1L;
-        given(repository.existsById(id)).willReturn(true);
+        given(tagRepository.existsById(tagId)).willReturn(true);
 
         // when
-        service.deleteById(id);
+        tagService.deleteById(tagId);
 
         // then
-        verify(repository).deleteById(id);
+        verify(tagRepository).deleteById(tagId);
     }
 
     @Test
     public void shouldNotDeleteById() {
         // given
-        Long id = 1L;
-        given(repository.existsById(id)).willReturn(false);
+        given(tagRepository.existsById(tagId)).willReturn(false);
 
         // when
         // then
-        assertThrows(RecordNotFoundException.class, () -> service.deleteById(id));
-        verify(repository, times(0)).deleteById(id);
+        assertThrows(RecordNotFoundException.class, () -> tagService.deleteById(tagId));
+        verify(tagRepository, times(0)).deleteById(tagId);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.as.eventalertbackend.service;
 
+import com.as.eventalertbackend.controller.request.EventSeverityRequestDto;
 import com.as.eventalertbackend.data.model.EventSeverity;
 import com.as.eventalertbackend.data.reopsitory.EventSeverityRepository;
 import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
@@ -11,46 +12,41 @@ import java.util.List;
 @Service
 public class EventSeverityService {
 
-    private final EventSeverityRepository repository;
+    private final EventSeverityRepository severityRepository;
 
     @Autowired
-    public EventSeverityService(EventSeverityRepository repository) {
-        this.repository = repository;
-    }
-
-    public Boolean existsById(Long id) {
-        return repository.existsById(id);
+    public EventSeverityService(EventSeverityRepository severityRepository) {
+        this.severityRepository = severityRepository;
     }
 
     public List<EventSeverity> findAll() {
-        return repository.findAll();
+        return severityRepository.findAll();
     }
 
     public EventSeverity findById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "No record for severity " + id,
-                        "Severity not found"));
+        return severityRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Severity not found"));
     }
 
-    public EventSeverity updateById(EventSeverity severity, Long id) {
-        EventSeverity dbObj = findById(id);
-        dbObj.setName(severity.getName());
-        dbObj.setColor(severity.getColor());
-        return repository.save(dbObj);
+    public EventSeverity updateById(EventSeverityRequestDto severityRequestDto, Long id) {
+        EventSeverity severity = findById(id);
+        severity.setName(severityRequestDto.getName());
+        severity.setColor(severityRequestDto.getColor());
+        return severityRepository.save(severity);
     }
 
-    public EventSeverity save(EventSeverity severity) {
-        return repository.save(severity);
+    public EventSeverity save(EventSeverityRequestDto severityRequestDto) {
+        EventSeverity severity = new EventSeverity();
+        severity.setName(severityRequestDto.getName());
+        severity.setColor(severityRequestDto.getColor());
+        return severityRepository.save(severity);
     }
 
     public void deleteById(Long id) {
-        if (repository.existsById(id)) {
-            repository.deleteById(id);
+        if (severityRepository.existsById(id)) {
+            severityRepository.deleteById(id);
         } else {
-            throw new RecordNotFoundException(
-                    "No record for severity " + id,
-                    "Severity not found");
+            throw new RecordNotFoundException("Severity not found");
         }
     }
 

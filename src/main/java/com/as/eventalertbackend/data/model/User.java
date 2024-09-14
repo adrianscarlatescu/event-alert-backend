@@ -1,7 +1,9 @@
 package com.as.eventalertbackend.data.model;
 
+import com.as.eventalertbackend.dto.UserDto;
 import com.as.eventalertbackend.enums.Gender;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode
 public class User implements UserDetails {
 
     @Id
@@ -111,4 +114,22 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public UserDto toDto() {
+        UserDto dto = new UserDto();
+        dto.setId(getId());
+        dto.setJoinDateTime(getJoinDateTime());
+        dto.setEmail(getEmail());
+        dto.setFirstName(getFirstName());
+        dto.setLastName(getLastName());
+        dto.setDateOfBirth(getDateOfBirth());
+        dto.setPhoneNumber(getPhoneNumber());
+        dto.setImagePath(getImagePath());
+        dto.setGender(getGender());
+        dto.setUserRoles(getUserRoles() == null ?
+                null : getUserRoles().stream().map(UserRole::toDto).collect(Collectors.toSet()));
+        dto.setReportsNumber(getReportsNumber());
+        return dto;
+    }
+
 }

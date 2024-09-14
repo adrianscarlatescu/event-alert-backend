@@ -24,14 +24,10 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             LocalDateTime startDate, LocalDateTime endDate,
             long[] tagsIds, long[] severitiesIds);
 
-    @Query(value = "SELECT * FROM event WHERE id in ?1 AND date_time BETWEEN ?2 AND ?3 AND tag_id IN ?4 AND severity_id IN ?5 ",
-            countQuery = "SELECT COUNT(*) FROM event WHERE id in ?1 AND date_time BETWEEN ?2 AND ?3 AND tag_id IN ?4 AND severity_id IN ?5",
+    @Query(value = "SELECT * FROM event WHERE id in ?1",
+            countQuery = "SELECT COUNT(*) FROM event WHERE id in ?1",
             nativeQuery = true)
-    Page<Event> findByFilter(
-            long[] eventsIds,
-            LocalDateTime startDate, LocalDateTime endDate,
-            long[] tagsIds, long[] severitiesIds,
-            Pageable pageable);
+    Page<Event> findByIds(long[] eventsIds, Pageable pageable);
 
     List<Event> findByUserIdOrderByDateTimeDesc(Long userId);
 

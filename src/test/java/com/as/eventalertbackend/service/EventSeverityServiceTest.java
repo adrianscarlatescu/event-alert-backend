@@ -1,5 +1,6 @@
 package com.as.eventalertbackend.service;
 
+import com.as.eventalertbackend.controller.request.EventSeverityRequestDto;
 import com.as.eventalertbackend.data.model.EventSeverity;
 import com.as.eventalertbackend.data.reopsitory.EventSeverityRepository;
 import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
@@ -22,118 +23,112 @@ import static org.mockito.Mockito.verify;
 class EventSeverityServiceTest {
 
     @Mock
-    private EventSeverityRepository repository;
+    private EventSeverityRepository severityRepository;
 
     @InjectMocks
-    private EventSeverityService service;
+    private EventSeverityService severityService;
+
+    private final Long severityId = 1L;
+    private final String severityName = "severity";
+    private final Integer severityColor = 999;
 
     @Test
     public void shouldFindById() {
         // given
-        Long id = 1L;
         EventSeverity mockSeverity = new EventSeverity();
-        mockSeverity.setId(id);
+        mockSeverity.setId(severityId);
 
-        given(repository.findById(id)).willReturn(Optional.of(mockSeverity));
+        given(severityRepository.findById(severityId)).willReturn(Optional.of(mockSeverity));
 
         // when
-        EventSeverity severity = service.findById(id);
+        EventSeverity severity = severityService.findById(severityId);
 
         // then
         assertNotNull(severity);
-        assertEquals(id, severity.getId());
+        assertEquals(severityId, severity.getId());
     }
 
     @Test
     public void shouldNotFindById() {
         // given
-        given(repository.findById(any())).willThrow(RecordNotFoundException.class);
+        given(severityRepository.findById(severityId)).willThrow(RecordNotFoundException.class);
 
         // when
         // then
-        assertThrows(RecordNotFoundException.class, () -> service.findById(any()));
+        assertThrows(RecordNotFoundException.class, () -> severityService.findById(severityId));
     }
 
     @Test
     public void shouldSave() {
         // given
-        Long id = 1L;
-        String name = "name";
-        int color = 99999;
+        EventSeverityRequestDto severityRequestDto = new EventSeverityRequestDto();
+        severityRequestDto.setName(severityName);
+        severityRequestDto.setColor(severityColor);
 
         EventSeverity mockSeverity = new EventSeverity();
-        mockSeverity.setId(id);
-        mockSeverity.setName(name);
-        mockSeverity.setColor(color);
+        mockSeverity.setId(severityId);
+        mockSeverity.setName(severityName);
+        mockSeverity.setColor(severityColor);
 
-        given(repository.save(mockSeverity)).willReturn(mockSeverity);
+        given(severityRepository.save(any())).willReturn(mockSeverity);
 
         // when
-        EventSeverity severity = service.save(mockSeverity);
+        EventSeverity severity = severityService.save(severityRequestDto);
 
         // then
         ArgumentCaptor<EventSeverity> argumentCaptor = ArgumentCaptor.forClass(EventSeverity.class);
-        verify(repository).save(argumentCaptor.capture());
+        verify(severityRepository).save(argumentCaptor.capture());
 
-        EventSeverity capturedEventSeverity = argumentCaptor.getValue();
+        EventSeverity capturedSeverity = argumentCaptor.getValue();
 
-        assertEquals(mockSeverity, capturedEventSeverity);
+        assertEquals(mockSeverity.getName(), capturedSeverity.getName());
+        assertEquals(mockSeverity.getColor().intValue(), capturedSeverity.getColor().intValue());
         assertNotNull(severity);
-        assertEquals(id, severity.getId());
-        assertEquals(name, severity.getName());
-        assertEquals(color, severity.getColor());
     }
 
     @Test
     public void shouldUpdateById() {
         // given
-        Long id = 1L;
-        String updatedName = "name";
-        int updatedColor = 99999;
+        EventSeverityRequestDto severityRequestDto = new EventSeverityRequestDto();
+        severityRequestDto.setName(severityName);
+        severityRequestDto.setColor(severityColor);
 
-        EventSeverity mockSeverity = new EventSeverity();
-        mockSeverity.setId(id);
-        mockSeverity.setName(updatedName);
-        mockSeverity.setColor(updatedColor);
+        EventSeverity eventSeverity = new EventSeverity();
+        eventSeverity.setId(severityId);
 
-        EventSeverity mockDbObjSeverity = new EventSeverity();
-        mockDbObjSeverity.setId(id);
-
-        given(repository.findById(id)).willReturn(Optional.of(mockDbObjSeverity));
-        given(repository.save(mockDbObjSeverity)).willReturn(mockDbObjSeverity);
+        given(severityRepository.findById(severityId)).willReturn(Optional.of(eventSeverity));
+        given(severityRepository.save(eventSeverity)).willReturn(eventSeverity);
 
         // when
-        EventSeverity severity = service.updateById(mockSeverity, id);
+        EventSeverity severity = severityService.updateById(severityRequestDto, severityId);
 
         // then
         assertNotNull(severity);
-        assertEquals(updatedName, severity.getName());
-        assertEquals(updatedColor, severity.getColor());
+        assertEquals(severityName, severity.getName());
+        assertEquals(severityColor, severity.getColor());
     }
 
     @Test
     public void shouldDeleteById() {
         // given
-        Long id = 1L;
-        given(repository.existsById(id)).willReturn(true);
+        given(severityRepository.existsById(severityId)).willReturn(true);
 
         // when
-        service.deleteById(id);
+        severityService.deleteById(severityId);
 
         // then
-        verify(repository).deleteById(id);
+        verify(severityRepository).deleteById(severityId);
     }
 
     @Test
     public void shouldNotDeleteById() {
         // given
-        Long id = 1L;
-        given(repository.existsById(id)).willReturn(false);
+        given(severityRepository.existsById(severityId)).willReturn(false);
 
         // when
         // then
-        assertThrows(RecordNotFoundException.class, () -> service.deleteById(id));
-        verify(repository, times(0)).deleteById(id);
+        assertThrows(RecordNotFoundException.class, () -> severityService.deleteById(severityId));
+        verify(severityRepository, times(0)).deleteById(severityId);
     }
 
 }

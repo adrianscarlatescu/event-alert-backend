@@ -1,10 +1,10 @@
 package com.as.eventalertbackend.security.jwt;
 
-import com.as.eventalertbackend.security.SecurityConstants;
+import com.as.eventalertbackend.AppProperties;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -13,49 +13,56 @@ import java.util.Date;
 @Slf4j
 public class JwtUtils {
 
+    private final AppProperties appProperties;
+
+    @Autowired
+    public JwtUtils(AppProperties appProperties) {
+        this.appProperties = appProperties;
+    }
+
     public String generateAccessToken(String email) {
         Date now = new Date();
         return Jwts.builder()
-                .setId(SecurityConstants.ACCESS_TOKEN_ID)
+                .setId(appProperties.getSecurity().getAccessTokenId())
                 .setSubject(email)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + SecurityConstants.ACCESS_TOKEN_EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET)
+                .setExpiration(new Date(now.getTime() + appProperties.getSecurity().getAccessTokenExpirationTime()))
+                .signWith(SignatureAlgorithm.HS512, appProperties.getSecurity().getSecret())
                 .compact();
     }
 
     public String generateRefreshToken(String email) {
         Date now = new Date();
         return Jwts.builder()
-                .setId(SecurityConstants.REFRESH_TOKEN_ID)
+                .setId(appProperties.getSecurity().getRefreshTokenId())
                 .setSubject(email)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + SecurityConstants.REFRESH_TOKEN_EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET)
+                .setExpiration(new Date(now.getTime() + appProperties.getSecurity().getRefreshTokenExpirationTime()))
+                .signWith(SignatureAlgorithm.HS512, appProperties.getSecurity().getSecret())
                 .compact();
     }
 
     public boolean isAccessToken(String token) {
         return Jwts.parser()
-                .setSigningKey(SecurityConstants.SECRET)
+                .setSigningKey(appProperties.getSecurity().getSecret())
                 .parseClaimsJws(token)
                 .getBody()
                 .getId()
-                .equals(SecurityConstants.ACCESS_TOKEN_ID);
+                .equals(appProperties.getSecurity().getAccessTokenId());
     }
 
     public boolean isRefreshToken(String token) {
         return Jwts.parser()
-                .setSigningKey(SecurityConstants.SECRET)
+                .setSigningKey(appProperties.getSecurity().getSecret())
                 .parseClaimsJws(token)
                 .getBody()
                 .getId()
-                .equals(SecurityConstants.REFRESH_TOKEN_ID);
+                .equals(appProperties.getSecurity().getRefreshTokenId());
     }
 
     public String getEmailFromJwtToken(String token) {
         return Jwts.parser()
-                .setSigningKey(SecurityConstants.SECRET)
+                .setSigningKey(appProperties.getSecurity().getSecret())
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
@@ -63,7 +70,7 @@ public class JwtUtils {
 
     public boolean validateJwtToken(String authToken) {
         try {
-            Jwts.parser().setSigningKey(SecurityConstants.SECRET).parseClaimsJws(authToken);
+            Jwts.parser().setSigningKey(appProperties.getSecurity().getSecret()).parseClaimsJws(authToken);
             return true;
         } catch (SignatureException e) {
             log.error("Invalid JWT signature: {}", e.getMessage());
@@ -81,13 +88,13 @@ public class JwtUtils {
     }
 
     public String parseJwt(HttpServletRequest request) {
-        String headerAuth = request.getHeader(SecurityConstants.HEADER_STRING);
+        String authHeader = request.getHeader(appProperties.getSecurity().getAuthHeader());
 
-        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith(SecurityConstants.TOKEN_PREFIX)) {
-            if (headerAuth.contains("\"")) {
-                headerAuth = headerAuth.replaceAll("\"", "");
+        if (authHeader != null && authHeader.startsWith(appProperties.getSecurity().getTokenPrefix())) {
+            if (authHeader.contains("\"")) {
+                authHeader = authHeader.replaceAll("\"", "");
             }
-            return headerAuth.substring(SecurityConstants.TOKEN_PREFIX.length());
+            return authHeader.substring(appProperties.getSecurity().getTokenPrefix().length());
         }
 
         return null;

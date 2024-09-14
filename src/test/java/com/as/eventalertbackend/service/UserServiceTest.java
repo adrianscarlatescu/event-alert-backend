@@ -1,5 +1,6 @@
 package com.as.eventalertbackend.service;
 
+import com.as.eventalertbackend.controller.request.UserRequestDto;
 import com.as.eventalertbackend.data.model.User;
 import com.as.eventalertbackend.data.model.UserRole;
 import com.as.eventalertbackend.data.reopsitory.UserRepository;
@@ -29,161 +30,158 @@ import static org.mockito.Mockito.verify;
 class UserServiceTest {
 
     @Mock
-    private UserRepository repository;
+    private UserRepository userRepository;
+
+    @Mock
+    private UserRoleService userRoleService;
 
     @InjectMocks
-    private UserService service;
+    private UserService userService;
+
+    private final Long userId = 1L;
+    private final String userEmail = "test@test.com";
+    private final String userFirstName = "firstName";
+    private final String userLastName = "lastName";
+    private final LocalDate userDateOfBirth = LocalDate.of(2000, Month.SEPTEMBER, 10);
+    private final String userPhoneNumber = "+40777555333";
+    private final String userImagePath = "/img/user_1.png";
+    private final Gender userGender = Gender.MALE;
+    private final Set<Role> userRoles = Collections.singleton(Role.ROLE_USER);
+
+    private final Long userRoleId = 1L;
 
     @Test
     public void shouldFindById() {
         // given
-        Long id = 1L;
         User mockUser = new User();
-        mockUser.setId(id);
+        mockUser.setId(userId);
 
-        given(repository.findById(id)).willReturn(Optional.of(mockUser));
+        given(userRepository.findById(userId)).willReturn(Optional.of(mockUser));
 
         // when
-        User user = service.findById(id);
+        User user = userService.findById(userId);
 
         // then
         assertNotNull(user);
-        assertEquals(id, user.getId());
+        assertEquals(userId, user.getId());
     }
 
     @Test
     public void shouldNotFindById() {
         // given
-        given(repository.findById(any())).willThrow(RecordNotFoundException.class);
+        given(userRepository.findById(userId)).willThrow(RecordNotFoundException.class);
 
         // when
         // then
-        assertThrows(RecordNotFoundException.class, () -> service.findById(any()));
+        assertThrows(RecordNotFoundException.class, () -> userService.findById(userId));
     }
 
     @Test
     public void shouldFindByEmail() {
         // given
-        Long id = 1L;
-        String email = "test@test.com";
-
         User mockUser = new User();
-        mockUser.setId(id);
-        mockUser.setEmail(email);
+        mockUser.setId(userId);
+        mockUser.setEmail(userEmail);
 
-        given(repository.findByEmail(email)).willReturn(Optional.of(mockUser));
+        given(userRepository.findByEmail(userEmail)).willReturn(Optional.of(mockUser));
 
         // when
-        User user = service.findByEmail(email);
+        User user = userService.findByEmail(userEmail);
 
         // then
         assertNotNull(user);
-        assertEquals(email, user.getEmail());
+        assertEquals(userEmail, user.getEmail());
     }
 
     @Test
     public void shouldNotFindByEmail() {
         // given
-        given(repository.findByEmail(any())).willThrow(RecordNotFoundException.class);
+        given(userRepository.findByEmail(userEmail)).willThrow(RecordNotFoundException.class);
 
         // when
         // then
-        assertThrows(RecordNotFoundException.class, () -> service.findByEmail(any()));
+        assertThrows(RecordNotFoundException.class, () -> userService.findByEmail(userEmail));
     }
 
     @Test
     public void shouldSave() {
         // given
-        Long id = 1L;
         User mockUser = new User();
-        mockUser.setId(id);
+        mockUser.setId(userId);
 
-        given(repository.save(mockUser)).willReturn(mockUser);
+        given(userRepository.save(any())).willReturn(mockUser);
 
         // when
-        User user = service.save(mockUser);
+        User user = userService.save(mockUser);
 
         // then
         ArgumentCaptor<User> argumentCaptor = ArgumentCaptor.forClass(User.class);
-        verify(repository).save(argumentCaptor.capture());
+        verify(userRepository).save(argumentCaptor.capture());
 
         User capturedUser = argumentCaptor.getValue();
 
-        assertEquals(mockUser, capturedUser);
+        assertEquals(mockUser.getId().longValue(), capturedUser.getId().longValue());
         assertNotNull(user);
-        assertEquals(id, user.getId());
     }
 
     @Test
     public void shouldUpdateById() {
         // given
-        Long id = 1L;
-        String updatedFirstName = "firstName";
-        String updatedLastName = "lastName";
-        LocalDate updatedDateOfBirth = LocalDate.of(2000, Month.SEPTEMBER, 10);
-        String updatedPhoneNumber = "0777555333";
-        String updatedImagePath = "/img/user_1.png";
-        Gender updatedGender = Gender.MALE;
+        UserRequestDto userRequestDto = new UserRequestDto();
+        userRequestDto.setFirstName(userFirstName);
+        userRequestDto.setLastName(userLastName);
+        userRequestDto.setDateOfBirth(userDateOfBirth);
+        userRequestDto.setPhoneNumber(userPhoneNumber);
+        userRequestDto.setImagePath(userImagePath);
+        userRequestDto.setGender(userGender);
+        userRequestDto.setRoles(userRoles);
+
+        User mockUser = new User();
+        mockUser.setId(userId);
 
         UserRole mockUserRole = new UserRole();
         mockUserRole.setName(Role.ROLE_USER);
 
-        Set<UserRole> mockUserRoles = Collections.singleton(mockUserRole);
-
-        User mockUser = new User();
-        mockUser.setId(id);
-        mockUser.setUserRoles(mockUserRoles);
-        mockUser.setFirstName(updatedFirstName);
-        mockUser.setLastName(updatedLastName);
-        mockUser.setDateOfBirth(updatedDateOfBirth);
-        mockUser.setPhoneNumber(updatedPhoneNumber);
-        mockUser.setImagePath(updatedImagePath);
-        mockUser.setGender(updatedGender);
-
-        User mockDbObjUser = new User();
-        mockDbObjUser.setId(id);
-
-        given(repository.findById(id)).willReturn(Optional.of(mockDbObjUser));
-        given(repository.save(mockDbObjUser)).willReturn(mockDbObjUser);
+        given(userRepository.findById(userId)).willReturn(Optional.of(mockUser));
+        given(userRoleService.findAllByName(userRoles)).willReturn(Collections.singleton(mockUserRole));
+        given(userRepository.save(mockUser)).willReturn(mockUser);
 
         // when
-        User user = service.updateById(mockUser, id);
+        User user = userService.updateById(userRequestDto, userId);
 
         // then
         assertNotNull(user);
-        assertEquals(id, user.getId());
-        assertEquals(updatedFirstName, user.getFirstName());
-        assertEquals(updatedLastName, user.getLastName());
-        assertEquals(updatedDateOfBirth, user.getDateOfBirth());
-        assertEquals(updatedPhoneNumber, user.getPhoneNumber());
-        assertEquals(updatedImagePath, user.getImagePath());
-        assertEquals(updatedGender, user.getGender());
-
+        assertEquals(userId, user.getId());
+        assertEquals(userFirstName, user.getFirstName());
+        assertEquals(userLastName, user.getLastName());
+        assertEquals(userDateOfBirth, user.getDateOfBirth());
+        assertEquals(userPhoneNumber, user.getPhoneNumber());
+        assertEquals(userImagePath, user.getImagePath());
+        assertEquals(userGender, user.getGender());
+        assertTrue(user.getUserRoles().stream().anyMatch(userRole -> userRole.getName() == Role.ROLE_USER));
     }
 
     @Test
     public void shouldDeleteById() {
         // given
-        Long id = 1L;
-        given(repository.existsById(id)).willReturn(true);
+        given(userRepository.existsById(userId)).willReturn(true);
 
         // when
-        service.deleteById(id);
+        userService.deleteById(userId);
 
         // then
-        verify(repository).deleteById(id);
+        verify(userRepository).deleteById(userId);
     }
 
     @Test
     public void shouldNotDeleteById() {
         // given
-        Long id = 1L;
-        given(repository.existsById(id)).willReturn(false);
+        given(userRepository.existsById(userId)).willReturn(false);
 
         // when
         // then
-        assertThrows(RecordNotFoundException.class, () -> service.deleteById(id));
-        verify(repository, times(0)).deleteById(id);
+        assertThrows(RecordNotFoundException.class, () -> userService.deleteById(userId));
+        verify(userRepository, times(0)).deleteById(userId);
     }
 
 }

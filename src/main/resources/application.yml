@@ -24,7 +24,25 @@ spring:
       max-request-size: 10MB
       enabled: true
 
-# Credentials must be set in firebase-service-account.json in order to connect to Firebase
 app:
+  security:
+    secret: "SecretKeyToGenerateJWTs"
+    access-token-expiration-time: 3600000 # 1 hour
+    refresh-token-expiration-time: 2592000000 # 30 days
+    access-token-id: "AccessTokenId"
+    refresh-token-id: "RefreshTokenId"
+    token-prefix: "Bearer "
+    auth-header: "Authorization"
+    auth-register-url: "/auth/register"
+    auth-login-url: "/auth/login"
+    auth-refresh-url: "/auth/refresh"
   notification:
-    enabled: false
+    enabled: false # Credentials must be set in firebase-service-account.json in order to connect to Firebase
+    event-id-key: "eventId"
+    event-date-time-key: "eventDateTime"
+    event-tag-name-key: "eventTagName"
+    event-tag-image-path-key: "eventTagImagePath"
+    event-severity-name-key: "eventSeverityName"
+    event-severity-color-key: "eventSeverityColor"
+    event-latitude-key: "eventLatitude"
+    event-longitude-key: "eventLongitude"

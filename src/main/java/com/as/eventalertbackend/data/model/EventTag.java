@@ -1,6 +1,8 @@
 package com.as.eventalertbackend.data.model;
 
+import com.as.eventalertbackend.dto.EventTagDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,6 +17,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode
 public class EventTag {
 
     @Id
@@ -30,5 +33,13 @@ public class EventTag {
     @JsonIgnore
     @OneToMany(mappedBy = "tag")
     private Set<Event> events;
+
+    public EventTagDto toDto() {
+        EventTagDto dto = new EventTagDto();
+        dto.setId(getId());
+        dto.setName(getName());
+        dto.setImagePath(getImagePath());
+        return dto;
+    }
 
 }

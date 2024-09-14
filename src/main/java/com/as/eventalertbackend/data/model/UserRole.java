@@ -1,7 +1,9 @@
 package com.as.eventalertbackend.data.model;
 
+import com.as.eventalertbackend.dto.UserRoleDto;
 import com.as.eventalertbackend.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +16,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode
 public class UserRole {
 
     @Id
@@ -26,5 +29,12 @@ public class UserRole {
     @JsonIgnore
     @ManyToMany(mappedBy = "userRoles")
     private Set<User> users;
+
+    public UserRoleDto toDto() {
+        UserRoleDto dto = new UserRoleDto();
+        dto.setId(getId());
+        dto.setName(getName());
+        return dto;
+    }
 
 }

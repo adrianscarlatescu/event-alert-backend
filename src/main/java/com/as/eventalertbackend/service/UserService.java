@@ -1,9 +1,11 @@
 package com.as.eventalertbackend.service;
 
+import com.as.eventalertbackend.controller.request.UserRequestDto;
 import com.as.eventalertbackend.data.model.User;
+import com.as.eventalertbackend.data.model.UserRole;
 import com.as.eventalertbackend.data.reopsitory.UserRepository;
 import com.as.eventalertbackend.enums.Role;
-import com.as.eventalertbackend.handler.exception.IllegalActionException;
+import com.as.eventalertbackend.handler.exception.InvalidActionException;
 import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,15 +14,20 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserService implements UserDetailsService {
 
-    private final UserRepository repository;
+    private final UserRepository userRepository;
+
+    private final UserRoleService userRoleService;
 
     @Autowired
-    public UserService(UserRepository repository) {
-        this.repository = repository;
+    public UserService(UserRepository userRepository,
+                       UserRoleService userRoleService) {
+        this.userRepository = userRepository;
+        this.userRoleService = userRoleService;
     }
 
     @Override
@@ -33,61 +40,52 @@ public class UserService implements UserDetailsService {
     }
 
     public Boolean existsByEmail(String email) {
-        return repository.existsByEmail(email);
-    }
-
-    public Boolean existsById(Long id) {
-        return repository.existsById(id);
+        return userRepository.existsByEmail(email);
     }
 
     public List<User> findAll() {
-        return repository.findAll();
+        return userRepository.findAll();
     }
 
     public User findById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "No record for user " + id,
-                        "User not found"));
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("User not found"));
     }
 
     public User findByEmail(String email) {
-        return repository.findByEmail(email)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "No record for user " + email,
-                        "User not found"));
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RecordNotFoundException("User not found"));
     }
 
-    public User updateById(User user, Long id) {
-        if (user.getUserRoles().stream()
-                .noneMatch(userRole -> userRole.getName() == Role.ROLE_USER)) {
-            throw new IllegalActionException(
-                    Role.ROLE_USER + " is mandatory",
-                    "The user role is mandatory");
+    public User updateById(UserRequestDto userRequestDto, Long id) {
+        if (userRequestDto.getRoles().stream()
+                .noneMatch(role -> role == Role.ROLE_USER)) {
+            throw new InvalidActionException("The user role is mandatory");
         }
 
-        User dbObj = findById(id);
-        dbObj.setFirstName(user.getFirstName());
-        dbObj.setLastName(user.getLastName());
-        dbObj.setDateOfBirth(user.getDateOfBirth());
-        dbObj.setPhoneNumber(user.getPhoneNumber());
-        dbObj.setImagePath(user.getImagePath());
-        dbObj.setGender(user.getGender());
+        User user = findById(id);
+        user.setFirstName(userRequestDto.getFirstName());
+        user.setLastName(userRequestDto.getLastName());
+        user.setDateOfBirth(userRequestDto.getDateOfBirth());
+        user.setPhoneNumber(userRequestDto.getPhoneNumber());
+        user.setImagePath(userRequestDto.getImagePath());
+        user.setGender(userRequestDto.getGender());
 
-        return repository.save(dbObj);
+        Set<UserRole> userRoles = userRoleService.findAllByName(userRequestDto.getRoles());
+        user.setUserRoles(userRoles);
+
+        return userRepository.save(user);
     }
 
     public User save(User user) {
-        return repository.save(user);
+        return userRepository.save(user);
     }
 
     public void deleteById(Long id) {
-        if (repository.existsById(id)) {
-            repository.deleteById(id);
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
         } else {
-            throw new RecordNotFoundException(
-                    "No record for user " + id,
-                    "User not found");
+            throw new RecordNotFoundException("User not found");
         }
     }
 }

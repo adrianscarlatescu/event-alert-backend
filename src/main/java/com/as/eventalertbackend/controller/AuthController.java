@@ -1,12 +1,13 @@
 package com.as.eventalertbackend.controller;
 
-import com.as.eventalertbackend.controller.request.AuthLoginBody;
-import com.as.eventalertbackend.controller.request.AuthRegisterBody;
-import com.as.eventalertbackend.controller.response.AuthRefreshTokenResponse;
-import com.as.eventalertbackend.controller.response.AuthTokensResponse;
-import com.as.eventalertbackend.data.model.User;
+import com.as.eventalertbackend.controller.request.AuthLoginRequestDto;
+import com.as.eventalertbackend.controller.request.AuthRegisterRequestDto;
+import com.as.eventalertbackend.controller.response.AuthRefreshTokenResponseDto;
+import com.as.eventalertbackend.controller.response.AuthTokensResponseDto;
+import com.as.eventalertbackend.dto.UserDto;
 import com.as.eventalertbackend.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,31 +18,34 @@ import javax.validation.Valid;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final AuthService service;
+    private final AuthService authService;
 
     @Autowired
-    public AuthController(AuthService service) {
-        this.service = service;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@Valid @RequestBody AuthRegisterBody body) {
-        return ResponseEntity.ok(service.register(body));
+    public ResponseEntity<UserDto> register(@Valid @RequestBody AuthRegisterRequestDto registerRequestDto) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(authService.register(registerRequestDto).toDto());
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthTokensResponse> login(@Valid @RequestBody AuthLoginBody body) {
-        return ResponseEntity.ok(service.login(body));
+    public ResponseEntity<AuthTokensResponseDto> login(@Valid @RequestBody AuthLoginRequestDto loginRequestDto) {
+        return ResponseEntity.ok(authService.login(loginRequestDto));
     }
 
     @GetMapping("/refresh")
-    public ResponseEntity<AuthRefreshTokenResponse> refreshToken(HttpServletRequest request) {
-        return ResponseEntity.ok(service.refreshToken(request));
+    public ResponseEntity<AuthRefreshTokenResponseDto> refreshToken(HttpServletRequest request) {
+        return ResponseEntity.ok(authService.refreshToken(request));
     }
 
     @PostMapping("/logout")
-    public void logout() {
-        service.logout();
+    public ResponseEntity<Void> logout() {
+        authService.logout();
+        return ResponseEntity.ok().build();
     }
 
 }

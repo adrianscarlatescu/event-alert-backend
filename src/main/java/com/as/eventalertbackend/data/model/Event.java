@@ -1,6 +1,8 @@
 package com.as.eventalertbackend.data.model;
 
+import com.as.eventalertbackend.dto.EventDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,11 +11,13 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode
 public class Event {
 
     @Id
@@ -45,7 +49,7 @@ public class Event {
     private User user;
 
     @Transient
-    private double distance;
+    private Double distance;
 
     @Override
     public String toString() {
@@ -54,6 +58,23 @@ public class Event {
                 ", tag_id: " + tag.getId() + ", severity_id: " + severity.getId() + ", user_id: " + user.getId() +
                 ", image_path: " + imagePath + ", description: " + description +
                 ", distance: " + distance + "}";
+    }
+
+    public EventDto toDto() {
+        EventDto dto = new EventDto();
+        dto.setId(getId());
+        dto.setDateTime(getDateTime());
+        dto.setLatitude(getLatitude());
+        dto.setLongitude(getLongitude());
+        dto.setImagePath(getImagePath());
+        dto.setDescription(getDescription());
+        dto.setEventComments(getEventComments() == null ?
+                null : getEventComments().stream().map(EventComment::toDto).collect(Collectors.toSet()));
+        dto.setSeverity(getSeverity() == null ? null : getSeverity().toDto());
+        dto.setTag(getTag() == null ? null : getTag().toDto());
+        dto.setUser(getUser() == null ? null : getUser().toDto());
+        dto.setDistance(getDistance());
+        return dto;
     }
 
 }

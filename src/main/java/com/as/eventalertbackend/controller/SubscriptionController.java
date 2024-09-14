@@ -1,8 +1,8 @@
 package com.as.eventalertbackend.controller;
 
-import com.as.eventalertbackend.controller.request.SubscriptionBody;
-import com.as.eventalertbackend.data.model.Subscription;
+import com.as.eventalertbackend.controller.request.SubscriptionRequestDto;
 import com.as.eventalertbackend.data.model.User;
+import com.as.eventalertbackend.dto.SubscriptionDto;
 import com.as.eventalertbackend.service.SubscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,31 +15,32 @@ import javax.validation.Valid;
 @RequestMapping("/subscriptions")
 public class SubscriptionController {
 
-    private final SubscriptionService service;
+    private final SubscriptionService subscriptionService;
 
     @Autowired
-    public SubscriptionController(SubscriptionService service) {
-        this.service = service;
+    public SubscriptionController(SubscriptionService subscriptionService) {
+        this.subscriptionService = subscriptionService;
     }
 
     @GetMapping
-    public ResponseEntity<Subscription> find(@RequestParam("deviceToken") String deviceToken) {
-        return ResponseEntity.ok(service.find(getPrincipalId(), deviceToken));
+    public ResponseEntity<SubscriptionDto> find(@RequestParam("deviceToken") String deviceToken) {
+        return ResponseEntity.ok(subscriptionService.find(getPrincipalId(), deviceToken).toDto());
     }
 
     @PostMapping
-    public ResponseEntity<Subscription> subscribe(@Valid @RequestBody SubscriptionBody body) {
-        return ResponseEntity.ok(service.subscribe(getPrincipalId(), body));
+    public ResponseEntity<SubscriptionDto> subscribe(@Valid @RequestBody SubscriptionRequestDto subscriptionRequestDto) {
+        return ResponseEntity.ok(subscriptionService.subscribe(getPrincipalId(), subscriptionRequestDto).toDto());
     }
 
     @PutMapping
-    public ResponseEntity<Subscription> update(@Valid @RequestBody SubscriptionBody body) {
-        return ResponseEntity.ok(service.update(getPrincipalId(), body));
+    public ResponseEntity<SubscriptionDto> update(@Valid @RequestBody SubscriptionRequestDto subscriptionRequestDto) {
+        return ResponseEntity.ok(subscriptionService.update(getPrincipalId(), subscriptionRequestDto).toDto());
     }
 
     @DeleteMapping
-    public void unsubscribe(@RequestParam("deviceToken") String deviceToken) {
-        service.delete(getPrincipalId(), deviceToken);
+    public ResponseEntity<Void> unsubscribe(@RequestParam("deviceToken") String deviceToken) {
+        subscriptionService.delete(getPrincipalId(), deviceToken);
+        return ResponseEntity.ok().build();
     }
 
     private Long getPrincipalId() {

@@ -7,21 +7,25 @@ import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+
 @Service
 public class UserRoleService {
 
-    private final UserRoleRepository repository;
+    private final UserRoleRepository userRoleRepository;
 
     @Autowired
-    public UserRoleService(UserRoleRepository repository) {
-        this.repository = repository;
+    public UserRoleService(UserRoleRepository userRoleRepository) {
+        this.userRoleRepository = userRoleRepository;
     }
 
     public UserRole findByName(Role role) {
-        return repository.findByName(role)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "No record for role " + role,
-                        "The role was not found"));
+        return userRoleRepository.findByName(role)
+                .orElseThrow(() -> new RecordNotFoundException("The role was not found"));
+    }
+
+    public Set<UserRole> findAllByName(Set<Role> roles) {
+        return userRoleRepository.findAllByNameIn(roles);
     }
 
 }

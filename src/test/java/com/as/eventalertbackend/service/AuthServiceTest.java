@@ -1,16 +1,18 @@
 package com.as.eventalertbackend.service;
 
-import com.as.eventalertbackend.controller.request.AuthLoginBody;
-import com.as.eventalertbackend.controller.request.AuthRegisterBody;
-import com.as.eventalertbackend.controller.response.AuthRefreshTokenResponse;
-import com.as.eventalertbackend.controller.response.AuthTokensResponse;
+import com.as.eventalertbackend.controller.request.AuthLoginRequestDto;
+import com.as.eventalertbackend.controller.request.AuthRegisterRequestDto;
+import com.as.eventalertbackend.controller.response.AuthRefreshTokenResponseDto;
+import com.as.eventalertbackend.controller.response.AuthTokensResponseDto;
+import com.as.eventalertbackend.data.model.EventSeverity;
 import com.as.eventalertbackend.data.model.User;
 import com.as.eventalertbackend.data.model.UserRole;
 import com.as.eventalertbackend.enums.Role;
-import com.as.eventalertbackend.handler.exception.IllegalActionException;
+import com.as.eventalertbackend.handler.exception.InvalidActionException;
 import com.as.eventalertbackend.security.jwt.JwtUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -47,14 +49,14 @@ class AuthServiceTest {
     public void shouldNotRegisterExistingEmail() {
         // given
         String email = "test@test.com";
-        AuthRegisterBody body = new AuthRegisterBody();
-        body.setEmail(email);
+        AuthRegisterRequestDto registerRequestDto = new AuthRegisterRequestDto();
+        registerRequestDto.setEmail(email);
 
         given(userService.existsByEmail(email)).willReturn(true);
 
         // when
         // then
-        assertThrows(IllegalActionException.class, () -> authService.register(body));
+        assertThrows(InvalidActionException.class, () -> authService.register(registerRequestDto));
         verify(userService, times(0)).save(any());
     }
 
@@ -62,16 +64,16 @@ class AuthServiceTest {
     public void shouldNotRegisterNotMatchingPasswords() {
         // given
         String email = "test@test.com";
-        AuthRegisterBody body = new AuthRegisterBody();
-        body.setEmail(email);
-        body.setPassword("test");
-        body.setConfirmPassword("notTheSame");
+        AuthRegisterRequestDto registerRequestDto = new AuthRegisterRequestDto();
+        registerRequestDto.setEmail(email);
+        registerRequestDto.setPassword("password1");
+        registerRequestDto.setConfirmPassword("password2");
 
         given(userService.existsByEmail(email)).willReturn(false);
 
         // when
         // then
-        assertThrows(IllegalActionException.class, () -> authService.register(body));
+        assertThrows(InvalidActionException.class, () -> authService.register(registerRequestDto));
         verify(userService, times(0)).save(any());
     }
 
@@ -82,10 +84,10 @@ class AuthServiceTest {
         String password = "test";
         String encodedPassword = "encodedPassword";
 
-        AuthRegisterBody body = new AuthRegisterBody();
-        body.setEmail(email);
-        body.setPassword(password);
-        body.setConfirmPassword(password);
+        AuthRegisterRequestDto registerRequestDto = new AuthRegisterRequestDto();
+        registerRequestDto.setEmail(email);
+        registerRequestDto.setPassword(password);
+        registerRequestDto.setConfirmPassword(password);
 
         UserRole mockUserRole = new UserRole();
         mockUserRole.setName(Role.ROLE_USER);
@@ -98,14 +100,17 @@ class AuthServiceTest {
         given(userService.save(any())).willReturn(mockUser);
 
         // when
-        User user = authService.register(body);
+        User user = authService.register(registerRequestDto);
 
         // then
-        verify(userService).save(any());
-        assertNotNull(user);
-        assertEquals(email, user.getEmail());
-        assertEquals(encodedPassword, user.getPassword());
-        assertTrue(user.getUserRoles().stream().map(UserRole::getName).anyMatch(role -> role == Role.ROLE_USER));
+        ArgumentCaptor<User> argumentCaptor = ArgumentCaptor.forClass(User.class);
+        verify(userService).save(argumentCaptor.capture());
+
+        User capturedUser = argumentCaptor.getValue();
+
+        assertEquals(email, capturedUser.getEmail());
+        assertEquals(encodedPassword, capturedUser.getPassword());
+        assertTrue(capturedUser.getUserRoles().stream().map(UserRole::getName).anyMatch(role -> role == Role.ROLE_USER));
     }
 
     @Test
@@ -114,15 +119,15 @@ class AuthServiceTest {
         String email = "test@test.com";
         String password = "test";
 
-        AuthLoginBody body = new AuthLoginBody();
-        body.setEmail(email);
-        body.setPassword(password);
+        AuthLoginRequestDto loginRequestDto = new AuthLoginRequestDto();
+        loginRequestDto.setEmail(email);
+        loginRequestDto.setPassword(password);
 
         given(authenticationManager.authenticate(any())).willThrow(IllegalArgumentException.class);
 
         // when
         // then
-        assertThrows(IllegalArgumentException.class, () -> authService.login(body));
+        assertThrows(IllegalArgumentException.class, () -> authService.login(loginRequestDto));
     }
 
     @Test
@@ -131,16 +136,16 @@ class AuthServiceTest {
         String email = "test@test.com";
         String password = "test";
 
-        AuthLoginBody body = new AuthLoginBody();
-        body.setEmail(email);
-        body.setPassword(password);
+        AuthLoginRequestDto loginRequestDto = new AuthLoginRequestDto();
+        loginRequestDto.setEmail(email);
+        loginRequestDto.setPassword(password);
 
         given(authenticationManager.authenticate(any())).willReturn(new UsernamePasswordAuthenticationToken(email, password));
         given(jwtUtils.generateAccessToken(email)).willReturn("accessToken");
         given(jwtUtils.generateRefreshToken(email)).willReturn("refreshToken");
 
         // when
-        AuthTokensResponse response = authService.login(body);
+        AuthTokensResponseDto response = authService.login(loginRequestDto);
 
         // then
         assertNotNull(response.getAccessToken());
@@ -156,7 +161,7 @@ class AuthServiceTest {
 
         // when
         // then
-        assertThrows(IllegalActionException.class, () -> authService.refreshToken(any()));
+        assertThrows(InvalidActionException.class, () -> authService.refreshToken(any()));
     }
 
     @Test
@@ -173,11 +178,11 @@ class AuthServiceTest {
         given(jwtUtils.generateAccessToken(email)).willReturn(accessToken);
 
         // when
-        AuthRefreshTokenResponse response = authService.refreshToken(any());
+        AuthRefreshTokenResponseDto refreshTokenResponseDto = authService.refreshToken(any());
 
         // then
-        assertNotNull(response);
-        assertNotNull(response.getAccessToken());
+        assertNotNull(refreshTokenResponseDto);
+        assertNotNull(refreshTokenResponseDto.getAccessToken());
     }
 
 }

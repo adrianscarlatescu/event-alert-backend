@@ -20,6 +20,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtUtils jwtUtils;
+
     @Autowired
     private UserDetailsService userService;
 
@@ -30,25 +31,25 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         try {
             String token = jwtUtils.parseJwt(request);
 
-            boolean isNull = token == null;
+            boolean isTokenNull = token == null;
             boolean isAccessToken = false;
             boolean isValid = false;
 
-            if (isNull) {
-                log.error("Null token, request URI: {}", request.getRequestURI());
+            if (isTokenNull) {
+                log.warn("Null token, endpoint: {}", request.getRequestURI());
             } else {
                 isAccessToken = jwtUtils.isAccessToken(token);
                 if (!isAccessToken) {
-                    log.error("Invalid access token signature: {}, request URI: {}", token, request.getRequestURI());
+                    log.error("Invalid access token signature: {}, endpoint: {}", token, request.getRequestURI());
                 }
 
                 isValid = jwtUtils.validateJwtToken(token);
                 if (!isValid) {
-                    log.error("Invalid token: {}, request URI: {}", token, request.getRequestURI());
+                    log.error("Invalid token: {}, endpoint: {}", token, request.getRequestURI());
                 }
             }
 
-            if (!isNull && isAccessToken && isValid) {
+            if (!isTokenNull && isAccessToken && isValid) {
                 String email = jwtUtils.getEmailFromJwtToken(token);
                 UserDetails userDetails = userService.loadUserByUsername(email);
                 UsernamePasswordAuthenticationToken authentication =

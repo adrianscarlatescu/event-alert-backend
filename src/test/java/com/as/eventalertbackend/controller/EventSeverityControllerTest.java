@@ -1,5 +1,6 @@
 package com.as.eventalertbackend.controller;
 
+import com.as.eventalertbackend.controller.request.EventSeverityRequestDto;
 import com.as.eventalertbackend.data.model.EventSeverity;
 import com.as.eventalertbackend.service.EventSeverityService;
 import org.junit.jupiter.api.Test;
@@ -9,7 +10,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.util.Collections;
 
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -23,9 +23,9 @@ class EventSeverityControllerTest extends AbstractControllerTest {
 
     private static final String SEVERITIES_PATH = "/severities";
 
-    private final Long id = 1L;
-    private final String name = "severity";
-    private final int color = 999;
+    private final Long severityId = 1L;
+    private final String severityName = "severity";
+    private final Integer severityColor = 999;
 
     @Test
     public void shouldGetAll() throws Exception {
@@ -37,71 +37,80 @@ class EventSeverityControllerTest extends AbstractControllerTest {
         // then
         mockMvc.perform(get(SEVERITIES_PATH).headers(httpHeaders))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(id.intValue())))
-                .andExpect(jsonPath("$[0].name", is(name)))
-                .andExpect(jsonPath("$[0].color", is(color)));
+                .andExpect(jsonPath("$[0].id", is(severityId.intValue())))
+                .andExpect(jsonPath("$[0].name", is(severityName)))
+                .andExpect(jsonPath("$[0].color", is(severityColor)));
     }
 
     @Test
     public void shouldGetById() throws Exception {
         // given
         EventSeverity severity = getMockSeverity();
-        given(severityService.findById(id)).willReturn(severity);
+        given(severityService.findById(severityId)).willReturn(severity);
 
         // when
         // then
-        mockMvc.perform(get(SEVERITIES_PATH + "/{id}", id).headers(httpHeaders))
+        mockMvc.perform(get(SEVERITIES_PATH + "/{id}", severityId).headers(httpHeaders))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(id.intValue())))
-                .andExpect(jsonPath("$.name", is(name)))
-                .andExpect(jsonPath("$.color", is(color)));
+                .andExpect(jsonPath("$.id", is(severityId.intValue())))
+                .andExpect(jsonPath("$.name", is(severityName)))
+                .andExpect(jsonPath("$.color", is(severityColor)));
     }
 
     @Test
     public void shouldSave() throws Exception {
         // given
+        EventSeverityRequestDto severityRequestDto = new EventSeverityRequestDto();
+        severityRequestDto.setName(severityName);
+        severityRequestDto.setColor(severityColor);
+
         EventSeverity severity = getMockSeverity();
-        given(severityService.save(any())).willReturn(severity);
+        given(severityService.save(severityRequestDto)).willReturn(severity);
 
         String jsonBody = objectMapper.writeValueAsString(severity);
 
         // when
         // then
         mockMvc.perform(post(SEVERITIES_PATH).headers(httpHeaders).content(jsonBody))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(id.intValue())))
-                .andExpect(jsonPath("$.name", is(name)))
-                .andExpect(jsonPath("$.color", is(color)));
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id", is(severityId.intValue())))
+                .andExpect(jsonPath("$.name", is(severityName)))
+                .andExpect(jsonPath("$.color", is(severityColor)));
     }
 
     @Test
     public void shouldUpdateById() throws Exception {
         // given
+        EventSeverityRequestDto severityRequestDto = new EventSeverityRequestDto();
+        severityRequestDto.setName(severityName);
+        severityRequestDto.setColor(severityColor);
+
         EventSeverity severity = getMockSeverity();
-        given(severityService.updateById(any(), any())).willReturn(severity);
+
+        given(severityService.updateById(severityRequestDto, severityId)).willReturn(severity);
 
         String jsonBody = objectMapper.writeValueAsString(severity);
 
         // when
         // then
-        mockMvc.perform(put(SEVERITIES_PATH + "/{id}", id).headers(httpHeaders).content(jsonBody))
+        mockMvc.perform(put(SEVERITIES_PATH + "/{id}", severityId).headers(httpHeaders).content(jsonBody))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(id.intValue())))
-                .andExpect(jsonPath("$.name", is(name)))
-                .andExpect(jsonPath("$.color", is(color)));
+                .andExpect(jsonPath("$.id", is(severityId.intValue())))
+                .andExpect(jsonPath("$.name", is(severityName)))
+                .andExpect(jsonPath("$.color", is(severityColor)));
     }
 
     @Test
     public void shouldDeleteById() throws Exception {
-        mockMvc.perform(delete(SEVERITIES_PATH + "/{id}", id).headers(httpHeaders))
+        mockMvc.perform(delete(SEVERITIES_PATH + "/{id}", severityId).headers(httpHeaders))
                 .andExpect(status().isOk());
     }
 
     private EventSeverity getMockSeverity() {
         EventSeverity severity = new EventSeverity();
-        severity.setId(id);
-        severity.setName(name);
-        severity.setColor(color);
+        severity.setId(severityId);
+        severity.setName(severityName);
+        severity.setColor(severityColor);
         return severity;
     }
 

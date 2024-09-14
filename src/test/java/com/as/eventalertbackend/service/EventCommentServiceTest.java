@@ -1,6 +1,6 @@
 package com.as.eventalertbackend.service;
 
-import com.as.eventalertbackend.controller.request.EventCommentBody;
+import com.as.eventalertbackend.controller.request.EventCommentRequestDto;
 import com.as.eventalertbackend.data.model.Event;
 import com.as.eventalertbackend.data.model.EventComment;
 import com.as.eventalertbackend.data.model.User;
@@ -8,6 +8,7 @@ import com.as.eventalertbackend.data.reopsitory.EventCommentRepository;
 import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -33,112 +34,131 @@ class EventCommentServiceTest {
     @InjectMocks
     private EventCommentService commentService;
 
+    private final Long commentId = 1L;
+    private final String commentMessage = "test";
+
+    private final Long eventId = 1L;
+    private final Long userId = 1L;
+
     @Test
     public void shouldFindById() {
         // given
-        Long id = 1L;
         EventComment mockComment = new EventComment();
-        mockComment.setId(id);
+        mockComment.setId(commentId);
+        mockComment.setComment(commentMessage);
 
-        given(commentRepository.findById(id)).willReturn(Optional.of(mockComment));
+        given(commentRepository.findById(commentId)).willReturn(Optional.of(mockComment));
 
         // when
-        EventComment comment = commentService.findById(id);
+        EventComment comment = commentService.findById(commentId);
 
         // then
         assertNotNull(comment);
-        assertEquals(id, comment.getId());
+        assertEquals(commentId, comment.getId());
     }
 
     @Test
     public void shouldNotFindById() {
         // given
-        given(commentRepository.findById(any())).willThrow(RecordNotFoundException.class);
+        given(commentRepository.findById(commentId)).willThrow(RecordNotFoundException.class);
 
         // when
         // then
-        assertThrows(RecordNotFoundException.class, () -> commentService.findById(any()));
+        assertThrows(RecordNotFoundException.class, () -> commentService.findById(commentId));
     }
 
     @Test
     public void shouldSave() {
         // given
-        Long id = 1L;
-        String title = "test";
+        EventCommentRequestDto commentRequestDto = new EventCommentRequestDto();
+        commentRequestDto.setEventId(eventId);
+        commentRequestDto.setUserId(userId);
+        commentRequestDto.setComment(commentMessage);
 
-        EventCommentBody body = new EventCommentBody();
-        body.setEventId(1L);
-        body.setUserId(1L);
-        body.setComment(title);
+        Event mockEvent = new Event();
+        mockEvent.setId(eventId);
+
+        User mockUser = new User();
+        mockUser.setId(userId);
 
         EventComment mockComment = new EventComment();
-        mockComment.setId(id);
-        mockComment.setComment(title);
+        mockComment.setId(commentId);
+        mockComment.setComment(commentMessage);
+        mockComment.setEvent(mockEvent);
+        mockComment.setUser(mockUser);
 
-        given(eventService.findById(1L)).willReturn(new Event());
-        given(userService.findById(1L)).willReturn(new User());
+        given(eventService.findById(eventId)).willReturn(mockEvent);
+        given(userService.findById(userId)).willReturn(mockUser);
         given(commentRepository.save(any())).willReturn(mockComment);
 
         // when
-        EventComment comment = commentService.save(body);
+        EventComment comment = commentService.save(commentRequestDto);
 
         // then
-        verify(commentRepository).save(any());
-        assertNotNull(comment);
-        assertEquals(id, comment.getId());
-        assertEquals(title, comment.getComment());
+        ArgumentCaptor<EventComment> argumentCaptor = ArgumentCaptor.forClass(EventComment.class);
+        verify(commentRepository).save(argumentCaptor.capture());
+
+        EventComment capturedComment = argumentCaptor.getValue();
+
+        assertEquals(mockComment.getComment(), capturedComment.getComment());
+        assertEquals(mockComment.getEvent().getId().longValue(), capturedComment.getEvent().getId().longValue());
+        assertEquals(mockComment.getUser().getId().longValue(), capturedComment.getUser().getId().longValue());
     }
 
     @Test
     public void shouldUpdateById() {
         // given
-        Long id = 1L;
-        String updatedTitle = "test";
+        EventCommentRequestDto commentRequestDto = new EventCommentRequestDto();
+        commentRequestDto.setEventId(eventId);
+        commentRequestDto.setUserId(userId);
+        commentRequestDto.setComment(commentMessage);
 
-        EventCommentBody body = new EventCommentBody();
-        body.setEventId(1L);
-        body.setUserId(1L);
-        body.setComment(updatedTitle);
+        Event mockEvent = new Event();
+        mockEvent.setId(eventId);
 
-        EventComment mockDbObjComment = new EventComment();
-        mockDbObjComment.setId(id);
+        User mockUser = new User();
+        mockUser.setId(userId);
 
-        given(eventService.findById(1L)).willReturn(new Event());
-        given(userService.findById(1L)).willReturn(new User());
-        given(commentRepository.findById(id)).willReturn(Optional.of(mockDbObjComment));
-        given(commentRepository.save(mockDbObjComment)).willReturn(mockDbObjComment);
+        EventComment mockComment = new EventComment();
+        mockComment.setId(commentId);
+        mockComment.setComment(commentMessage);
+        mockComment.setEvent(mockEvent);
+        mockComment.setUser(mockUser);
+
+        given(eventService.findById(eventId)).willReturn(new Event());
+        given(userService.findById(userId)).willReturn(new User());
+        given(commentRepository.findById(commentId)).willReturn(Optional.of(mockComment));
+        given(commentRepository.save(mockComment)).willReturn(mockComment);
 
         // when
-        EventComment comment = commentService.updateById(body, id);
+        EventComment comment = commentService.updateById(commentRequestDto, commentId);
 
         // then
         assertNotNull(comment);
-        assertEquals(updatedTitle, comment.getComment());
+        assertEquals(commentMessage, comment.getComment());
     }
 
     @Test
     public void shouldDeleteById() {
         // given
-        Long id = 1L;
-        given(commentRepository.existsById(id)).willReturn(true);
+        given(commentRepository.existsById(commentId)).willReturn(true);
 
         // when
-        commentService.deleteById(id);
+        commentService.deleteById(commentId);
 
         // then
-        verify(commentRepository).deleteById(id);
+        verify(commentRepository).deleteById(commentId);
     }
 
     @Test
     public void shouldNotDeleteById() {
         // given
-        Long id = 1L;
-        given(commentRepository.existsById(id)).willReturn(false);
+        given(commentRepository.existsById(commentId)).willReturn(false);
 
         // when
         // then
-        assertThrows(RecordNotFoundException.class, () -> commentService.deleteById(id));
-        verify(commentRepository, times(0)).deleteById(id);
+        assertThrows(RecordNotFoundException.class, () -> commentService.deleteById(commentId));
+        verify(commentRepository, times(0)).deleteById(commentId);
     }
 
 }

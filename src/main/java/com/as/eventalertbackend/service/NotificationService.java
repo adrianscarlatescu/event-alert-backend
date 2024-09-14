@@ -1,5 +1,6 @@
 package com.as.eventalertbackend.service;
 
+import com.as.eventalertbackend.AppProperties;
 import com.as.eventalertbackend.data.model.Event;
 import com.as.eventalertbackend.data.model.Subscription;
 import com.google.firebase.messaging.*;
@@ -17,22 +18,16 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class NotificationService {
-
-    private static final String EVENT_ID_KEY = "eventId";
-    private static final String EVENT_DATE_TIME_KEY = "eventDateTime";
-    private static final String EVENT_TAG_NAME_KEY = "eventTagName";
-    private static final String EVENT_TAG_IMAGE_PATH_KEY = "eventTagImagePath";
-    private static final String EVENT_SEVERITY_NAME_KEY = "eventSeverityName";
-    private static final String EVENT_SEVERITY_COLOR_KEY = "eventSeverityColor";
-    private static final String EVENT_LATITUDE_KEY = "eventLatitude";
-    private static final String EVENT_LONGITUDE_KEY = "eventLongitude";
-
+    
+    private final AppProperties appProperties;
     private final SubscriptionService subscriptionService;
     private FirebaseMessaging firebaseMessaging;
 
     @Autowired
-    public NotificationService(SubscriptionService subscriptionService,
+    public NotificationService(AppProperties appProperties,
+                               SubscriptionService subscriptionService,
                                ApplicationContext applicationContext) {
+        this.appProperties = appProperties;
         this.subscriptionService = subscriptionService;
         try {
             this.firebaseMessaging = applicationContext.getBean(FirebaseMessaging.class);
@@ -45,17 +40,12 @@ public class NotificationService {
         log.info("Sending notifications for event: {}", newEvent.getId());
         List<Subscription> subscriptions = subscriptionService.findByLocation(newEvent.getLatitude(), newEvent.getLongitude());
 
-        Map<String, String> messageMap = new HashMap<>();
-        messageMap.put(EVENT_ID_KEY, String.valueOf(newEvent.getId()));
-        messageMap.put(EVENT_DATE_TIME_KEY, newEvent.getDateTime().toString());
-        messageMap.put(EVENT_TAG_NAME_KEY, newEvent.getTag().getName());
-        messageMap.put(EVENT_TAG_IMAGE_PATH_KEY, newEvent.getTag().getImagePath());
-        messageMap.put(EVENT_SEVERITY_NAME_KEY, newEvent.getSeverity().getName());
-        messageMap.put(EVENT_SEVERITY_COLOR_KEY, String.valueOf(newEvent.getSeverity().getColor()));
-        messageMap.put(EVENT_LATITUDE_KEY, String.valueOf(newEvent.getLatitude()));
-        messageMap.put(EVENT_LONGITUDE_KEY, String.valueOf(newEvent.getLongitude()));
+        Map<String, String> messageMap = getMessageMap(newEvent);
 
-        String title = "New " + newEvent.getSeverity().getName().toLowerCase() + " " + newEvent.getTag().getName().toLowerCase() + " reported!";
+        String severity = newEvent.getSeverity().getName().toLowerCase();
+        String tag = newEvent.getTag().getName().toLowerCase();
+
+        String title = "New " + severity + " " + tag + " reported!";
         String body = "Click the notification for more details.";
 
         Notification notification = Notification.builder()
@@ -80,16 +70,29 @@ public class NotificationService {
         try {
             BatchResponse batchResponse = firebaseMessaging.sendAll(messages);
             log.info("Notifications sent, success: {}, fail: {}", batchResponse.getSuccessCount(), batchResponse.getFailureCount());
-            batchResponse.getResponses().forEach(sendResponse -> {
-                if (!sendResponse.isSuccessful()) {
-                    log.error("Could not send notification", sendResponse.getException());
+            batchResponse.getResponses().forEach(response -> {
+                if (!response.isSuccessful()) {
+                    log.error("Could not send notification", response.getException());
                 } else {
-                    log.info("Notification sent, identifier: {}", sendResponse.getMessageId());
+                    log.info("Notification sent, identifier: {}", response.getMessageId());
                 }
             });
         } catch (FirebaseMessagingException e) {
             log.error("Could not send notifications", e);
         }
+    }
+
+    private Map<String, String> getMessageMap(Event newEvent) {
+        Map<String, String> messageMap = new HashMap<>();
+        messageMap.put(appProperties.getNotification().getEventIdKey(), String.valueOf(newEvent.getId()));
+        messageMap.put(appProperties.getNotification().getEventDateTimeKey(), newEvent.getDateTime().toString());
+        messageMap.put(appProperties.getNotification().getEventTagNameKey(), newEvent.getTag().getName());
+        messageMap.put(appProperties.getNotification().getEventTagImagePathKey(), newEvent.getTag().getImagePath());
+        messageMap.put(appProperties.getNotification().getEventSeverityNameKey(), newEvent.getSeverity().getName());
+        messageMap.put(appProperties.getNotification().getEventSeverityColorKey(), String.valueOf(newEvent.getSeverity().getColor()));
+        messageMap.put(appProperties.getNotification().getEventLatitudeKey(), String.valueOf(newEvent.getLatitude()));
+        messageMap.put(appProperties.getNotification().getEventLongitudeKey(), String.valueOf(newEvent.getLongitude()));
+        return messageMap;
     }
 
 }

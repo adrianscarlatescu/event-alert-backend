@@ -1,9 +1,9 @@
 package com.as.eventalertbackend.controller;
 
-import com.as.eventalertbackend.controller.request.AuthLoginBody;
-import com.as.eventalertbackend.controller.request.AuthRegisterBody;
-import com.as.eventalertbackend.controller.response.AuthRefreshTokenResponse;
-import com.as.eventalertbackend.controller.response.AuthTokensResponse;
+import com.as.eventalertbackend.controller.request.AuthLoginRequestDto;
+import com.as.eventalertbackend.controller.request.AuthRegisterRequestDto;
+import com.as.eventalertbackend.controller.response.AuthRefreshTokenResponseDto;
+import com.as.eventalertbackend.controller.response.AuthTokensResponseDto;
 import com.as.eventalertbackend.data.model.User;
 import com.as.eventalertbackend.service.AuthService;
 import org.junit.jupiter.api.Test;
@@ -35,20 +35,20 @@ class AuthControllerTest extends AbstractControllerTest {
     @Test
     public void shouldRegister() throws Exception {
         // given
-        AuthRegisterBody body = new AuthRegisterBody();
-        body.setEmail(email);
-        body.setPassword(password);
-        body.setConfirmPassword(password);
-        String jsonBody = objectMapper.writeValueAsString(body);
+        AuthRegisterRequestDto registerRequestDto = new AuthRegisterRequestDto();
+        registerRequestDto.setEmail(email);
+        registerRequestDto.setPassword(password);
+        registerRequestDto.setConfirmPassword(password);
+        String jsonBody = objectMapper.writeValueAsString(registerRequestDto);
 
         User user = getMockUser();
 
-        given(authService.register(any())).willReturn(user);
+        given(authService.register(registerRequestDto)).willReturn(user);
 
         // when
         // then
         mockMvc.perform(post(AUTH_PATH + "/register").headers(httpHeaders).content(jsonBody))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(id.intValue())))
                 .andExpect(jsonPath("$.email", is(email)))
                 .andExpect(jsonPath("$.password").doesNotExist());
@@ -57,15 +57,15 @@ class AuthControllerTest extends AbstractControllerTest {
     @Test
     public void shouldNotRegisterForInvalidEmail() throws Exception {
         // given
-        AuthRegisterBody body = new AuthRegisterBody();
-        body.setEmail("email");
-        body.setPassword(password);
-        body.setConfirmPassword(password);
-        String jsonBody = objectMapper.writeValueAsString(body);
+        AuthRegisterRequestDto registerRequestDto = new AuthRegisterRequestDto();
+        registerRequestDto.setEmail("email");
+        registerRequestDto.setPassword(password);
+        registerRequestDto.setConfirmPassword(password);
+        String jsonBody = objectMapper.writeValueAsString(registerRequestDto);
 
         User user = getMockUser();
 
-        given(authService.register(any())).willReturn(user);
+        given(authService.register(registerRequestDto)).willReturn(user);
 
         // when
         // then
@@ -80,14 +80,14 @@ class AuthControllerTest extends AbstractControllerTest {
         String accessToken = "accessToken";
         String refreshToken = "refreshToken";
 
-        AuthLoginBody body = new AuthLoginBody();
-        body.setEmail(email);
-        body.setPassword(password);
-        String jsonBody = objectMapper.writeValueAsString(body);
+        AuthLoginRequestDto loginRequestDto = new AuthLoginRequestDto();
+        loginRequestDto.setEmail(email);
+        loginRequestDto.setPassword(password);
+        String jsonBody = objectMapper.writeValueAsString(loginRequestDto);
 
-        AuthTokensResponse tokensResponse = new AuthTokensResponse(accessToken, refreshToken);
+        AuthTokensResponseDto tokensResponseDto = new AuthTokensResponseDto(accessToken, refreshToken);
 
-        given(authService.login(any())).willReturn(tokensResponse);
+        given(authService.login(loginRequestDto)).willReturn(tokensResponseDto);
 
         // when
         // then
@@ -100,10 +100,10 @@ class AuthControllerTest extends AbstractControllerTest {
     @Test
     public void shouldNotLoginForEmptyEmail() throws Exception {
         // given
-        AuthLoginBody body = new AuthLoginBody();
-        body.setEmail("");
-        body.setPassword("");
-        String jsonBody = objectMapper.writeValueAsString(body);
+        AuthLoginRequestDto loginRequestDto = new AuthLoginRequestDto();
+        loginRequestDto.setEmail("");
+        loginRequestDto.setPassword(password);
+        String jsonBody = objectMapper.writeValueAsString(loginRequestDto);
 
         // when
         // then
@@ -116,9 +116,9 @@ class AuthControllerTest extends AbstractControllerTest {
     public void shouldRefreshToken() throws Exception {
         // given
         String accessToken = "accessToken";
-        AuthRefreshTokenResponse tokenResponse = new AuthRefreshTokenResponse(accessToken);
+        AuthRefreshTokenResponseDto tokenResponseDto = new AuthRefreshTokenResponseDto(accessToken);
 
-        given(authService.refreshToken(any())).willReturn(tokenResponse);
+        given(authService.refreshToken(any())).willReturn(tokenResponseDto);
 
         // when
         // then

@@ -1,13 +1,13 @@
 package com.as.eventalertbackend.service;
 
-import com.as.eventalertbackend.controller.request.AuthLoginBody;
-import com.as.eventalertbackend.controller.request.AuthRegisterBody;
-import com.as.eventalertbackend.controller.response.AuthRefreshTokenResponse;
-import com.as.eventalertbackend.controller.response.AuthTokensResponse;
+import com.as.eventalertbackend.controller.request.AuthLoginRequestDto;
+import com.as.eventalertbackend.controller.request.AuthRegisterRequestDto;
+import com.as.eventalertbackend.controller.response.AuthRefreshTokenResponseDto;
+import com.as.eventalertbackend.controller.response.AuthTokensResponseDto;
 import com.as.eventalertbackend.data.model.User;
 import com.as.eventalertbackend.data.model.UserRole;
 import com.as.eventalertbackend.enums.Role;
-import com.as.eventalertbackend.handler.exception.IllegalActionException;
+import com.as.eventalertbackend.handler.exception.InvalidActionException;
 import com.as.eventalertbackend.security.jwt.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,33 +45,29 @@ public class AuthService {
         this.jwtUtils = jwtUtils;
     }
 
-    public User register(AuthRegisterBody body) {
-        boolean isEmail = userService.existsByEmail(body.getEmail());
-        if (isEmail) {
-            throw new IllegalActionException(
-                    "Email already registered " + body.getEmail(),
-                    "The account is already created");
+    public User register(AuthRegisterRequestDto registerRequestDto) {
+        boolean emailExists = userService.existsByEmail(registerRequestDto.getEmail());
+        if (emailExists) {
+            throw new InvalidActionException("The account is already created");
         }
 
-        if (!body.getPassword().equals(body.getConfirmPassword())) {
-            throw new IllegalActionException(
-                    "Passwords don't match " + body.getEmail(),
-                    "The passwords are not identical");
+        if (!registerRequestDto.getPassword().equals(registerRequestDto.getConfirmPassword())) {
+            throw new InvalidActionException("The passwords are not identical");
         }
 
         UserRole role = userRoleService.findByName(Role.ROLE_USER);
 
-        User user = new User(body.getEmail(),
-                passwordEncoder.encode(body.getPassword()),
+        User user = new User(registerRequestDto.getEmail(),
+                passwordEncoder.encode(registerRequestDto.getPassword()),
                 Collections.singleton(role));
 
         return userService.save(user);
     }
 
     @Transactional
-    public AuthTokensResponse login(AuthLoginBody body) {
-        String email = body.getEmail();
-        String password = body.getPassword();
+    public AuthTokensResponseDto login(AuthLoginRequestDto loginRequestDto) {
+        String email = loginRequestDto.getEmail();
+        String password = loginRequestDto.getPassword();
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, password)
@@ -81,20 +77,20 @@ public class AuthService {
         String accessToken = jwtUtils.generateAccessToken(email);
         String refreshToken = jwtUtils.generateRefreshToken(email);
 
-        return new AuthTokensResponse(accessToken, refreshToken);
+        return new AuthTokensResponseDto(accessToken, refreshToken);
     }
 
-    public AuthRefreshTokenResponse refreshToken(HttpServletRequest request) {
+    public AuthRefreshTokenResponseDto refreshToken(HttpServletRequest request) {
         String token = jwtUtils.parseJwt(request);
         if (token == null || !jwtUtils.validateJwtToken(token) || !jwtUtils.isRefreshToken(token)) {
-            throw new IllegalActionException("Invalid token: " + token, "Invalid token");
+            throw new InvalidActionException("Invalid token");
         }
 
         String email = jwtUtils.getEmailFromJwtToken(token);
         String accessToken = jwtUtils.generateAccessToken(email);
 
         log.info("New access token generated for user with email: {}, access token: {}", email, accessToken);
-        return new AuthRefreshTokenResponse(accessToken);
+        return new AuthRefreshTokenResponseDto(accessToken);
     }
 
     @Transactional

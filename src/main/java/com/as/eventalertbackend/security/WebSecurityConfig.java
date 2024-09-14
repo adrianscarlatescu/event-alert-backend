@@ -1,5 +1,6 @@
 package com.as.eventalertbackend.security;
 
+import com.as.eventalertbackend.AppProperties;
 import com.as.eventalertbackend.security.jwt.AuthEntryPointJwt;
 import com.as.eventalertbackend.security.jwt.AuthTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +23,19 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+@Profile("!test")
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
-@Profile("dev")
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private UserDetailsService userService;
+    private final AppProperties appProperties;
+    private final UserDetailsService userService;
 
     @Autowired
-    public WebSecurityConfig(UserDetailsService userService) {
+    public WebSecurityConfig(AppProperties appProperties,
+                             UserDetailsService userService) {
+        this.appProperties = appProperties;
         this.userService = userService;
     }
 
@@ -69,9 +73,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, SecurityConstants.AUTH_REGISTER_URL).permitAll()
-                .antMatchers(HttpMethod.POST, SecurityConstants.AUTH_LOGIN_URL).permitAll()
-                .antMatchers(HttpMethod.GET, SecurityConstants.AUTH_REFRESH_TOKEN_URL).permitAll()
+                .antMatchers(HttpMethod.POST, appProperties.getSecurity().getAuthRegisterUrl()).permitAll()
+                .antMatchers(HttpMethod.POST, appProperties.getSecurity().getAuthLoginUrl()).permitAll()
+                .antMatchers(HttpMethod.GET, appProperties.getSecurity().getRefreshTokenId()).permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

@@ -28,9 +28,7 @@ public class StorageService {
         try {
             return new UrlResource(path.toUri());
         } catch (MalformedURLException e) {
-            throw new StorageFailException(
-                    "Could not read the image " + imgRelativePath,
-                    "Could not retrieve the image");
+            throw new StorageFailException("Could not retrieve the image");
         }
     }
 
@@ -46,10 +44,7 @@ public class StorageService {
         if (!directory.exists()) {
             boolean isCreated = directory.mkdir();
             if (!isCreated) {
-                throw new StorageFailException(
-                        "Could not create the directory " + directory.getAbsolutePath(),
-                        "Could not store the image");
-
+                throw new StorageFailException("Could not store the image");
             }
         }
 
@@ -57,11 +52,9 @@ public class StorageService {
             byte[] bytes = file.getBytes();
             Path path = Paths.get(serverImgPath + name);
             Files.write(path, bytes);
-            log.info("Image write successful: {}", name);
+            log.info("Image successfully stored: {}", name);
         } catch (IOException e) {
-            throw new StorageFailException(
-                    "Could not write the image " + file.getOriginalFilename(),
-                    "Could not store the image");
+            throw new StorageFailException("Could not store the image");
         }
 
         return IMG_PATH + name;

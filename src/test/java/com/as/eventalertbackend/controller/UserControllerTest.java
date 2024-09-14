@@ -1,7 +1,9 @@
 package com.as.eventalertbackend.controller;
 
 import com.as.eventalertbackend.data.model.User;
+import com.as.eventalertbackend.data.model.UserRole;
 import com.as.eventalertbackend.enums.Gender;
+import com.as.eventalertbackend.enums.Role;
 import com.as.eventalertbackend.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -27,16 +29,19 @@ class UserControllerTest extends AbstractControllerTest {
 
     private static final String USERS_PATH = "/users";
 
-    private final Long id = 1L;
-    private final String email = "test@test.com";
-    private final String firstName = "firstName";
-    private final String lastName = "lastName";
-    private final String phoneNumber = "0777555333";
-    private final String imagePath = "img/user_1.png";
-    private final String gender = "MALE";
-    private final int reportsNumber = 0;
-    private final LocalDateTime joinDateTime = LocalDateTime.of(2020, Month.JUNE, 20, 14, 30, 45);
-    private final LocalDate dateOfBirth = LocalDate.of(2000, Month.MARCH, 10);
+    private final Long userId = 1L;
+    private final String userEmail = "test@test.com";
+    private final String userFirstName = "firstName";
+    private final String userLastName = "lastName";
+    private final String userPhoneNumber = "0777555333";
+    private final String userImagePath = "img/user_1.png";
+    private final Gender userGender = Gender.MALE;
+    private final Integer userReportsNumber = 0;
+    private final LocalDateTime userJoinDateTime = LocalDateTime.of(2020, Month.JUNE, 20, 14, 30, 45);
+    private final LocalDate userDateOfBirth = LocalDate.of(2000, Month.MARCH, 10);
+
+    private final Long userRoleId = 1L;
+    private final Role userRoleName = Role.ROLE_USER;
 
     @Test
     public void shouldGetAll() throws Exception {
@@ -48,57 +53,68 @@ class UserControllerTest extends AbstractControllerTest {
         // then
         mockMvc.perform(get(USERS_PATH).headers(httpHeaders))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(id.intValue())))
-                .andExpect(jsonPath("$[0].email", is(email)))
-                .andExpect(jsonPath("$[0].joinDateTime", is(joinDateTime.toString())))
-                .andExpect(jsonPath("$[0].dateOfBirth", is(dateOfBirth.toString())))
-                .andExpect(jsonPath("$[0].firstName", is(firstName)))
-                .andExpect(jsonPath("$[0].lastName", is(lastName)))
-                .andExpect(jsonPath("$[0].phoneNumber", is(phoneNumber)))
-                .andExpect(jsonPath("$[0].imagePath", is(imagePath)))
-                .andExpect(jsonPath("$[0].gender", is(gender)))
-                .andExpect(jsonPath("$[0].reportsNumber", is(reportsNumber)));
+                .andExpect(jsonPath("$[0].id", is(userId.intValue())))
+                .andExpect(jsonPath("$[0].email", is(userEmail)))
+                .andExpect(jsonPath("$[0].joinDateTime", is(userJoinDateTime.toString())))
+                .andExpect(jsonPath("$[0].dateOfBirth", is(userDateOfBirth.toString())))
+                .andExpect(jsonPath("$[0].firstName", is(userFirstName)))
+                .andExpect(jsonPath("$[0].lastName", is(userLastName)))
+                .andExpect(jsonPath("$[0].phoneNumber", is(userPhoneNumber)))
+                .andExpect(jsonPath("$[0].imagePath", is(userImagePath)))
+                .andExpect(jsonPath("$[0].gender", is(userGender.name())))
+                .andExpect(jsonPath("$[0].reportsNumber", is(userReportsNumber)))
+                .andExpect(jsonPath("$[0].userRoles[0].id", is(userRoleId.intValue())))
+                .andExpect(jsonPath("$[0].userRoles[0].name", is(userRoleName.name())));
     }
 
     @Test
     public void shouldGeById() throws Exception {
         // given
         User user = getMockUser();
-        given(userService.findById(id)).willReturn(user);
+        given(userService.findById(userId)).willReturn(user);
 
         // when
         // then
-        mockMvc.perform(get(USERS_PATH + "/{id}", id).headers(httpHeaders))
+        mockMvc.perform(get(USERS_PATH + "/{id}", userId).headers(httpHeaders))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(id.intValue())))
-                .andExpect(jsonPath("$.email", is(email)))
-                .andExpect(jsonPath("$.joinDateTime", is(joinDateTime.toString())))
-                .andExpect(jsonPath("$.dateOfBirth", is(dateOfBirth.toString())))
-                .andExpect(jsonPath("$.firstName", is(firstName)))
-                .andExpect(jsonPath("$.lastName", is(lastName)))
-                .andExpect(jsonPath("$.phoneNumber", is(phoneNumber)))
-                .andExpect(jsonPath("$.imagePath", is(imagePath)))
-                .andExpect(jsonPath("$.gender", is(gender)))
-                .andExpect(jsonPath("$.reportsNumber", is(reportsNumber)));
+                .andExpect(jsonPath("$.id", is(userId.intValue())))
+                .andExpect(jsonPath("$.email", is(userEmail)))
+                .andExpect(jsonPath("$.joinDateTime", is(userJoinDateTime.toString())))
+                .andExpect(jsonPath("$.dateOfBirth", is(userDateOfBirth.toString())))
+                .andExpect(jsonPath("$.firstName", is(userFirstName)))
+                .andExpect(jsonPath("$.lastName", is(userLastName)))
+                .andExpect(jsonPath("$.phoneNumber", is(userPhoneNumber)))
+                .andExpect(jsonPath("$.imagePath", is(userImagePath)))
+                .andExpect(jsonPath("$.gender", is(userGender.name())))
+                .andExpect(jsonPath("$.reportsNumber", is(userReportsNumber)))
+                .andExpect(jsonPath("$.userRoles[0].id", is(userRoleId.intValue())))
+                .andExpect(jsonPath("$.userRoles[0].name", is(userRoleName.name())));
     }
 
     @Test
     public void shouldDeleteById() throws Exception {
-        mockMvc.perform(delete(USERS_PATH + "/{id}", id).headers(httpHeaders))
+        mockMvc.perform(delete(USERS_PATH + "/{id}", userId).headers(httpHeaders))
                 .andExpect(status().isOk());
     }
 
     private User getMockUser() {
+        UserRole userRole = new UserRole();
+        userRole.setId(userRoleId);
+        userRole.setName(userRoleName);
+
         User user = new User();
-        user.setId(id);
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setEmail(email);
-        user.setPhoneNumber(phoneNumber);
-        user.setImagePath(imagePath);
-        user.setJoinDateTime(joinDateTime);
-        user.setDateOfBirth(dateOfBirth);
+        user.setId(userId);
+        user.setFirstName(userFirstName);
+        user.setLastName(userLastName);
+        user.setEmail(userEmail);
+        user.setPhoneNumber(userPhoneNumber);
+        user.setImagePath(userImagePath);
+        user.setJoinDateTime(userJoinDateTime);
+        user.setDateOfBirth(userDateOfBirth);
         user.setGender(Gender.MALE);
+
+        user.setUserRoles(Collections.singleton(userRole));
+
         return user;
     }
 
