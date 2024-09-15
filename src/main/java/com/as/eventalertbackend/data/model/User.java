@@ -2,7 +2,6 @@ package com.as.eventalertbackend.data.model;
 
 import com.as.eventalertbackend.dto.UserDto;
 import com.as.eventalertbackend.enums.Gender;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,8 +36,6 @@ public class User implements UserDetails {
 
     @Column(unique = true)
     private String email;
-
-    @JsonIgnore
     private String password;
 
     private String firstName;
@@ -50,11 +47,9 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<Event> events;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<EventComment> eventComments;
 
@@ -64,12 +59,11 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<UserRole> userRoles;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<Subscription> subscriptions;
 
     @Formula("(SELECT COUNT(e.id) FROM event e WHERE e.user_id = id)")
-    private int reportsNumber;
+    private Integer reportsNumber;
 
     public User(String email, String password, Set<UserRole> userRoles) {
         this.email = email;
@@ -77,7 +71,6 @@ public class User implements UserDetails {
         this.userRoles = userRoles;
     }
 
-    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return userRoles.stream()
@@ -85,31 +78,26 @@ public class User implements UserDetails {
                 .collect(Collectors.toSet());
     }
 
-    @JsonIgnore
     @Override
     public String getUsername() {
         return email;
     }
 
-    @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
-    @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
-    @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
-    @JsonIgnore
     @Override
     public boolean isEnabled() {
         return true;

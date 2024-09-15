@@ -1,7 +1,6 @@
 package com.as.eventalertbackend.data.model;
 
 import com.as.eventalertbackend.dto.EventCommentDto;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,7 +27,6 @@ public class EventComment {
 
     private String comment;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;

@@ -1,7 +1,6 @@
 package com.as.eventalertbackend.data.model;
 
 import com.as.eventalertbackend.dto.EventDto;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,7 +31,6 @@ public class Event {
     private String imagePath;
     private String description;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "event")
     private Set<EventComment> eventComments;
 

@@ -1,7 +1,6 @@
 package com.as.eventalertbackend.data.model;
 
 import com.as.eventalertbackend.dto.EventSeverityDto;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,7 +27,6 @@ public class EventSeverity {
 
     private Integer color;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "severity")
     private Set<Event> events;
 

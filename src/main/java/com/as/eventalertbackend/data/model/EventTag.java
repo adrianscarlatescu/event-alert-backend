@@ -1,7 +1,6 @@
 package com.as.eventalertbackend.data.model;
 
 import com.as.eventalertbackend.dto.EventTagDto;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,7 +29,6 @@ public class EventTag {
     @NotEmpty(message = "Invalid image path")
     private String imagePath;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "tag")
     private Set<Event> events;
 

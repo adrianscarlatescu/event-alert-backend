@@ -2,7 +2,6 @@ package com.as.eventalertbackend.data.model;
 
 import com.as.eventalertbackend.dto.UserRoleDto;
 import com.as.eventalertbackend.enums.Role;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +25,6 @@ public class UserRole {
     @Enumerated(EnumType.STRING)
     private Role name;
 
-    @JsonIgnore
     @ManyToMany(mappedBy = "userRoles")
     private Set<User> users;
 
