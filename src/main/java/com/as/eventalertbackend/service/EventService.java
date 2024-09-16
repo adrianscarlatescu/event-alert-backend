@@ -1,19 +1,24 @@
 package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.AppConstants;
-import com.as.eventalertbackend.controller.request.EventFilterRequestDto;
-import com.as.eventalertbackend.controller.request.EventRequestDto;
-import com.as.eventalertbackend.data.model.Event;
-import com.as.eventalertbackend.data.model.EventSeverity;
-import com.as.eventalertbackend.data.model.EventTag;
-import com.as.eventalertbackend.data.model.User;
-import com.as.eventalertbackend.data.reopsitory.EventRepository;
+import com.as.eventalertbackend.dto.request.EventFilterRequestDto;
+import com.as.eventalertbackend.dto.request.EventRequestDto;
+import com.as.eventalertbackend.dto.response.EventResponseDto;
+import com.as.eventalertbackend.dto.response.PageResponseDto;
 import com.as.eventalertbackend.enums.Order;
+import com.as.eventalertbackend.handler.ApiErrorMessage;
 import com.as.eventalertbackend.handler.exception.InvalidActionException;
 import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
+import com.as.eventalertbackend.jpa.entity.Event;
+import com.as.eventalertbackend.jpa.entity.EventSeverity;
+import com.as.eventalertbackend.jpa.entity.EventTag;
+import com.as.eventalertbackend.jpa.entity.User;
+import com.as.eventalertbackend.jpa.reopsitory.EventRepository;
+import com.as.eventalertbackend.jpa.reopsitory.EventSeverityRepository;
+import com.as.eventalertbackend.jpa.reopsitory.EventTagRepository;
+import com.as.eventalertbackend.jpa.reopsitory.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -24,55 +29,56 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class EventService {
 
     private final EventRepository eventRepository;
+    private final EventSeverityRepository severityRepository;
+    private final EventTagRepository tagRepository;
+    private final UserRepository userRepository;
 
-    private final EventSeverityService severityService;
-    private final EventTagService tagService;
-    private final UserService userService;
     private final NotificationService notificationService;
-
-    @Value("${app.notification.enabled}")
-    private boolean isNotificationEnabled;
 
     @Autowired
     public EventService(EventRepository eventRepository,
-                        EventSeverityService severityService,
-                        EventTagService tagService,
-                        UserService userService,
+                        EventSeverityRepository severityRepository,
+                        EventTagRepository tagRepository,
+                        UserRepository userRepository,
                         NotificationService notificationService) {
         this.eventRepository = eventRepository;
-        this.severityService = severityService;
-        this.tagService = tagService;
-        this.userService = userService;
+        this.severityRepository = severityRepository;
+        this.tagRepository = tagRepository;
+        this.userRepository = userRepository;
         this.notificationService = notificationService;
     }
 
-    public Event findById(Long id) {
+    public EventResponseDto findById(Long id) {
         return eventRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException("Event not found"));
+                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.EVENT_NOT_FOUND))
+                .toDto();
     }
 
-    public List<Event> findAllByUserId(Long userId) {
-        return eventRepository.findByUserIdOrderByDateTimeDesc(userId);
+    public List<EventResponseDto> findAllByUserId(Long userId) {
+        return eventRepository.findByUserIdOrderByDateTimeDesc(userId).stream()
+                .map(Event::toDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public Page<Event> findByFilter(EventFilterRequestDto filterRequestDto, int pageSize, int pageNumber, Order order) {
+    public PageResponseDto<EventResponseDto> findByFilter(EventFilterRequestDto filterRequestDto, int pageSize, int pageNumber, Order order) {
         if (pageSize > AppConstants.MAX_PAGES) {
-            throw new InvalidActionException("The page size must be less than " + AppConstants.MAX_PAGES);
+            throw new InvalidActionException(ApiErrorMessage.FILTER_MAX_PAGE_SIZE);
         }
 
         if (filterRequestDto.getStartDate().isAfter(filterRequestDto.getEndDate())) {
-            throw new InvalidActionException("The end date must be after the start date");
+            throw new InvalidActionException(ApiErrorMessage.FILTER_END_DATE_AFTER_START_DATE);
         }
 
         if (filterRequestDto.getEndDate().getYear() - filterRequestDto.getStartDate().getYear() > AppConstants.MAX_YEARS_INTERVAL) {
-            throw new InvalidActionException("The years interval must be maximum " + AppConstants.MAX_YEARS_INTERVAL);
+            throw new InvalidActionException(ApiErrorMessage.FILTER_MAX_YEARS_INTERVAL);
         }
 
         if (order == null) {
@@ -136,40 +142,48 @@ public class EventService {
                 eventsPage.getTotalElements(),
                 eventsPage.getContent().stream().mapToLong(Event::getId).toArray());
 
-        return eventsPage;
+        return new PageResponseDto<>(
+                eventsPage.getTotalPages(),
+                eventsPage.getTotalElements(),
+                eventsPage.getContent().stream()
+                        .map(Event::toDto)
+                        .collect(Collectors.toList())
+        );
     }
 
-    public Event save(Event event) {
-        return eventRepository.save(event);
+    public EventResponseDto save(EventRequestDto eventRequestDto) {
+        EventResponseDto newEventDto = createOrUpdate(new Event(), eventRequestDto).toDto();
+        notificationService.send(newEventDto);
+        return newEventDto;
     }
 
-    public Event save(EventRequestDto eventRequestDto) {
-        return save(new Event(), eventRequestDto);
-    }
-
-    public Event updateById(EventRequestDto eventRequestDto, Long id) {
-        Event event = findById(id);
-        return save(event, eventRequestDto);
+    public EventResponseDto updateById(EventRequestDto eventRequestDto, Long id) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.EVENT_NOT_FOUND));
+        return createOrUpdate(event, eventRequestDto).toDto();
     }
 
     public void deleteById(Long id) {
         if (eventRepository.existsById(id)) {
             eventRepository.deleteById(id);
         } else {
-            throw new RecordNotFoundException("Event not found");
+            throw new RecordNotFoundException(ApiErrorMessage.EVENT_NOT_FOUND);
         }
     }
 
-    private Event save(Event event, EventRequestDto eventRequestDto) {
-        User user = userService.findById(eventRequestDto.getUserId());
-        EventTag tag = tagService.findById(eventRequestDto.getTagId());
-        EventSeverity severity = severityService.findById(eventRequestDto.getSeverityId());
+    private Event createOrUpdate(Event event, EventRequestDto eventRequestDto) {
+        User user = userRepository.findById(eventRequestDto.getUserId())
+                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.USER_NOT_FOUND));
+        EventTag tag = tagRepository.findById(eventRequestDto.getTagId())
+                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.TAG_NOT_FOUND));
+        EventSeverity severity = severityRepository.findById(eventRequestDto.getSeverityId())
+                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.SEVERITY_NOT_FOUND));
 
         if (isNullOrEmpty(user.getFirstName())) {
-            throw new InvalidActionException("User first name is mandatory");
+            throw new InvalidActionException(ApiErrorMessage.USER_FIRST_NAME_MANDATORY);
         }
         if (isNullOrEmpty(user.getLastName())) {
-            throw new InvalidActionException("User last name is mandatory");
+            throw new InvalidActionException(ApiErrorMessage.USER_FIRST_NAME_MANDATORY);
         }
 
         String description = eventRequestDto.getDescription() == null ?
@@ -183,13 +197,7 @@ public class EventService {
         event.setTag(tag);
         event.setUser(user);
 
-        Event newEvent = eventRepository.save(event);
-
-        if (isNotificationEnabled) {
-            notificationService.send(newEvent);
-        }
-
-        return newEvent;
+        return eventRepository.save(event);
     }
 
     private boolean isNullOrEmpty(String s) {

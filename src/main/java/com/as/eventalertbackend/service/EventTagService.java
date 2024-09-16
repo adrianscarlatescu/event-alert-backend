@@ -1,13 +1,16 @@
 package com.as.eventalertbackend.service;
 
-import com.as.eventalertbackend.controller.request.EventTagRequestDto;
-import com.as.eventalertbackend.data.model.EventTag;
-import com.as.eventalertbackend.data.reopsitory.EventTagRepository;
+import com.as.eventalertbackend.dto.request.EventTagRequestDto;
+import com.as.eventalertbackend.dto.response.EventTagResponseDto;
+import com.as.eventalertbackend.handler.ApiErrorMessage;
 import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
+import com.as.eventalertbackend.jpa.entity.EventTag;
+import com.as.eventalertbackend.jpa.reopsitory.EventTagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class EventTagService {
@@ -19,34 +22,42 @@ public class EventTagService {
         this.tagRepository = tagRepository;
     }
 
-    public List<EventTag> findAll() {
-        return tagRepository.findAll();
+    public List<EventTagResponseDto> findAll() {
+        return tagRepository.findAll().stream()
+                .map(EventTag::toDto)
+                .collect(Collectors.toList());
     }
 
-    public EventTag findById(Long id) {
+    public EventTagResponseDto findById(Long id) {
         return tagRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException("Tag not found"));
+                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.TAG_NOT_FOUND))
+                .toDto();
     }
 
-    public EventTag updateById(EventTagRequestDto tagRequestDto, Long id) {
-        EventTag tag = findById(id);
+    public EventTagResponseDto updateById(EventTagRequestDto tagRequestDto, Long id) {
+        EventTag tag = tagRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.TAG_NOT_FOUND));
+
         tag.setName(tagRequestDto.getName());
         tag.setImagePath(tagRequestDto.getImagePath());
-        return tagRepository.save(tag);
+
+        return tagRepository.save(tag).toDto();
     }
 
-    public EventTag save(EventTagRequestDto tagRequestDto) {
+    public EventTagResponseDto save(EventTagRequestDto tagRequestDto) {
         EventTag tag = new EventTag();
+
         tag.setName(tagRequestDto.getName());
         tag.setImagePath(tagRequestDto.getImagePath());
-        return tagRepository.save(tag);
+
+        return tagRepository.save(tag).toDto();
     }
 
     public void deleteById(Long id) {
         if (tagRepository.existsById(id)) {
             tagRepository.deleteById(id);
         } else {
-            throw new RecordNotFoundException("Tag not found");
+            throw new RecordNotFoundException(ApiErrorMessage.TAG_NOT_FOUND);
         }
     }
 

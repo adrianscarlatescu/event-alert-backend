@@ -1,8 +1,8 @@
 package com.as.eventalertbackend.controller;
 
-import com.as.eventalertbackend.controller.request.UserRequestDto;
-import com.as.eventalertbackend.data.model.User;
-import com.as.eventalertbackend.dto.UserDto;
+import com.as.eventalertbackend.dto.request.UserRequestDto;
+import com.as.eventalertbackend.dto.response.UserResponseDto;
+import com.as.eventalertbackend.jpa.entity.User;
 import com.as.eventalertbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 public class UserController {
@@ -25,23 +24,20 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<UserDto>> getAll() {
-        List<UserDto> users = userService.findAll().stream()
-                .map(User::toDto)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(users);
+    public ResponseEntity<List<UserResponseDto>> getAll() {
+        return ResponseEntity.ok(userService.findAll());
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<UserDto> getById(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(userService.findById(id).toDto());
+    public ResponseEntity<UserResponseDto> getById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(userService.findById(id));
     }
 
     @Secured({"ROLE_ADMIN"})
     @PutMapping("/users/{id}")
-    public ResponseEntity<UserDto> updateById(@Valid @RequestBody UserRequestDto userRequestDto,
-                                              @PathVariable("id") Long id) {
-        return ResponseEntity.ok(userService.updateById(userRequestDto, id).toDto());
+    public ResponseEntity<UserResponseDto> updateById(@Valid @RequestBody UserRequestDto userRequestDto,
+                                                      @PathVariable("id") Long id) {
+        return ResponseEntity.ok(userService.updateById(userRequestDto, id));
     }
 
     @Secured({"ROLE_ADMIN"})
@@ -52,17 +48,17 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<UserDto> getProfile() {
-        User principal =
-                (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return ResponseEntity.ok(userService.findById(principal.getId()).toDto());
+    public ResponseEntity<UserResponseDto> getProfile() {
+        Long principalId =
+                ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
+        return ResponseEntity.ok(userService.findById(principalId));
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<UserDto> updateProfile(@Valid @RequestBody UserRequestDto userRequestDto) {
-        User principal =
-                (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return ResponseEntity.ok(userService.updateById(userRequestDto, principal.getId()).toDto());
+    public ResponseEntity<UserResponseDto> updateProfile(@Valid @RequestBody UserRequestDto userRequestDto) {
+        Long principalId =
+                ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
+        return ResponseEntity.ok(userService.updateById(userRequestDto, principalId));
     }
 
 }

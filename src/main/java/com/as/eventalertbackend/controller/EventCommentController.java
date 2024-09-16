@@ -1,8 +1,7 @@
 package com.as.eventalertbackend.controller;
 
-import com.as.eventalertbackend.controller.request.EventCommentRequestDto;
-import com.as.eventalertbackend.data.model.EventComment;
-import com.as.eventalertbackend.dto.EventCommentDto;
+import com.as.eventalertbackend.dto.request.EventCommentRequestDto;
+import com.as.eventalertbackend.dto.response.EventCommentResponseDto;
 import com.as.eventalertbackend.service.EventCommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/comments")
@@ -26,25 +24,22 @@ public class EventCommentController {
     }
 
     @GetMapping("/{eventId}")
-    public ResponseEntity<List<EventCommentDto>> getAllByEventId(@PathVariable("eventId") Long id) {
-        List<EventCommentDto> comments = commentService.findAllByEventId(id).stream()
-                .map(EventComment::toDto)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(comments);
+    public ResponseEntity<List<EventCommentResponseDto>> getAllByEventId(@PathVariable("eventId") Long id) {
+        return ResponseEntity.ok(commentService.findAllByEventId(id));
     }
 
     @PostMapping
-    public ResponseEntity<EventCommentDto> save(@Valid @RequestBody EventCommentRequestDto commentRequestDto) {
+    public ResponseEntity<EventCommentResponseDto> save(@Valid @RequestBody EventCommentRequestDto commentRequestDto) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(commentService.save(commentRequestDto).toDto());
+                .body(commentService.save(commentRequestDto));
     }
 
     @Secured({"ROLE_ADMIN"})
     @PutMapping("/{id}")
-    public ResponseEntity<EventCommentDto> updateById(@Valid @RequestBody EventCommentRequestDto commentRequestDto,
-                                                      @PathVariable("id") Long id) {
-        return ResponseEntity.ok(commentService.updateById(commentRequestDto, id).toDto());
+    public ResponseEntity<EventCommentResponseDto> updateById(@Valid @RequestBody EventCommentRequestDto commentRequestDto,
+                                                              @PathVariable("id") Long id) {
+        return ResponseEntity.ok(commentService.updateById(commentRequestDto, id));
     }
 
     @Secured({"ROLE_ADMIN"})

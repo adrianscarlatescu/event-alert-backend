@@ -1,14 +1,18 @@
 package com.as.eventalertbackend.service;
 
-import com.as.eventalertbackend.controller.request.AuthLoginRequestDto;
-import com.as.eventalertbackend.controller.request.AuthRegisterRequestDto;
-import com.as.eventalertbackend.controller.response.AuthRefreshTokenResponseDto;
-import com.as.eventalertbackend.controller.response.AuthTokensResponseDto;
-import com.as.eventalertbackend.data.model.User;
-import com.as.eventalertbackend.data.model.UserRole;
+import com.as.eventalertbackend.dto.request.AuthLoginRequestDto;
+import com.as.eventalertbackend.dto.request.AuthRegisterRequestDto;
+import com.as.eventalertbackend.dto.response.AuthTokensResponseDto;
+import com.as.eventalertbackend.dto.response.UserResponseDto;
 import com.as.eventalertbackend.enums.Role;
+import com.as.eventalertbackend.handler.ApiErrorMessage;
 import com.as.eventalertbackend.handler.exception.InvalidActionException;
-import com.as.eventalertbackend.security.jwt.JwtUtils;
+import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
+import com.as.eventalertbackend.jpa.entity.User;
+import com.as.eventalertbackend.jpa.entity.UserRole;
+import com.as.eventalertbackend.jpa.reopsitory.UserRepository;
+import com.as.eventalertbackend.jpa.reopsitory.UserRoleRepository;
+import com.as.eventalertbackend.security.jwt.JwtManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,71 +30,73 @@ import java.util.Collections;
 @Slf4j
 public class AuthService {
 
-    private final UserService userService;
-    private final UserRoleService userRoleService;
+    private final UserRepository userRepository;
+    private final UserRoleRepository userRoleRepository;
+
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final JwtUtils jwtUtils;
+    private final JwtManager jwtManager;
 
     @Autowired
-    public AuthService(UserService userService,
-                       UserRoleService userRoleService,
+    public AuthService(UserRepository userRepository,
+                       UserRoleRepository userRoleRepository,
                        PasswordEncoder passwordEncoder,
                        AuthenticationManager authenticationManager,
-                       JwtUtils jwtUtils) {
-        this.userService = userService;
-        this.userRoleService = userRoleService;
+                       JwtManager jwtManager) {
+        this.userRepository = userRepository;
+        this.userRoleRepository = userRoleRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
-        this.jwtUtils = jwtUtils;
+        this.jwtManager = jwtManager;
     }
 
-    public User register(AuthRegisterRequestDto registerRequestDto) {
-        boolean emailExists = userService.existsByEmail(registerRequestDto.getEmail());
+    public UserResponseDto register(AuthRegisterRequestDto registerRequestDto) {
+        boolean emailExists = userRepository.existsByEmail(registerRequestDto.getEmail());
         if (emailExists) {
-            throw new InvalidActionException("The account is already created");
+            throw new InvalidActionException(ApiErrorMessage.ACCOUNT_ALREADY_CREATED);
         }
 
         if (!registerRequestDto.getPassword().equals(registerRequestDto.getConfirmPassword())) {
-            throw new InvalidActionException("The passwords are not identical");
+            throw new InvalidActionException(ApiErrorMessage.PASSWORDS_NOT_MATCH);
         }
 
-        UserRole role = userRoleService.findByName(Role.ROLE_USER);
+        UserRole userRole = userRoleRepository.findByName(Role.ROLE_USER)
+                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.ROLE_NOT_FOUND));
 
         User user = new User(registerRequestDto.getEmail(),
                 passwordEncoder.encode(registerRequestDto.getPassword()),
-                Collections.singleton(role));
+                Collections.singleton(userRole));
 
-        return userService.save(user);
+        return userRepository.save(user).toDto();
     }
 
     @Transactional
-    public AuthTokensResponseDto login(AuthLoginRequestDto loginRequestDto) {
-        String email = loginRequestDto.getEmail();
-        String password = loginRequestDto.getPassword();
+    public AuthTokensResponseDto login(AuthLoginRequestDto loginDto) {
+        String email = loginDto.getEmail();
+        String password = loginDto.getPassword();
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, password)
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String accessToken = jwtUtils.generateAccessToken(email);
-        String refreshToken = jwtUtils.generateRefreshToken(email);
+        String accessToken = jwtManager.generateAccessToken(email);
+        String refreshToken = jwtManager.generateRefreshToken(email);
 
         return new AuthTokensResponseDto(accessToken, refreshToken);
     }
 
-    public AuthRefreshTokenResponseDto refreshToken(HttpServletRequest request) {
-        String token = jwtUtils.parseJwt(request);
-        if (token == null || !jwtUtils.validateJwtToken(token) || !jwtUtils.isRefreshToken(token)) {
-            throw new InvalidActionException("Invalid token");
+    public AuthTokensResponseDto refreshToken(HttpServletRequest request) {
+        String refreshToken = jwtManager.parseJwt(request);
+        if (refreshToken == null || !jwtManager.validateJwtToken(refreshToken) || !jwtManager.isRefreshToken(refreshToken)) {
+            throw new InvalidActionException(ApiErrorMessage.INVALID_REFRESH_TOKEN);
         }
 
-        String email = jwtUtils.getEmailFromJwtToken(token);
-        String accessToken = jwtUtils.generateAccessToken(email);
+        String email = jwtManager.getEmailFromJwtToken(refreshToken);
+        String accessToken = jwtManager.generateAccessToken(email);
 
         log.info("New access token generated for user with email: {}, access token: {}", email, accessToken);
-        return new AuthRefreshTokenResponseDto(accessToken);
+        return new AuthTokensResponseDto(accessToken, refreshToken);
     }
 
     @Transactional

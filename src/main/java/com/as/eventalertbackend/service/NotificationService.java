@@ -1,8 +1,8 @@
 package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.AppProperties;
-import com.as.eventalertbackend.data.model.Event;
-import com.as.eventalertbackend.data.model.Subscription;
+import com.as.eventalertbackend.dto.response.EventResponseDto;
+import com.as.eventalertbackend.dto.response.SubscriptionResponseDto;
 import com.google.firebase.messaging.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -36,14 +36,19 @@ public class NotificationService {
         }
     }
 
-    public void send(Event newEvent) {
-        log.info("Sending notifications for event: {}", newEvent.getId());
-        List<Subscription> subscriptions = subscriptionService.findByLocation(newEvent.getLatitude(), newEvent.getLongitude());
+    public void send(EventResponseDto newEventDto) {
+        if (!appProperties.getNotification().getEnabled()) {
+            return;
+        }
 
-        Map<String, String> messageMap = getMessageMap(newEvent);
+        log.info("Sending notifications for event: {}", newEventDto.getId());
+        List<SubscriptionResponseDto> subscriptions =
+                subscriptionService.findByLocation(newEventDto.getLatitude(), newEventDto.getLongitude(), newEventDto.getUser().getId());
 
-        String severity = newEvent.getSeverity().getName().toLowerCase();
-        String tag = newEvent.getTag().getName().toLowerCase();
+        Map<String, String> messageMap = getMessageMap(newEventDto);
+
+        String severity = newEventDto.getSeverity().getName().toLowerCase();
+        String tag = newEventDto.getTag().getName().toLowerCase();
 
         String title = "New " + severity + " " + tag + " reported!";
         String body = "Click the notification for more details.";
@@ -54,7 +59,6 @@ public class NotificationService {
                 .build();
 
         List<Message> messages = subscriptions.stream()
-                .filter(subscription -> subscription.getUser().getId().longValue() != newEvent.getUser().getId().longValue())
                 .map(subscription -> Message.builder()
                         .setToken(subscription.getDeviceToken())
                         .setNotification(notification)
@@ -82,16 +86,16 @@ public class NotificationService {
         }
     }
 
-    private Map<String, String> getMessageMap(Event newEvent) {
+    private Map<String, String> getMessageMap(EventResponseDto newEventDto) {
         Map<String, String> messageMap = new HashMap<>();
-        messageMap.put(appProperties.getNotification().getEventIdKey(), String.valueOf(newEvent.getId()));
-        messageMap.put(appProperties.getNotification().getEventDateTimeKey(), newEvent.getDateTime().toString());
-        messageMap.put(appProperties.getNotification().getEventTagNameKey(), newEvent.getTag().getName());
-        messageMap.put(appProperties.getNotification().getEventTagImagePathKey(), newEvent.getTag().getImagePath());
-        messageMap.put(appProperties.getNotification().getEventSeverityNameKey(), newEvent.getSeverity().getName());
-        messageMap.put(appProperties.getNotification().getEventSeverityColorKey(), String.valueOf(newEvent.getSeverity().getColor()));
-        messageMap.put(appProperties.getNotification().getEventLatitudeKey(), String.valueOf(newEvent.getLatitude()));
-        messageMap.put(appProperties.getNotification().getEventLongitudeKey(), String.valueOf(newEvent.getLongitude()));
+        messageMap.put(appProperties.getNotification().getEventIdKey(), String.valueOf(newEventDto.getId()));
+        messageMap.put(appProperties.getNotification().getEventDateTimeKey(), newEventDto.getDateTime().toString());
+        messageMap.put(appProperties.getNotification().getEventTagNameKey(), newEventDto.getTag().getName());
+        messageMap.put(appProperties.getNotification().getEventTagImagePathKey(), newEventDto.getTag().getImagePath());
+        messageMap.put(appProperties.getNotification().getEventSeverityNameKey(), newEventDto.getSeverity().getName());
+        messageMap.put(appProperties.getNotification().getEventSeverityColorKey(), String.valueOf(newEventDto.getSeverity().getColor()));
+        messageMap.put(appProperties.getNotification().getEventLatitudeKey(), String.valueOf(newEventDto.getLatitude()));
+        messageMap.put(appProperties.getNotification().getEventLongitudeKey(), String.valueOf(newEventDto.getLongitude()));
         return messageMap;
     }
 

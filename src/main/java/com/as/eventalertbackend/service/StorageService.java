@@ -1,5 +1,6 @@
 package com.as.eventalertbackend.service;
 
+import com.as.eventalertbackend.handler.ApiErrorMessage;
 import com.as.eventalertbackend.handler.exception.StorageFailException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -28,7 +29,7 @@ public class StorageService {
         try {
             return new UrlResource(path.toUri());
         } catch (MalformedURLException e) {
-            throw new StorageFailException("Could not retrieve the image");
+            throw new StorageFailException(ApiErrorMessage.IMAGE_RETRIEVE_FAIL);
         }
     }
 
@@ -44,7 +45,7 @@ public class StorageService {
         if (!directory.exists()) {
             boolean isCreated = directory.mkdir();
             if (!isCreated) {
-                throw new StorageFailException("Could not store the image");
+                throw new StorageFailException(ApiErrorMessage.IMAGE_STORE_FAIL);
             }
         }
 
@@ -54,7 +55,7 @@ public class StorageService {
             Files.write(path, bytes);
             log.info("Image successfully stored: {}", name);
         } catch (IOException e) {
-            throw new StorageFailException("Could not store the image");
+            throw new StorageFailException(ApiErrorMessage.IMAGE_STORE_FAIL);
         }
 
         return IMG_PATH + name;

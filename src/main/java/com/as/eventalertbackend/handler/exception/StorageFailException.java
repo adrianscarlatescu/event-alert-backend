@@ -1,9 +1,11 @@
 package com.as.eventalertbackend.handler.exception;
 
+import com.as.eventalertbackend.handler.ApiErrorMessage;
+
 public class StorageFailException extends AbstractApiException {
 
-    public StorageFailException(String message) {
-        super(message);
+    public StorageFailException(ApiErrorMessage apiErrorMessage) {
+        super(apiErrorMessage);
     }
 
 }

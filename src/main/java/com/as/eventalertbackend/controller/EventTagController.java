@@ -1,8 +1,7 @@
 package com.as.eventalertbackend.controller;
 
-import com.as.eventalertbackend.controller.request.EventTagRequestDto;
-import com.as.eventalertbackend.data.model.EventTag;
-import com.as.eventalertbackend.dto.EventTagDto;
+import com.as.eventalertbackend.dto.request.EventTagRequestDto;
+import com.as.eventalertbackend.dto.response.EventTagResponseDto;
 import com.as.eventalertbackend.service.EventTagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/tags")
@@ -26,31 +24,28 @@ public class EventTagController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EventTagDto>> getAll() {
-        List<EventTagDto> tags = tagService.findAll().stream()
-                .map(EventTag::toDto)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(tags);
+    public ResponseEntity<List<EventTagResponseDto>> getAll() {
+        return ResponseEntity.ok(tagService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EventTagDto> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(tagService.findById(id).toDto());
+    public ResponseEntity<EventTagResponseDto> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(tagService.findById(id));
     }
 
     @Secured({"ROLE_ADMIN"})
     @PostMapping
-    public ResponseEntity<EventTagDto> save(@Valid @RequestBody EventTagRequestDto tagRequestDto) {
+    public ResponseEntity<EventTagResponseDto> save(@Valid @RequestBody EventTagRequestDto tagRequestDto) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(tagService.save(tagRequestDto).toDto());
+                .body(tagService.save(tagRequestDto));
     }
 
     @Secured({"ROLE_ADMIN"})
     @PutMapping("/{id}")
-    public ResponseEntity<EventTagDto> updateById(@Valid @RequestBody EventTagRequestDto tagRequestDto,
-                                                  @PathVariable("id") Long id) {
-        return ResponseEntity.ok(tagService.updateById(tagRequestDto, id).toDto());
+    public ResponseEntity<EventTagResponseDto> updateById(@Valid @RequestBody EventTagRequestDto tagRequestDto,
+                                                          @PathVariable("id") Long id) {
+        return ResponseEntity.ok(tagService.updateById(tagRequestDto, id));
     }
 
     @Secured({"ROLE_ADMIN"})
