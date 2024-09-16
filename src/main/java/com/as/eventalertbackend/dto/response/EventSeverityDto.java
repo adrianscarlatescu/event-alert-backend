@@ -9,10 +9,10 @@ import java.io.Serializable;
 @Getter
 @Setter
 @NoArgsConstructor
-public class EventTagResponseDto implements Serializable {
+public class EventSeverityDto implements Serializable {
 
     private Long id;
     private String name;
-    private String imagePath;
+    private Integer color;
 
 }

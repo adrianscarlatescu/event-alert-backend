@@ -1,6 +1,6 @@
 package com.as.eventalertbackend.jpa.entity;
 
-import com.as.eventalertbackend.dto.response.EventTagResponseDto;
+import com.as.eventalertbackend.dto.response.EventTagDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,8 +30,8 @@ public class EventTag {
     @OneToMany(mappedBy = "tag")
     private Set<Event> events;
 
-    public EventTagResponseDto toDto() {
-        EventTagResponseDto dto = new EventTagResponseDto();
+    public EventTagDto toDto() {
+        EventTagDto dto = new EventTagDto();
         dto.setId(getId());
         dto.setName(getName());
         dto.setImagePath(getImagePath());

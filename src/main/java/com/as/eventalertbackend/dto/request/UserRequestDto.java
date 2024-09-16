@@ -1,7 +1,9 @@
 package com.as.eventalertbackend.dto.request;
 
+import com.as.eventalertbackend.AppConstants;
 import com.as.eventalertbackend.enums.Gender;
 import com.as.eventalertbackend.enums.Role;
+import com.as.eventalertbackend.handler.ApiErrorValidationMessage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,17 +23,17 @@ public class UserRequestDto {
 
     private String lastName;
 
-    @Past(message = "Invalid date of birth")
+    @Past(message = ApiErrorValidationMessage.INVALID_DATE_OF_BIRTH)
     private LocalDate dateOfBirth;
 
-    @Pattern(regexp="^\\+[0-9]{11}$", message = "The phone number does not match the expected format")
+    @Pattern(regexp = AppConstants.PHONE_NUMBER_PATTERN, message = ApiErrorValidationMessage.INVALID_PHONE_FORMAT)
     private String phoneNumber;
 
     private String imagePath;
 
     private Gender gender;
 
-    @NotEmpty(message = "At least one role is required")
+    @NotEmpty(message = ApiErrorValidationMessage.MIN_ROLE_REQUIRED)
     private Set<Role> roles;
 
 }

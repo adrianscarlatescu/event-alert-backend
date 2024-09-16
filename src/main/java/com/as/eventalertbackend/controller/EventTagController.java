@@ -1,7 +1,7 @@
 package com.as.eventalertbackend.controller;
 
 import com.as.eventalertbackend.dto.request.EventTagRequestDto;
-import com.as.eventalertbackend.dto.response.EventTagResponseDto;
+import com.as.eventalertbackend.dto.response.EventTagDto;
 import com.as.eventalertbackend.service.EventTagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,18 +24,18 @@ public class EventTagController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EventTagResponseDto>> getAll() {
+    public ResponseEntity<List<EventTagDto>> getAll() {
         return ResponseEntity.ok(tagService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EventTagResponseDto> getById(@PathVariable Long id) {
+    public ResponseEntity<EventTagDto> getById(@PathVariable Long id) {
         return ResponseEntity.ok(tagService.findById(id));
     }
 
     @Secured({"ROLE_ADMIN"})
     @PostMapping
-    public ResponseEntity<EventTagResponseDto> save(@Valid @RequestBody EventTagRequestDto tagRequestDto) {
+    public ResponseEntity<EventTagDto> save(@Valid @RequestBody EventTagRequestDto tagRequestDto) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(tagService.save(tagRequestDto));
@@ -43,8 +43,8 @@ public class EventTagController {
 
     @Secured({"ROLE_ADMIN"})
     @PutMapping("/{id}")
-    public ResponseEntity<EventTagResponseDto> updateById(@Valid @RequestBody EventTagRequestDto tagRequestDto,
-                                                          @PathVariable("id") Long id) {
+    public ResponseEntity<EventTagDto> updateById(@Valid @RequestBody EventTagRequestDto tagRequestDto,
+                                                  @PathVariable("id") Long id) {
         return ResponseEntity.ok(tagService.updateById(tagRequestDto, id));
     }
 

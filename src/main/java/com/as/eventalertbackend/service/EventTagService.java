@@ -1,7 +1,7 @@
 package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.dto.request.EventTagRequestDto;
-import com.as.eventalertbackend.dto.response.EventTagResponseDto;
+import com.as.eventalertbackend.dto.response.EventTagDto;
 import com.as.eventalertbackend.handler.ApiErrorMessage;
 import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
 import com.as.eventalertbackend.jpa.entity.EventTag;
@@ -22,19 +22,19 @@ public class EventTagService {
         this.tagRepository = tagRepository;
     }
 
-    public List<EventTagResponseDto> findAll() {
+    public List<EventTagDto> findAll() {
         return tagRepository.findAll().stream()
                 .map(EventTag::toDto)
                 .collect(Collectors.toList());
     }
 
-    public EventTagResponseDto findById(Long id) {
+    public EventTagDto findById(Long id) {
         return tagRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.TAG_NOT_FOUND))
                 .toDto();
     }
 
-    public EventTagResponseDto updateById(EventTagRequestDto tagRequestDto, Long id) {
+    public EventTagDto updateById(EventTagRequestDto tagRequestDto, Long id) {
         EventTag tag = tagRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.TAG_NOT_FOUND));
 
@@ -44,7 +44,7 @@ public class EventTagService {
         return tagRepository.save(tag).toDto();
     }
 
-    public EventTagResponseDto save(EventTagRequestDto tagRequestDto) {
+    public EventTagDto save(EventTagRequestDto tagRequestDto) {
         EventTag tag = new EventTag();
 
         tag.setName(tagRequestDto.getName());

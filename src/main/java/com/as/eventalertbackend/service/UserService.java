@@ -1,7 +1,7 @@
 package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.dto.request.UserRequestDto;
-import com.as.eventalertbackend.dto.response.UserResponseDto;
+import com.as.eventalertbackend.dto.response.UserDto;
 import com.as.eventalertbackend.enums.Role;
 import com.as.eventalertbackend.handler.ApiErrorMessage;
 import com.as.eventalertbackend.handler.exception.InvalidActionException;
@@ -39,19 +39,19 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException(username));
     }
 
-    public List<UserResponseDto> findAll() {
+    public List<UserDto> findAll() {
         return userRepository.findAll().stream()
                 .map(User::toDto)
                 .collect(Collectors.toList());
     }
 
-    public UserResponseDto findById(Long id) {
+    public UserDto findById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.USER_NOT_FOUND))
                 .toDto();
     }
 
-    public UserResponseDto updateById(UserRequestDto userRequestDto, Long id) {
+    public UserDto updateById(UserRequestDto userRequestDto, Long id) {
         if (userRequestDto.getRoles().stream()
                 .noneMatch(role -> role == Role.ROLE_USER)) {
             throw new InvalidActionException(ApiErrorMessage.DEFAULT_ROLE_MANDATORY);

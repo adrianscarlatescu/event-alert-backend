@@ -11,7 +11,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-public class EventResponseDto implements Serializable {
+public class EventDto implements Serializable {
 
     private Long id;
     private LocalDateTime dateTime;
@@ -19,10 +19,10 @@ public class EventResponseDto implements Serializable {
     private Double longitude;
     private String imagePath;
     private String description;
-    private Set<EventCommentResponseDto> eventComments;
-    private EventSeverityResponseDto severity;
-    private EventTagResponseDto tag;
-    private UserResponseDto user;
+    private Set<EventCommentDto> eventComments;
+    private EventSeverityDto severity;
+    private EventTagDto tag;
+    private UserDto user;
     private double distance;
 
 }

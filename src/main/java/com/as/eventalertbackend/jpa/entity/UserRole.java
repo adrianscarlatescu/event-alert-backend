@@ -1,6 +1,6 @@
 package com.as.eventalertbackend.jpa.entity;
 
-import com.as.eventalertbackend.dto.response.UserRoleResponseDto;
+import com.as.eventalertbackend.dto.response.UserRoleDto;
 import com.as.eventalertbackend.enums.Role;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,8 +26,8 @@ public class UserRole {
     @ManyToMany(mappedBy = "userRoles")
     private Set<User> users;
 
-    public UserRoleResponseDto toDto() {
-        UserRoleResponseDto dto = new UserRoleResponseDto();
+    public UserRoleDto toDto() {
+        UserRoleDto dto = new UserRoleDto();
         dto.setId(getId());
         dto.setName(getName());
         return dto;

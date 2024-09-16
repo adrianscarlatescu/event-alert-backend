@@ -1,7 +1,7 @@
 package com.as.eventalertbackend.controller;
 
 import com.as.eventalertbackend.dto.request.UserRequestDto;
-import com.as.eventalertbackend.dto.response.UserResponseDto;
+import com.as.eventalertbackend.dto.response.UserDto;
 import com.as.eventalertbackend.jpa.entity.User;
 import com.as.eventalertbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,19 +24,19 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<UserResponseDto>> getAll() {
+    public ResponseEntity<List<UserDto>> getAll() {
         return ResponseEntity.ok(userService.findAll());
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<UserResponseDto> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<UserDto> getById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(userService.findById(id));
     }
 
     @Secured({"ROLE_ADMIN"})
     @PutMapping("/users/{id}")
-    public ResponseEntity<UserResponseDto> updateById(@Valid @RequestBody UserRequestDto userRequestDto,
-                                                      @PathVariable("id") Long id) {
+    public ResponseEntity<UserDto> updateById(@Valid @RequestBody UserRequestDto userRequestDto,
+                                              @PathVariable("id") Long id) {
         return ResponseEntity.ok(userService.updateById(userRequestDto, id));
     }
 
@@ -48,17 +48,17 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<UserResponseDto> getProfile() {
-        Long principalId =
-                ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
-        return ResponseEntity.ok(userService.findById(principalId));
+    public ResponseEntity<UserDto> getProfile() {
+        return ResponseEntity.ok(userService.findById(getPrincipalId()));
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<UserResponseDto> updateProfile(@Valid @RequestBody UserRequestDto userRequestDto) {
-        Long principalId =
-                ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
-        return ResponseEntity.ok(userService.updateById(userRequestDto, principalId));
+    public ResponseEntity<UserDto> updateProfile(@Valid @RequestBody UserRequestDto userRequestDto) {
+        return ResponseEntity.ok(userService.updateById(userRequestDto, getPrincipalId()));
+    }
+
+    private Long getPrincipalId() {
+        return ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
     }
 
 }

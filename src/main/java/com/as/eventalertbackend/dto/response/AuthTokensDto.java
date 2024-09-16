@@ -5,15 +5,15 @@ import lombok.Getter;
 import java.io.Serializable;
 
 @Getter
-public class AuthTokensResponseDto implements Serializable {
+public class AuthTokensDto implements Serializable {
 
     private String accessToken;
     private String refreshToken;
 
-    private AuthTokensResponseDto() {
+    private AuthTokensDto() {
     }
 
-    public AuthTokensResponseDto(String accessToken, String refreshToken) {
+    public AuthTokensDto(String accessToken, String refreshToken) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }

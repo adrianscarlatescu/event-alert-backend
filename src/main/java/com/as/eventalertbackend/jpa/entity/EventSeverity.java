@@ -1,6 +1,6 @@
 package com.as.eventalertbackend.jpa.entity;
 
-import com.as.eventalertbackend.dto.response.EventSeverityResponseDto;
+import com.as.eventalertbackend.dto.response.EventSeverityDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,8 +28,8 @@ public class EventSeverity {
     @OneToMany(mappedBy = "severity")
     private Set<Event> events;
 
-    public EventSeverityResponseDto toDto() {
-        EventSeverityResponseDto dto = new EventSeverityResponseDto();
+    public EventSeverityDto toDto() {
+        EventSeverityDto dto = new EventSeverityDto();
         dto.setId(getId());
         dto.setName(getName());
         dto.setColor(getColor());

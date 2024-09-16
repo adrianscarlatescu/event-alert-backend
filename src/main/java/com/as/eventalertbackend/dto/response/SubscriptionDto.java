@@ -7,10 +7,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class SubscriptionResponseDto {
+public class SubscriptionDto {
 
     private Long id;
-    private UserResponseDto user;
+    private UserDto user;
     private Double latitude;
     private Double longitude;
     private Integer radius;

@@ -1,6 +1,7 @@
 package com.as.eventalertbackend.dto.request;
 
 import com.as.eventalertbackend.AppConstants;
+import com.as.eventalertbackend.handler.ApiErrorValidationMessage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,21 +14,20 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class SubscriptionRequestDto implements Serializable {
 
-    @NotNull(message = "The latitude is mandatory")
-    @PositiveOrZero(message = "The latitude must be positive or 0")
+    @NotNull(message = ApiErrorValidationMessage.MANDATORY_LATITUDE)
+    @PositiveOrZero(message = ApiErrorValidationMessage.POSITIVE_OR_ZERO_LATITUDE)
     private Double latitude;
 
-    @NotNull(message = "The longitude is mandatory")
-    @PositiveOrZero(message = "The longitude must be positive or 0")
+    @NotNull(message = ApiErrorValidationMessage.MANDATORY_LONGITUDE)
+    @PositiveOrZero(message = ApiErrorValidationMessage.POSITIVE_OR_ZERO_LONGITUDE)
     private Double longitude;
 
-    @Min(value = AppConstants.MIN_RADIUS, message = "The radius must be greater than " + AppConstants.MIN_RADIUS + " km")
-    @Max(value = AppConstants.MAX_RADIUS, message = "The radius must be less than " + AppConstants.MAX_RADIUS + " km")
-    @NotNull(message = "The radius is mandatory")
-    @Positive(message = "The radius must be positive")
+    @Min(value = AppConstants.MIN_RADIUS, message = ApiErrorValidationMessage.MIN_RADIUS)
+    @Max(value = AppConstants.MAX_RADIUS, message = ApiErrorValidationMessage.MAX_RADIUS)
+    @NotNull(message = ApiErrorValidationMessage.MANDATORY_RADIUS)
     private Integer radius;
 
-    @NotBlank
+    @NotBlank(message = ApiErrorValidationMessage.MANDATORY_DEVICE_TOKEN)
     private String deviceToken;
 
 }

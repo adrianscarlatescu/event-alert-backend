@@ -1,6 +1,6 @@
 package com.as.eventalertbackend.jpa.entity;
 
-import com.as.eventalertbackend.dto.response.EventResponseDto;
+import com.as.eventalertbackend.dto.response.EventDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -56,8 +56,8 @@ public class Event {
                 ", distance: " + distance + "}";
     }
 
-    public EventResponseDto toDto() {
-        EventResponseDto dto = new EventResponseDto();
+    public EventDto toDto() {
+        EventDto dto = new EventDto();
         dto.setId(getId());
         dto.setDateTime(getDateTime());
         dto.setLatitude(getLatitude());

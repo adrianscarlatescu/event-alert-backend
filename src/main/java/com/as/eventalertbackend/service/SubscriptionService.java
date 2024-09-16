@@ -1,7 +1,7 @@
 package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.dto.request.SubscriptionRequestDto;
-import com.as.eventalertbackend.dto.response.SubscriptionResponseDto;
+import com.as.eventalertbackend.dto.response.SubscriptionDto;
 import com.as.eventalertbackend.handler.ApiErrorMessage;
 import com.as.eventalertbackend.handler.exception.InvalidActionException;
 import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
@@ -12,9 +12,6 @@ import com.as.eventalertbackend.jpa.reopsitory.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class SubscriptionService {
@@ -29,13 +26,13 @@ public class SubscriptionService {
         this.userRepository = userRepository;
     }
 
-    public SubscriptionResponseDto find(Long userId, String deviceToken) {
+    public SubscriptionDto find(Long userId, String deviceToken) {
         return subscriptionRepository.findByUserIdAndDeviceToken(userId, deviceToken)
                 .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.SUBSCRIPTION_NOT_FOUND))
                 .toDto();
     }
 
-    public SubscriptionResponseDto subscribe(Long userId, SubscriptionRequestDto subscriptionRequestDto) {
+    public SubscriptionDto subscribe(Long userId, SubscriptionRequestDto subscriptionRequestDto) {
         if (subscriptionRepository.existsByUserIdAndDeviceToken(userId, subscriptionRequestDto.getDeviceToken())) {
             throw new InvalidActionException(ApiErrorMessage.ALREADY_SUBSCRIBER);
         }
@@ -52,7 +49,7 @@ public class SubscriptionService {
         return subscriptionRepository.save(subscription).toDto();
     }
 
-    public SubscriptionResponseDto update(Long userId, SubscriptionRequestDto subscriptionRequestDto) {
+    public SubscriptionDto update(Long userId, SubscriptionRequestDto subscriptionRequestDto) {
         Subscription subscription = subscriptionRepository.findByUserIdAndDeviceToken(userId, subscriptionRequestDto.getDeviceToken())
                 .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.SUBSCRIPTION_NOT_FOUND));
         subscription.setLatitude(subscriptionRequestDto.getLatitude());
@@ -68,12 +65,6 @@ public class SubscriptionService {
         } else {
             throw new RecordNotFoundException(ApiErrorMessage.SUBSCRIPTION_NOT_FOUND);
         }
-    }
-
-    public List<SubscriptionResponseDto> findByLocation(Double eventLatitude, Double eventLongitude, Long userIdToExclude) {
-        return subscriptionRepository.findByLocation(eventLatitude, eventLongitude, userIdToExclude).stream()
-                .map(Subscription::toDto)
-                .collect(Collectors.toList());
     }
 
 }

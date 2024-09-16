@@ -1,7 +1,7 @@
 package com.as.eventalertbackend.controller;
 
 import com.as.eventalertbackend.dto.request.SubscriptionRequestDto;
-import com.as.eventalertbackend.dto.response.SubscriptionResponseDto;
+import com.as.eventalertbackend.dto.response.SubscriptionDto;
 import com.as.eventalertbackend.jpa.entity.User;
 import com.as.eventalertbackend.service.SubscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,17 +23,17 @@ public class SubscriptionController {
     }
 
     @GetMapping("/{deviceToken}")
-    public ResponseEntity<SubscriptionResponseDto> find(@PathVariable("deviceToken") String deviceToken) {
+    public ResponseEntity<SubscriptionDto> find(@PathVariable("deviceToken") String deviceToken) {
         return ResponseEntity.ok(subscriptionService.find(getPrincipalId(), deviceToken));
     }
 
     @PostMapping
-    public ResponseEntity<SubscriptionResponseDto> subscribe(@Valid @RequestBody SubscriptionRequestDto subscriptionRequestDto) {
+    public ResponseEntity<SubscriptionDto> subscribe(@Valid @RequestBody SubscriptionRequestDto subscriptionRequestDto) {
         return ResponseEntity.ok(subscriptionService.subscribe(getPrincipalId(), subscriptionRequestDto));
     }
 
     @PutMapping
-    public ResponseEntity<SubscriptionResponseDto> update(@Valid @RequestBody SubscriptionRequestDto subscriptionRequestDto) {
+    public ResponseEntity<SubscriptionDto> update(@Valid @RequestBody SubscriptionRequestDto subscriptionRequestDto) {
         return ResponseEntity.ok(subscriptionService.update(getPrincipalId(), subscriptionRequestDto));
     }
 

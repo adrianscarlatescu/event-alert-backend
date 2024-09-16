@@ -1,7 +1,7 @@
 package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.dto.request.EventCommentRequestDto;
-import com.as.eventalertbackend.dto.response.EventCommentResponseDto;
+import com.as.eventalertbackend.dto.response.EventCommentDto;
 import com.as.eventalertbackend.handler.ApiErrorMessage;
 import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
 import com.as.eventalertbackend.jpa.entity.Event;
@@ -32,23 +32,23 @@ public class EventCommentService {
         this.eventRepository = eventRepository;
     }
 
-    public EventCommentResponseDto findById(Long id) {
+    public EventCommentDto findById(Long id) {
         return commentRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.COMMENT_NOT_FOUND))
                 .toDto();
     }
 
-    public List<EventCommentResponseDto> findAllByEventId(Long id) {
+    public List<EventCommentDto> findAllByEventId(Long id) {
         return commentRepository.findByEventIdOrderByDateTimeDesc(id).stream()
                 .map(EventComment::toDto)
                 .collect(Collectors.toList());
     }
 
-    public EventCommentResponseDto save(EventCommentRequestDto commentRequestDto) {
+    public EventCommentDto save(EventCommentRequestDto commentRequestDto) {
         return createOrUpdate(new EventComment(), commentRequestDto).toDto();
     }
 
-    public EventCommentResponseDto updateById(EventCommentRequestDto commentRequestDto, Long id) {
+    public EventCommentDto updateById(EventCommentRequestDto commentRequestDto, Long id) {
         EventComment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.COMMENT_NOT_FOUND));
         return createOrUpdate(comment, commentRequestDto).toDto();

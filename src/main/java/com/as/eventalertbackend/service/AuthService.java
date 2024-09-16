@@ -2,8 +2,8 @@ package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.dto.request.AuthLoginRequestDto;
 import com.as.eventalertbackend.dto.request.AuthRegisterRequestDto;
-import com.as.eventalertbackend.dto.response.AuthTokensResponseDto;
-import com.as.eventalertbackend.dto.response.UserResponseDto;
+import com.as.eventalertbackend.dto.response.AuthTokensDto;
+import com.as.eventalertbackend.dto.response.UserDto;
 import com.as.eventalertbackend.enums.Role;
 import com.as.eventalertbackend.handler.ApiErrorMessage;
 import com.as.eventalertbackend.handler.exception.InvalidActionException;
@@ -50,7 +50,7 @@ public class AuthService {
         this.jwtManager = jwtManager;
     }
 
-    public UserResponseDto register(AuthRegisterRequestDto registerRequestDto) {
+    public UserDto register(AuthRegisterRequestDto registerRequestDto) {
         boolean emailExists = userRepository.existsByEmail(registerRequestDto.getEmail());
         if (emailExists) {
             throw new InvalidActionException(ApiErrorMessage.ACCOUNT_ALREADY_CREATED);
@@ -71,7 +71,7 @@ public class AuthService {
     }
 
     @Transactional
-    public AuthTokensResponseDto login(AuthLoginRequestDto loginDto) {
+    public AuthTokensDto login(AuthLoginRequestDto loginDto) {
         String email = loginDto.getEmail();
         String password = loginDto.getPassword();
 
@@ -83,20 +83,17 @@ public class AuthService {
         String accessToken = jwtManager.generateAccessToken(email);
         String refreshToken = jwtManager.generateRefreshToken(email);
 
-        return new AuthTokensResponseDto(accessToken, refreshToken);
+        return new AuthTokensDto(accessToken, refreshToken);
     }
 
-    public AuthTokensResponseDto refreshToken(HttpServletRequest request) {
+    public AuthTokensDto refreshToken(HttpServletRequest request) {
         String refreshToken = jwtManager.parseJwt(request);
-        if (refreshToken == null || !jwtManager.validateJwtToken(refreshToken) || !jwtManager.isRefreshToken(refreshToken)) {
-            throw new InvalidActionException(ApiErrorMessage.INVALID_REFRESH_TOKEN);
-        }
 
         String email = jwtManager.getEmailFromJwtToken(refreshToken);
         String accessToken = jwtManager.generateAccessToken(email);
 
-        log.info("New access token generated for user with email: {}, access token: {}", email, accessToken);
-        return new AuthTokensResponseDto(accessToken, refreshToken);
+        log.info("New access token generated for user with email: {}", email);
+        return new AuthTokensDto(accessToken, refreshToken);
     }
 
     @Transactional

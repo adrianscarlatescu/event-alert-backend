@@ -3,8 +3,8 @@ package com.as.eventalertbackend.service;
 import com.as.eventalertbackend.AppConstants;
 import com.as.eventalertbackend.dto.request.EventFilterRequestDto;
 import com.as.eventalertbackend.dto.request.EventRequestDto;
-import com.as.eventalertbackend.dto.response.EventResponseDto;
-import com.as.eventalertbackend.dto.response.PageResponseDto;
+import com.as.eventalertbackend.dto.response.EventDto;
+import com.as.eventalertbackend.dto.response.PageDto;
 import com.as.eventalertbackend.enums.Order;
 import com.as.eventalertbackend.handler.ApiErrorMessage;
 import com.as.eventalertbackend.handler.exception.InvalidActionException;
@@ -55,20 +55,20 @@ public class EventService {
         this.notificationService = notificationService;
     }
 
-    public EventResponseDto findById(Long id) {
+    public EventDto findById(Long id) {
         return eventRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.EVENT_NOT_FOUND))
                 .toDto();
     }
 
-    public List<EventResponseDto> findAllByUserId(Long userId) {
+    public List<EventDto> findAllByUserId(Long userId) {
         return eventRepository.findByUserIdOrderByDateTimeDesc(userId).stream()
                 .map(Event::toDto)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public PageResponseDto<EventResponseDto> findByFilter(EventFilterRequestDto filterRequestDto, int pageSize, int pageNumber, Order order) {
+    public PageDto<EventDto> findByFilter(EventFilterRequestDto filterRequestDto, int pageSize, int pageNumber, Order order) {
         if (pageSize > AppConstants.MAX_PAGES) {
             throw new InvalidActionException(ApiErrorMessage.FILTER_MAX_PAGE_SIZE);
         }
@@ -137,12 +137,12 @@ public class EventService {
                         .ifPresent(distanceProjection -> event.setDistance(distanceProjection.getDistance()))
         );
 
-        log.info("Retrieved pages: {}, elements: {}, events: {}",
+        log.info("Retrieved total pages: {}, total elements: {}, events: {}",
                 eventsPage.getTotalPages(),
                 eventsPage.getTotalElements(),
                 eventsPage.getContent().stream().mapToLong(Event::getId).toArray());
 
-        return new PageResponseDto<>(
+        return new PageDto<>(
                 eventsPage.getTotalPages(),
                 eventsPage.getTotalElements(),
                 eventsPage.getContent().stream()
@@ -151,13 +151,13 @@ public class EventService {
         );
     }
 
-    public EventResponseDto save(EventRequestDto eventRequestDto) {
-        EventResponseDto newEventDto = createOrUpdate(new Event(), eventRequestDto).toDto();
-        notificationService.send(newEventDto);
+    public EventDto save(EventRequestDto eventRequestDto) {
+        EventDto newEventDto = createOrUpdate(new Event(), eventRequestDto).toDto();
+        notificationService.send(newEventDto.getId());
         return newEventDto;
     }
 
-    public EventResponseDto updateById(EventRequestDto eventRequestDto, Long id) {
+    public EventDto updateById(EventRequestDto eventRequestDto, Long id) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.EVENT_NOT_FOUND));
         return createOrUpdate(event, eventRequestDto).toDto();
@@ -180,10 +180,10 @@ public class EventService {
                 .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.SEVERITY_NOT_FOUND));
 
         if (isNullOrEmpty(user.getFirstName())) {
-            throw new InvalidActionException(ApiErrorMessage.USER_FIRST_NAME_MANDATORY);
+            throw new InvalidActionException(ApiErrorMessage.PROFILE_FIRST_NAME_MANDATORY);
         }
         if (isNullOrEmpty(user.getLastName())) {
-            throw new InvalidActionException(ApiErrorMessage.USER_FIRST_NAME_MANDATORY);
+            throw new InvalidActionException(ApiErrorMessage.PROFILE_LAST_NAME_MANDATORY);
         }
 
         String description = eventRequestDto.getDescription() == null ?

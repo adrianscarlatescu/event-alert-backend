@@ -1,6 +1,6 @@
 package com.as.eventalertbackend.jpa.entity;
 
-import com.as.eventalertbackend.dto.response.SubscriptionResponseDto;
+import com.as.eventalertbackend.dto.response.SubscriptionDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,8 +27,8 @@ public class Subscription {
     private Integer radius;
     private String deviceToken;
 
-    public SubscriptionResponseDto toDto() {
-        SubscriptionResponseDto dto = new SubscriptionResponseDto();
+    public SubscriptionDto toDto() {
+        SubscriptionDto dto = new SubscriptionDto();
         dto.setId(getId());
         dto.setUser(getUser() == null ? null : getUser().toDto());
         dto.setLatitude(getLatitude());

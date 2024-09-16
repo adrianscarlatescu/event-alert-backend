@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PageResponseDto<T> implements Serializable {
+public class PageDto<T> implements Serializable {
 
     private Integer totalPages;
     private Long totalElements;

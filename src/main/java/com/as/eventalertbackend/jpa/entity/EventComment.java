@@ -1,6 +1,6 @@
 package com.as.eventalertbackend.jpa.entity;
 
-import com.as.eventalertbackend.dto.response.EventCommentResponseDto;
+import com.as.eventalertbackend.dto.response.EventCommentDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,8 +33,8 @@ public class EventComment {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public EventCommentResponseDto toDto() {
-        EventCommentResponseDto dto = new EventCommentResponseDto();
+    public EventCommentDto toDto() {
+        EventCommentDto dto = new EventCommentDto();
         dto.setId(getId());
         dto.setDateTime(getDateTime());
         dto.setComment(getComment());

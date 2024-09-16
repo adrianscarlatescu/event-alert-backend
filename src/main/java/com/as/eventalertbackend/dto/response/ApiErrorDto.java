@@ -3,15 +3,17 @@ package com.as.eventalertbackend.dto.response;
 import lombok.Getter;
 
 @Getter
-public class ApiErrorResponseDto {
+public class ApiErrorDto {
+
     private String code;
     private String message;
 
-    private ApiErrorResponseDto() {
+    private ApiErrorDto() {
     }
 
-    public ApiErrorResponseDto(String code, String message) {
+    public ApiErrorDto(String code, String message) {
         this.code = code;
         this.message = message;
     }
+
 }

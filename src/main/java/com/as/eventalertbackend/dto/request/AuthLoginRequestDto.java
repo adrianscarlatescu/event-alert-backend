@@ -1,5 +1,6 @@
 package com.as.eventalertbackend.dto.request;
 
+import com.as.eventalertbackend.handler.ApiErrorValidationMessage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,11 +14,11 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class AuthLoginRequestDto implements Serializable {
 
-    @Email(message = "Invalid email")
-    @NotBlank(message = "The email is mandatory")
+    @Email(message = ApiErrorValidationMessage.INVALID_EMAIL)
+    @NotBlank(message = ApiErrorValidationMessage.MANDATORY_EMAIL)
     private String email;
 
-    @NotBlank(message = "The password is mandatory")
+    @NotBlank(message = ApiErrorValidationMessage.MANDATORY_PASSWORD)
     private String password;
 
 }

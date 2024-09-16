@@ -1,8 +1,12 @@
 package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.AppProperties;
-import com.as.eventalertbackend.dto.response.EventResponseDto;
-import com.as.eventalertbackend.dto.response.SubscriptionResponseDto;
+import com.as.eventalertbackend.handler.ApiErrorMessage;
+import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
+import com.as.eventalertbackend.jpa.entity.Event;
+import com.as.eventalertbackend.jpa.entity.Subscription;
+import com.as.eventalertbackend.jpa.reopsitory.EventRepository;
+import com.as.eventalertbackend.jpa.reopsitory.SubscriptionRepository;
 import com.google.firebase.messaging.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -18,17 +22,22 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class NotificationService {
-    
+
     private final AppProperties appProperties;
-    private final SubscriptionService subscriptionService;
+
+    private final SubscriptionRepository subscriptionRepository;
+    private final EventRepository eventRepository;
+
     private FirebaseMessaging firebaseMessaging;
 
     @Autowired
     public NotificationService(AppProperties appProperties,
-                               SubscriptionService subscriptionService,
+                               SubscriptionRepository subscriptionRepository,
+                               EventRepository eventRepository,
                                ApplicationContext applicationContext) {
         this.appProperties = appProperties;
-        this.subscriptionService = subscriptionService;
+        this.subscriptionRepository = subscriptionRepository;
+        this.eventRepository = eventRepository;
         try {
             this.firebaseMessaging = applicationContext.getBean(FirebaseMessaging.class);
         } catch (NoSuchBeanDefinitionException e) {
@@ -36,19 +45,25 @@ public class NotificationService {
         }
     }
 
-    public void send(EventResponseDto newEventDto) {
+    public void send(Long eventId) {
         if (!appProperties.getNotification().getEnabled()) {
             return;
         }
 
-        log.info("Sending notifications for event: {}", newEventDto.getId());
-        List<SubscriptionResponseDto> subscriptions =
-                subscriptionService.findByLocation(newEventDto.getLatitude(), newEventDto.getLongitude(), newEventDto.getUser().getId());
+        Event event = eventRepository.findById(eventId)
+                        .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.EVENT_NOT_FOUND));
 
-        Map<String, String> messageMap = getMessageMap(newEventDto);
+        log.info("Sending notifications for event: {}", event.getId());
+        List<Subscription> subscriptions =
+                subscriptionRepository.findByLocation(
+                        event.getLatitude(),
+                        event.getLongitude(),
+                        event.getUser().getId());
 
-        String severity = newEventDto.getSeverity().getName().toLowerCase();
-        String tag = newEventDto.getTag().getName().toLowerCase();
+        Map<String, String> messageMap = getMessageMap(event);
+
+        String severity = event.getSeverity().getName().toLowerCase();
+        String tag = event.getTag().getName().toLowerCase();
 
         String title = "New " + severity + " " + tag + " reported!";
         String body = "Click the notification for more details.";
@@ -86,16 +101,16 @@ public class NotificationService {
         }
     }
 
-    private Map<String, String> getMessageMap(EventResponseDto newEventDto) {
+    private Map<String, String> getMessageMap(Event event) {
         Map<String, String> messageMap = new HashMap<>();
-        messageMap.put(appProperties.getNotification().getEventIdKey(), String.valueOf(newEventDto.getId()));
-        messageMap.put(appProperties.getNotification().getEventDateTimeKey(), newEventDto.getDateTime().toString());
-        messageMap.put(appProperties.getNotification().getEventTagNameKey(), newEventDto.getTag().getName());
-        messageMap.put(appProperties.getNotification().getEventTagImagePathKey(), newEventDto.getTag().getImagePath());
-        messageMap.put(appProperties.getNotification().getEventSeverityNameKey(), newEventDto.getSeverity().getName());
-        messageMap.put(appProperties.getNotification().getEventSeverityColorKey(), String.valueOf(newEventDto.getSeverity().getColor()));
-        messageMap.put(appProperties.getNotification().getEventLatitudeKey(), String.valueOf(newEventDto.getLatitude()));
-        messageMap.put(appProperties.getNotification().getEventLongitudeKey(), String.valueOf(newEventDto.getLongitude()));
+        messageMap.put(appProperties.getNotification().getEventIdKey(), String.valueOf(event.getId()));
+        messageMap.put(appProperties.getNotification().getEventDateTimeKey(), event.getDateTime().toString());
+        messageMap.put(appProperties.getNotification().getEventTagNameKey(), event.getTag().getName());
+        messageMap.put(appProperties.getNotification().getEventTagImagePathKey(), event.getTag().getImagePath());
+        messageMap.put(appProperties.getNotification().getEventSeverityNameKey(), event.getSeverity().getName());
+        messageMap.put(appProperties.getNotification().getEventSeverityColorKey(), String.valueOf(event.getSeverity().getColor()));
+        messageMap.put(appProperties.getNotification().getEventLatitudeKey(), String.valueOf(event.getLatitude()));
+        messageMap.put(appProperties.getNotification().getEventLongitudeKey(), String.valueOf(event.getLongitude()));
         return messageMap;
     }
 

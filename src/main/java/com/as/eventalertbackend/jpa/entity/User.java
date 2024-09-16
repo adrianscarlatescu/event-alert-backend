@@ -1,6 +1,6 @@
 package com.as.eventalertbackend.jpa.entity;
 
-import com.as.eventalertbackend.dto.response.UserResponseDto;
+import com.as.eventalertbackend.dto.response.UserDto;
 import com.as.eventalertbackend.enums.Gender;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -101,8 +101,8 @@ public class User implements UserDetails {
         return true;
     }
 
-    public UserResponseDto toDto() {
-        UserResponseDto dto = new UserResponseDto();
+    public UserDto toDto() {
+        UserDto dto = new UserDto();
         dto.setId(getId());
         dto.setJoinDateTime(getJoinDateTime());
         dto.setEmail(getEmail());

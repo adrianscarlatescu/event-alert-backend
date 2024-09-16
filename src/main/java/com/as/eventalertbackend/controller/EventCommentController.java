@@ -1,7 +1,7 @@
 package com.as.eventalertbackend.controller;
 
 import com.as.eventalertbackend.dto.request.EventCommentRequestDto;
-import com.as.eventalertbackend.dto.response.EventCommentResponseDto;
+import com.as.eventalertbackend.dto.response.EventCommentDto;
 import com.as.eventalertbackend.service.EventCommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,12 +24,12 @@ public class EventCommentController {
     }
 
     @GetMapping("/{eventId}")
-    public ResponseEntity<List<EventCommentResponseDto>> getAllByEventId(@PathVariable("eventId") Long id) {
+    public ResponseEntity<List<EventCommentDto>> getAllByEventId(@PathVariable("eventId") Long id) {
         return ResponseEntity.ok(commentService.findAllByEventId(id));
     }
 
     @PostMapping
-    public ResponseEntity<EventCommentResponseDto> save(@Valid @RequestBody EventCommentRequestDto commentRequestDto) {
+    public ResponseEntity<EventCommentDto> save(@Valid @RequestBody EventCommentRequestDto commentRequestDto) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(commentService.save(commentRequestDto));
@@ -37,8 +37,8 @@ public class EventCommentController {
 
     @Secured({"ROLE_ADMIN"})
     @PutMapping("/{id}")
-    public ResponseEntity<EventCommentResponseDto> updateById(@Valid @RequestBody EventCommentRequestDto commentRequestDto,
-                                                              @PathVariable("id") Long id) {
+    public ResponseEntity<EventCommentDto> updateById(@Valid @RequestBody EventCommentRequestDto commentRequestDto,
+                                                      @PathVariable("id") Long id) {
         return ResponseEntity.ok(commentService.updateById(commentRequestDto, id));
     }
 

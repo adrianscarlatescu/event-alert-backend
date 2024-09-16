@@ -75,7 +75,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, appProperties.getSecurity().getAuthRegisterUrl()).permitAll()
                 .antMatchers(HttpMethod.POST, appProperties.getSecurity().getAuthLoginUrl()).permitAll()
-                .antMatchers(HttpMethod.GET, appProperties.getSecurity().getRefreshTokenId()).permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

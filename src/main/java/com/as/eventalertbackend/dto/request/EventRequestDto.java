@@ -1,12 +1,12 @@
 package com.as.eventalertbackend.dto.request;
 
+import com.as.eventalertbackend.handler.ApiErrorValidationMessage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.io.Serializable;
 
@@ -15,24 +15,24 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class EventRequestDto implements Serializable {
 
-    @NotNull(message = "The latitude is mandatory")
-    @PositiveOrZero(message = "The latitude must be positive or 0")
+    @NotNull(message = ApiErrorValidationMessage.MANDATORY_LATITUDE)
+    @PositiveOrZero(message = ApiErrorValidationMessage.POSITIVE_OR_ZERO_LATITUDE)
     private Double latitude;
 
-    @NotNull(message = "The longitude is mandatory")
-    @PositiveOrZero(message = "The longitude must be positive or 0")
+    @NotNull(message = ApiErrorValidationMessage.MANDATORY_LONGITUDE)
+    @PositiveOrZero(message = ApiErrorValidationMessage.POSITIVE_OR_ZERO_LONGITUDE)
     private Double longitude;
 
-    @NotBlank(message = "The image is mandatory")
+    @NotBlank(message = ApiErrorValidationMessage.MANDATORY_IMAGE_PATH)
     private String imagePath;
 
-    @NotNull(message = "The severity is mandatory")
+    @NotNull(message = ApiErrorValidationMessage.MANDATORY_SEVERITY)
     private Long severityId;
 
-    @NotNull(message = "The tag is mandatory")
+    @NotNull(message = ApiErrorValidationMessage.MANDATORY_TAG)
     private Long tagId;
 
-    @NotNull(message = "The user is mandatory")
+    @NotNull(message = ApiErrorValidationMessage.MANDATORY_USER)
     private Long userId;
 
     private String description;

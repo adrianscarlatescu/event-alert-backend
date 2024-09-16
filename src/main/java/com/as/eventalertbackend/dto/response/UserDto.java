@@ -13,7 +13,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserResponseDto implements Serializable {
+public class UserDto implements Serializable {
 
     private Long id;
     private LocalDateTime joinDateTime;
@@ -24,7 +24,7 @@ public class UserResponseDto implements Serializable {
     private String phoneNumber;
     private String imagePath;
     private Gender gender;
-    private Set<UserRoleResponseDto> userRoles;
+    private Set<UserRoleDto> userRoles;
     private int reportsNumber;
 
 }

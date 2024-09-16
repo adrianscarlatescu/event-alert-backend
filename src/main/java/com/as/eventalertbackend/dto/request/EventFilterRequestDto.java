@@ -1,6 +1,7 @@
 package com.as.eventalertbackend.dto.request;
 
 import com.as.eventalertbackend.AppConstants;
+import com.as.eventalertbackend.handler.ApiErrorValidationMessage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,32 +15,31 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class EventFilterRequestDto implements Serializable {
 
-    @Min(value = AppConstants.MIN_RADIUS, message = "The radius must be greater than " + AppConstants.MIN_RADIUS + " km")
-    @Max(value = AppConstants.MAX_RADIUS, message = "The radius must be less than " + AppConstants.MAX_RADIUS + " km")
-    @NotNull(message = "The radius is mandatory")
-    @Positive(message = "The radius must be positive")
+    @Min(value = AppConstants.MIN_RADIUS, message = ApiErrorValidationMessage.MIN_RADIUS)
+    @Max(value = AppConstants.MAX_RADIUS, message = ApiErrorValidationMessage.MAX_RADIUS)
+    @NotNull(message = ApiErrorValidationMessage.MANDATORY_RADIUS)
     public Integer radius;
 
-    @NotNull(message = "The start date is mandatory")
-    @PastOrPresent(message = "Invalid start date")
+    @NotNull(message = ApiErrorValidationMessage.MANDATORY_START_DATE)
+    @PastOrPresent(message = ApiErrorValidationMessage.INVALID_START_DATE)
     public LocalDate startDate;
 
-    @NotNull(message = "The end date is mandatory")
-    @PastOrPresent(message = "Invalid end date")
+    @NotNull(message = ApiErrorValidationMessage.MANDATORY_END_DATE)
+    @PastOrPresent(message = ApiErrorValidationMessage.INVALID_END_DATE)
     public LocalDate endDate;
 
-    @NotNull(message = "The latitude is mandatory")
-    @Positive(message = "The latitude must be positive")
+    @NotNull(message = ApiErrorValidationMessage.MANDATORY_LATITUDE)
+    @PositiveOrZero(message = ApiErrorValidationMessage.POSITIVE_OR_ZERO_LATITUDE)
     public Double latitude;
 
-    @NotNull(message = "The longitude is mandatory")
-    @Positive(message = "The longitude must be positive")
+    @NotNull(message = ApiErrorValidationMessage.MANDATORY_LONGITUDE)
+    @PositiveOrZero(message = ApiErrorValidationMessage.POSITIVE_OR_ZERO_LONGITUDE)
     public Double longitude;
 
-    @NotEmpty(message = "Minimum one tag is required")
+    @NotEmpty(message = ApiErrorValidationMessage.MIN_TAG_REQUIRED)
     public Long[] tagsIds;
 
-    @NotEmpty(message = "Minimum one severity is required")
+    @NotEmpty(message = ApiErrorValidationMessage.MIN_SEVERITY_REQUIRED)
     public Long[] severitiesIds;
 
 }

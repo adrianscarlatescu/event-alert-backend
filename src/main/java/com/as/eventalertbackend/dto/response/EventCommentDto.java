@@ -1,18 +1,20 @@
 package com.as.eventalertbackend.dto.response;
 
-import com.as.eventalertbackend.enums.Role;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserRoleResponseDto implements Serializable {
+public class EventCommentDto implements Serializable {
 
     private Long id;
-    private Role name;
+    private LocalDateTime dateTime;
+    private String comment;
+    private UserDto user;
 
 }

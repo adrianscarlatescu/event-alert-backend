@@ -33,15 +33,14 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
             boolean isTokenNull = token == null;
             boolean isAccessToken = false;
+            boolean isRefreshToken = false;
             boolean isValid = false;
 
             if (isTokenNull) {
                 log.warn("Null token, endpoint: {}", request.getRequestURI());
             } else {
                 isAccessToken = jwtManager.isAccessToken(token);
-                if (!isAccessToken) {
-                    log.error("Invalid access token signature: {}, endpoint: {}", token, request.getRequestURI());
-                }
+                isRefreshToken = jwtManager.isRefreshToken(token);
 
                 isValid = jwtManager.validateJwtToken(token);
                 if (!isValid) {
@@ -49,7 +48,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 }
             }
 
-            if (!isTokenNull && isAccessToken && isValid) {
+            if (!isTokenNull && isValid && (isAccessToken || isRefreshToken)) {
                 String email = jwtManager.getEmailFromJwtToken(token);
                 UserDetails userDetails = userService.loadUserByUsername(email);
                 UsernamePasswordAuthenticationToken authentication =
