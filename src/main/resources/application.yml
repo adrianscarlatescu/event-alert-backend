@@ -6,13 +6,14 @@ server:
 spring:
   profiles:
     active: local
+  liquibase:
+      enabled: true
+      change-log: classpath:db/changelog/changelog.yaml
   datasource:
-    url: jdbc:mysql://localhost:3306/event_alert
+    url: jdbc:mysql://localhost:3306/event_alert?allowMultiQueries=true
     username: event_alert_user
     password: 1234qwer
   jpa:
-    hibernate:
-      ddl-auto: update
     properties:
       hibernate:
         format_sql: true

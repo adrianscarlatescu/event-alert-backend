@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "user")
+@Table(name = "user", indexes ={@Index(name = "idx_email", columnList = "email")})
 @Getter
 @Setter
 @NoArgsConstructor

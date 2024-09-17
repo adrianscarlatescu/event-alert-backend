@@ -8,6 +8,7 @@ The technology stack consists of:
 * [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) - The cross-platform messaging solution to send notifications.
 * [Hibernate](https://hibernate.org/) - The Object-Relational Mapping framework used to map the object-oriented domain models to the relational database.
 * [MySQL Server](https://dev.mysql.com/doc/refman/5.7/en/) - The database server.
+* [Liquibase](https://www.liquibase.com/) - The library for tracking, managing and applying database schema changes.
 * [JUnit](https://junit.org/junit4/) - The framework used to write repeatable tests.
 * [Mockito](https://site.mockito.org/) - The mocking framework used to add dummy functionality that is used in unit testing.
 * [JWT](https://jwt.io/introduction/) - The standard used to securely transmit the information.
@@ -22,18 +23,24 @@ A user who is an admin can also modify or delete other users, the events reporte
 
 ## Run prerequisites
 In order to run the application locally, the following steps must be set:
-* Run the commands highlighted in this [script](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/database_query.sql#L1,L6) in order to have the database ready.
-The connection details are specified in [application.yml](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L10,L12).
+* The MySQL database must be created with the following commands:
+``` 
+create database event_alert;
+create user 'event_alert_user' identified by '1234qwer';
+grant all on event_alert.* to 'event_alert_user';
+```
+The connection details are specified in [application.yml](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L13,L15).
+
+At application startup, Liquibase will run the [scripts](https://github.com/adrianscarlatescu/event-alert-backend/tree/master/src/main/resources/db/changelog/scripts) declared. 
+It will create the required tables and insert some basic data.
 * Push notifications feature:
-    * To skip this feature, set [app.notification.enabled](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L30) to `false`.
+    * To skip this feature, set [app.notification.enabled](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L40) to `false`.
     * In order to send push notifications, create a Firebase project and generate the service account private key.
 This key must be put in [firebase-service-account.json](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/firebase-service-account.json).
 
 
 ## Database schema
 <img src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/database_schema.png" width="800">  
-
-* Note: dummy data was added with the following [script](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/database_query.sql).
 
 ## Authorization diagram
 <img src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/authorization_diagram.png" width="800">
