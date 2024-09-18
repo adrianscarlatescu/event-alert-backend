@@ -1,6 +1,5 @@
 package com.as.eventalertbackend.dto.request;
 
-import com.as.eventalertbackend.handler.ApiErrorValidationMessage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,24 +14,24 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class EventRequestDto implements Serializable {
 
-    @NotNull(message = ApiErrorValidationMessage.MANDATORY_LATITUDE)
-    @PositiveOrZero(message = ApiErrorValidationMessage.POSITIVE_OR_ZERO_LATITUDE)
+    @NotNull(message = "The latitude is mandatory")
+    @PositiveOrZero(message = "The latitude must be positive or 0")
     private Double latitude;
 
-    @NotNull(message = ApiErrorValidationMessage.MANDATORY_LONGITUDE)
-    @PositiveOrZero(message = ApiErrorValidationMessage.POSITIVE_OR_ZERO_LONGITUDE)
+    @NotNull(message = "The longitude is mandatory")
+    @PositiveOrZero(message = "The longitude must be positive or 0")
     private Double longitude;
 
-    @NotBlank(message = ApiErrorValidationMessage.MANDATORY_IMAGE_PATH)
+    @NotBlank(message = "The image path is mandatory")
     private String imagePath;
 
-    @NotNull(message = ApiErrorValidationMessage.MANDATORY_SEVERITY)
+    @NotNull(message = "The severity is mandatory")
     private Long severityId;
 
-    @NotNull(message = ApiErrorValidationMessage.MANDATORY_TAG)
+    @NotNull(message = "The tag is mandatory")
     private Long tagId;
 
-    @NotNull(message = ApiErrorValidationMessage.MANDATORY_USER)
+    @NotNull(message = "The user is mandatory")
     private Long userId;
 
     private String description;

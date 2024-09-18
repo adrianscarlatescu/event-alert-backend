@@ -1,7 +1,7 @@
 package com.as.eventalertbackend.service;
 
-import com.as.eventalertbackend.handler.ApiErrorMessage;
-import com.as.eventalertbackend.handler.exception.StorageFailException;
+import com.as.eventalertbackend.error.ApiErrorMessage;
+import com.as.eventalertbackend.error.exception.StorageFailException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;

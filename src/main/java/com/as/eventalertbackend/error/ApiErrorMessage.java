@@ -1,4 +1,4 @@
-package com.as.eventalertbackend.handler;
+package com.as.eventalertbackend.error;
 
 import com.as.eventalertbackend.AppConstants;
 import lombok.Getter;
@@ -34,7 +34,7 @@ public enum ApiErrorMessage {
     PROFILE_FIRST_NAME_MANDATORY("Profile first name is mandatory"),
     PROFILE_LAST_NAME_MANDATORY("Profile last name is mandatory");
 
-    public final String value;
+    private final String value;
 
     ApiErrorMessage(String value) {
         this.value = value;

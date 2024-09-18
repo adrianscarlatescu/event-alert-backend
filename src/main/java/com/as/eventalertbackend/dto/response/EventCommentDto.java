@@ -15,6 +15,6 @@ public class EventCommentDto implements Serializable {
     private Long id;
     private LocalDateTime dateTime;
     private String comment;
-    private UserDto user;
+    private UserBaseDto user;
 
 }

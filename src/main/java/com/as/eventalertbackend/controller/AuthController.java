@@ -4,6 +4,8 @@ import com.as.eventalertbackend.dto.request.AuthLoginRequestDto;
 import com.as.eventalertbackend.dto.request.AuthRegisterRequestDto;
 import com.as.eventalertbackend.dto.response.AuthTokensDto;
 import com.as.eventalertbackend.dto.response.UserDto;
+import com.as.eventalertbackend.jpa.entity.User;
+import com.as.eventalertbackend.mapper.Mapper;
 import com.as.eventalertbackend.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,10 +19,13 @@ import javax.validation.Valid;
 @RequestMapping("/auth")
 public class AuthController {
 
+    private final Mapper<User, UserDto> mapper;
     private final AuthService authService;
 
     @Autowired
-    public AuthController(AuthService authService) {
+    public AuthController(Mapper<User, UserDto> mapper,
+                          AuthService authService) {
+        this.mapper = mapper;
         this.authService = authService;
     }
 
@@ -28,7 +33,7 @@ public class AuthController {
     public ResponseEntity<UserDto> register(@Valid @RequestBody AuthRegisterRequestDto registerRequestDto) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(authService.register(registerRequestDto));
+                .body(mapper.mapTo(authService.register(registerRequestDto)));
     }
 
     @PostMapping("/login")

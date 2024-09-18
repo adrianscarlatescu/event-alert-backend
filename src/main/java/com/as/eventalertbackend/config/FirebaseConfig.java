@@ -1,4 +1,4 @@
-package com.as.eventalertbackend.firebase;
+package com.as.eventalertbackend.config;
 
 import com.as.eventalertbackend.AppConstants;
 import com.google.auth.oauth2.GoogleCredentials;

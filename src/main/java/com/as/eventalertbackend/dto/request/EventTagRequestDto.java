@@ -1,6 +1,5 @@
 package com.as.eventalertbackend.dto.request;
 
-import com.as.eventalertbackend.handler.ApiErrorValidationMessage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,10 +12,10 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class EventTagRequestDto implements Serializable {
 
-    @NotBlank(message = ApiErrorValidationMessage.MANDATORY_NAME)
+    @NotBlank(message = "The name is mandatory")
     private String name;
 
-    @NotBlank(message = ApiErrorValidationMessage.MANDATORY_IMAGE_PATH)
+    @NotBlank(message = "The image path is mandatory")
     private String imagePath;
 
 }

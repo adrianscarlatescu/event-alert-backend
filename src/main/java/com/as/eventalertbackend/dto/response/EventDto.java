@@ -22,7 +22,7 @@ public class EventDto implements Serializable {
     private Set<EventCommentDto> eventComments;
     private EventSeverityDto severity;
     private EventTagDto tag;
-    private UserDto user;
+    private UserBaseDto user;
     private double distance;
 
 }

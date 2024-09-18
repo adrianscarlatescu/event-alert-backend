@@ -1,16 +1,14 @@
 package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.dto.request.EventSeverityRequestDto;
-import com.as.eventalertbackend.dto.response.EventSeverityDto;
-import com.as.eventalertbackend.handler.ApiErrorMessage;
-import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
+import com.as.eventalertbackend.error.ApiErrorMessage;
+import com.as.eventalertbackend.error.exception.RecordNotFoundException;
 import com.as.eventalertbackend.jpa.entity.EventSeverity;
 import com.as.eventalertbackend.jpa.reopsitory.EventSeverityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class EventSeverityService {
@@ -22,35 +20,31 @@ public class EventSeverityService {
         this.severityRepository = severityRepository;
     }
 
-    public List<EventSeverityDto> findAll() {
-        return severityRepository.findAll().stream()
-                .map(EventSeverity::toDto)
-                .collect(Collectors.toList());
+    public List<EventSeverity> findAll() {
+        return severityRepository.findAll();
     }
 
-    public EventSeverityDto findById(Long id) {
+    public EventSeverity findById(Long id) {
         return severityRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.SEVERITY_NOT_FOUND))
-                .toDto();
+                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.SEVERITY_NOT_FOUND));
     }
 
-    public EventSeverityDto updateById(EventSeverityRequestDto severityRequestDto, Long id) {
-        EventSeverity severity = severityRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.SEVERITY_NOT_FOUND));
+    public EventSeverity updateById(EventSeverityRequestDto severityRequestDto, Long id) {
+        EventSeverity severity = findById(id);
 
         severity.setName(severityRequestDto.getName());
         severity.setColor(severityRequestDto.getColor());
 
-        return severityRepository.save(severity).toDto();
+        return severityRepository.save(severity);
     }
 
-    public EventSeverityDto save(EventSeverityRequestDto severityRequestDto) {
+    public EventSeverity save(EventSeverityRequestDto severityRequestDto) {
         EventSeverity severity = new EventSeverity();
 
         severity.setName(severityRequestDto.getName());
         severity.setColor(severityRequestDto.getColor());
 
-        return severityRepository.save(severity).toDto();
+        return severityRepository.save(severity);
     }
 
     public void deleteById(Long id) {

@@ -1,6 +1,6 @@
-package com.as.eventalertbackend.handler.exception;
+package com.as.eventalertbackend.error.exception;
 
-import com.as.eventalertbackend.handler.ApiErrorMessage;
+import com.as.eventalertbackend.error.ApiErrorMessage;
 
 public class InvalidActionException extends AbstractApiException {
 

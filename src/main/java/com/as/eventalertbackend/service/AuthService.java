@@ -3,15 +3,11 @@ package com.as.eventalertbackend.service;
 import com.as.eventalertbackend.dto.request.AuthLoginRequestDto;
 import com.as.eventalertbackend.dto.request.AuthRegisterRequestDto;
 import com.as.eventalertbackend.dto.response.AuthTokensDto;
-import com.as.eventalertbackend.dto.response.UserDto;
 import com.as.eventalertbackend.enums.Role;
-import com.as.eventalertbackend.handler.ApiErrorMessage;
-import com.as.eventalertbackend.handler.exception.InvalidActionException;
-import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
+import com.as.eventalertbackend.error.ApiErrorMessage;
+import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.jpa.entity.User;
 import com.as.eventalertbackend.jpa.entity.UserRole;
-import com.as.eventalertbackend.jpa.reopsitory.UserRepository;
-import com.as.eventalertbackend.jpa.reopsitory.UserRoleRepository;
 import com.as.eventalertbackend.security.jwt.JwtManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,28 +26,28 @@ import java.util.Collections;
 @Slf4j
 public class AuthService {
 
-    private final UserRepository userRepository;
-    private final UserRoleRepository userRoleRepository;
+    private final UserService userService;
+    private final UserRoleService userRoleService;
 
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtManager jwtManager;
 
     @Autowired
-    public AuthService(UserRepository userRepository,
-                       UserRoleRepository userRoleRepository,
+    public AuthService(UserService userService,
+                       UserRoleService userRoleService,
                        PasswordEncoder passwordEncoder,
                        AuthenticationManager authenticationManager,
                        JwtManager jwtManager) {
-        this.userRepository = userRepository;
-        this.userRoleRepository = userRoleRepository;
+        this.userService = userService;
+        this.userRoleService = userRoleService;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtManager = jwtManager;
     }
 
-    public UserDto register(AuthRegisterRequestDto registerRequestDto) {
-        boolean emailExists = userRepository.existsByEmail(registerRequestDto.getEmail());
+    public User register(AuthRegisterRequestDto registerRequestDto) {
+        boolean emailExists = userService.existsByEmail(registerRequestDto.getEmail());
         if (emailExists) {
             throw new InvalidActionException(ApiErrorMessage.ACCOUNT_ALREADY_CREATED);
         }
@@ -60,14 +56,13 @@ public class AuthService {
             throw new InvalidActionException(ApiErrorMessage.PASSWORDS_NOT_MATCH);
         }
 
-        UserRole userRole = userRoleRepository.findByName(Role.ROLE_USER)
-                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.ROLE_NOT_FOUND));
+        UserRole userRole = userRoleService.findByName(Role.ROLE_USER);
 
         User user = new User(registerRequestDto.getEmail(),
                 passwordEncoder.encode(registerRequestDto.getPassword()),
                 Collections.singleton(userRole));
 
-        return userRepository.save(user).toDto();
+        return userService.save(user);
     }
 
     @Transactional

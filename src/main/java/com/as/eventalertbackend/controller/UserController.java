@@ -3,6 +3,7 @@ package com.as.eventalertbackend.controller;
 import com.as.eventalertbackend.dto.request.UserRequestDto;
 import com.as.eventalertbackend.dto.response.UserDto;
 import com.as.eventalertbackend.jpa.entity.User;
+import com.as.eventalertbackend.mapper.Mapper;
 import com.as.eventalertbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,28 +17,31 @@ import java.util.List;
 @RestController
 public class UserController {
 
+    private final Mapper<User, UserDto> mapper;
     private final UserService userService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(Mapper<User, UserDto> mapper,
+                          UserService userService) {
         this.userService = userService;
+        this.mapper = mapper;
     }
 
     @GetMapping("/users")
     public ResponseEntity<List<UserDto>> getAll() {
-        return ResponseEntity.ok(userService.findAll());
+        return ResponseEntity.ok(mapper.mapTo(userService.findAll()));
     }
 
     @GetMapping("/users/{id}")
     public ResponseEntity<UserDto> getById(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(userService.findById(id));
+        return ResponseEntity.ok(mapper.mapTo(userService.findById(id)));
     }
 
     @Secured({"ROLE_ADMIN"})
     @PutMapping("/users/{id}")
     public ResponseEntity<UserDto> updateById(@Valid @RequestBody UserRequestDto userRequestDto,
                                               @PathVariable("id") Long id) {
-        return ResponseEntity.ok(userService.updateById(userRequestDto, id));
+        return ResponseEntity.ok(mapper.mapTo(userService.updateById(userRequestDto, id)));
     }
 
     @Secured({"ROLE_ADMIN"})
@@ -49,12 +53,12 @@ public class UserController {
 
     @GetMapping("/profile")
     public ResponseEntity<UserDto> getProfile() {
-        return ResponseEntity.ok(userService.findById(getPrincipalId()));
+        return ResponseEntity.ok(mapper.mapTo(userService.findById(getPrincipalId())));
     }
 
     @PutMapping("/profile")
     public ResponseEntity<UserDto> updateProfile(@Valid @RequestBody UserRequestDto userRequestDto) {
-        return ResponseEntity.ok(userService.updateById(userRequestDto, getPrincipalId()));
+        return ResponseEntity.ok(mapper.mapTo(userService.updateById(userRequestDto, getPrincipalId())));
     }
 
     private Long getPrincipalId() {

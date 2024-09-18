@@ -1,6 +1,5 @@
 package com.as.eventalertbackend.dto.request;
 
-import com.as.eventalertbackend.handler.ApiErrorValidationMessage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,10 +13,10 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class EventSeverityRequestDto implements Serializable {
 
-    @NotBlank(message = ApiErrorValidationMessage.MANDATORY_NAME)
+    @NotBlank(message = "The name is mandatory")
     private String name;
 
-    @NotNull(message = ApiErrorValidationMessage.MANDATORY_COLOR)
+    @NotNull(message = "The color is mandatory")
     private Integer color;
 
 }

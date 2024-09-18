@@ -1,15 +1,13 @@
 package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.dto.request.UserRequestDto;
-import com.as.eventalertbackend.dto.response.UserDto;
 import com.as.eventalertbackend.enums.Role;
-import com.as.eventalertbackend.handler.ApiErrorMessage;
-import com.as.eventalertbackend.handler.exception.InvalidActionException;
-import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
+import com.as.eventalertbackend.error.ApiErrorMessage;
+import com.as.eventalertbackend.error.exception.InvalidActionException;
+import com.as.eventalertbackend.error.exception.RecordNotFoundException;
 import com.as.eventalertbackend.jpa.entity.User;
 import com.as.eventalertbackend.jpa.entity.UserRole;
 import com.as.eventalertbackend.jpa.reopsitory.UserRepository;
-import com.as.eventalertbackend.jpa.reopsitory.UserRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,19 +16,19 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final UserRoleRepository userRoleRepository;
+
+    private final UserRoleService userRoleService;
 
     @Autowired
     public UserService(UserRepository userRepository,
-                       UserRoleRepository userRoleRepository) {
+                       UserRoleService userRoleService) {
         this.userRepository = userRepository;
-        this.userRoleRepository = userRoleRepository;
+        this.userRoleService = userRoleService;
     }
 
     @Override
@@ -39,26 +37,30 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException(username));
     }
 
-    public List<UserDto> findAll() {
-        return userRepository.findAll().stream()
-                .map(User::toDto)
-                .collect(Collectors.toList());
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
     }
 
-    public UserDto findById(Long id) {
+    public User save(User user) {
+        return userRepository.save(user);
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    public User findById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.USER_NOT_FOUND))
-                .toDto();
+                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.USER_NOT_FOUND));
     }
 
-    public UserDto updateById(UserRequestDto userRequestDto, Long id) {
+    public User updateById(UserRequestDto userRequestDto, Long id) {
         if (userRequestDto.getRoles().stream()
                 .noneMatch(role -> role == Role.ROLE_USER)) {
             throw new InvalidActionException(ApiErrorMessage.DEFAULT_ROLE_MANDATORY);
         }
 
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.USER_NOT_FOUND));
+        User user = findById(id);
         user.setFirstName(userRequestDto.getFirstName());
         user.setLastName(userRequestDto.getLastName());
         user.setDateOfBirth(userRequestDto.getDateOfBirth());
@@ -66,10 +68,10 @@ public class UserService implements UserDetailsService {
         user.setImagePath(userRequestDto.getImagePath());
         user.setGender(userRequestDto.getGender());
 
-        Set<UserRole> userRoles = userRoleRepository.findAllByNameIn(userRequestDto.getRoles());
+        Set<UserRole> userRoles = userRoleService.findAllByName(userRequestDto.getRoles());
         user.setUserRoles(userRoles);
 
-        return userRepository.save(user).toDto();
+        return userRepository.save(user);
     }
 
     public void deleteById(Long id) {

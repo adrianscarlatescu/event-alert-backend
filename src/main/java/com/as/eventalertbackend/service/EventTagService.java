@@ -1,16 +1,14 @@
 package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.dto.request.EventTagRequestDto;
-import com.as.eventalertbackend.dto.response.EventTagDto;
-import com.as.eventalertbackend.handler.ApiErrorMessage;
-import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
+import com.as.eventalertbackend.error.ApiErrorMessage;
+import com.as.eventalertbackend.error.exception.RecordNotFoundException;
 import com.as.eventalertbackend.jpa.entity.EventTag;
 import com.as.eventalertbackend.jpa.reopsitory.EventTagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class EventTagService {
@@ -22,35 +20,31 @@ public class EventTagService {
         this.tagRepository = tagRepository;
     }
 
-    public List<EventTagDto> findAll() {
-        return tagRepository.findAll().stream()
-                .map(EventTag::toDto)
-                .collect(Collectors.toList());
+    public List<EventTag> findAll() {
+        return tagRepository.findAll();
     }
 
-    public EventTagDto findById(Long id) {
+    public EventTag findById(Long id) {
         return tagRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.TAG_NOT_FOUND))
-                .toDto();
+                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.TAG_NOT_FOUND));
     }
 
-    public EventTagDto updateById(EventTagRequestDto tagRequestDto, Long id) {
-        EventTag tag = tagRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.TAG_NOT_FOUND));
+    public EventTag updateById(EventTagRequestDto tagRequestDto, Long id) {
+        EventTag tag = findById(id);
 
         tag.setName(tagRequestDto.getName());
         tag.setImagePath(tagRequestDto.getImagePath());
 
-        return tagRepository.save(tag).toDto();
+        return tagRepository.save(tag);
     }
 
-    public EventTagDto save(EventTagRequestDto tagRequestDto) {
+    public EventTag save(EventTagRequestDto tagRequestDto) {
         EventTag tag = new EventTag();
 
         tag.setName(tagRequestDto.getName());
         tag.setImagePath(tagRequestDto.getImagePath());
 
-        return tagRepository.save(tag).toDto();
+        return tagRepository.save(tag);
     }
 
     public void deleteById(Long id) {

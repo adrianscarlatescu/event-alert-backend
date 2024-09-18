@@ -2,6 +2,8 @@ package com.as.eventalertbackend.controller;
 
 import com.as.eventalertbackend.dto.request.EventSeverityRequestDto;
 import com.as.eventalertbackend.dto.response.EventSeverityDto;
+import com.as.eventalertbackend.jpa.entity.EventSeverity;
+import com.as.eventalertbackend.mapper.Mapper;
 import com.as.eventalertbackend.service.EventSeverityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,21 +18,24 @@ import java.util.List;
 @RequestMapping("/severities")
 public class EventSeverityController {
 
+    private final Mapper<EventSeverity, EventSeverityDto> mapper;
     private final EventSeverityService severityService;
 
     @Autowired
-    public EventSeverityController(EventSeverityService severityService) {
+    public EventSeverityController(Mapper<EventSeverity, EventSeverityDto> mapper,
+                                   EventSeverityService severityService) {
+        this.mapper = mapper;
         this.severityService = severityService;
     }
 
     @GetMapping
     public ResponseEntity<List<EventSeverityDto>> getAll() {
-        return ResponseEntity.ok(severityService.findAll());
+        return ResponseEntity.ok(mapper.mapTo(severityService.findAll()));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<EventSeverityDto> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(severityService.findById(id));
+        return ResponseEntity.ok(mapper.mapTo(severityService.findById(id)));
     }
 
     @Secured({"ROLE_ADMIN"})
@@ -38,14 +43,14 @@ public class EventSeverityController {
     public ResponseEntity<EventSeverityDto> save(@Valid @RequestBody EventSeverityRequestDto severityRequestDto) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(severityService.save(severityRequestDto));
+                .body(mapper.mapTo(severityService.save(severityRequestDto)));
     }
 
     @Secured({"ROLE_ADMIN"})
     @PutMapping("/{id}")
     public ResponseEntity<EventSeverityDto> updateById(@Valid @RequestBody EventSeverityRequestDto severityRequestDto,
                                                        @PathVariable("id") Long id) {
-        return ResponseEntity.ok(severityService.updateById(severityRequestDto, id));
+        return ResponseEntity.ok(mapper.mapTo(severityService.updateById(severityRequestDto, id)));
     }
 
     @Secured({"ROLE_ADMIN"})

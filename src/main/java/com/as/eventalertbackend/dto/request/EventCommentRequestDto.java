@@ -1,6 +1,5 @@
 package com.as.eventalertbackend.dto.request;
 
-import com.as.eventalertbackend.handler.ApiErrorValidationMessage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,13 +13,13 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class EventCommentRequestDto implements Serializable {
 
-    @NotBlank(message = ApiErrorValidationMessage.MANDATORY_COMMENT)
+    @NotBlank(message = "The comment is mandatory")
     private String comment;
 
-    @NotNull(message = ApiErrorValidationMessage.MANDATORY_EVENT)
+    @NotNull(message = "The event is mandatory")
     private Long eventId;
 
-    @NotNull(message = ApiErrorValidationMessage.MANDATORY_USER)
+    @NotNull(message = "The user is mandatory")
     private Long userId;
 
 }

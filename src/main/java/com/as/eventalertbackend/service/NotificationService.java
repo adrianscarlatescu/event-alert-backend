@@ -1,11 +1,8 @@
 package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.AppProperties;
-import com.as.eventalertbackend.handler.ApiErrorMessage;
-import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
 import com.as.eventalertbackend.jpa.entity.Event;
 import com.as.eventalertbackend.jpa.entity.Subscription;
-import com.as.eventalertbackend.jpa.reopsitory.EventRepository;
 import com.as.eventalertbackend.jpa.reopsitory.SubscriptionRepository;
 import com.google.firebase.messaging.*;
 import lombok.extern.slf4j.Slf4j;
@@ -26,18 +23,15 @@ public class NotificationService {
     private final AppProperties appProperties;
 
     private final SubscriptionRepository subscriptionRepository;
-    private final EventRepository eventRepository;
 
     private FirebaseMessaging firebaseMessaging;
 
     @Autowired
     public NotificationService(AppProperties appProperties,
                                SubscriptionRepository subscriptionRepository,
-                               EventRepository eventRepository,
                                ApplicationContext applicationContext) {
         this.appProperties = appProperties;
         this.subscriptionRepository = subscriptionRepository;
-        this.eventRepository = eventRepository;
         try {
             this.firebaseMessaging = applicationContext.getBean(FirebaseMessaging.class);
         } catch (NoSuchBeanDefinitionException e) {
@@ -45,13 +39,10 @@ public class NotificationService {
         }
     }
 
-    public void send(Long eventId) {
+    public void send(Event event) {
         if (!appProperties.getNotification().getEnabled()) {
             return;
         }
-
-        Event event = eventRepository.findById(eventId)
-                        .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.EVENT_NOT_FOUND));
 
         log.info("Sending notifications for event: {}", event.getId());
         List<Subscription> subscriptions =

@@ -3,20 +3,15 @@ package com.as.eventalertbackend.service;
 import com.as.eventalertbackend.AppConstants;
 import com.as.eventalertbackend.dto.request.EventFilterRequestDto;
 import com.as.eventalertbackend.dto.request.EventRequestDto;
-import com.as.eventalertbackend.dto.response.EventDto;
-import com.as.eventalertbackend.dto.response.PageDto;
 import com.as.eventalertbackend.enums.Order;
-import com.as.eventalertbackend.handler.ApiErrorMessage;
-import com.as.eventalertbackend.handler.exception.InvalidActionException;
-import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
+import com.as.eventalertbackend.error.ApiErrorMessage;
+import com.as.eventalertbackend.error.exception.InvalidActionException;
+import com.as.eventalertbackend.error.exception.RecordNotFoundException;
 import com.as.eventalertbackend.jpa.entity.Event;
 import com.as.eventalertbackend.jpa.entity.EventSeverity;
 import com.as.eventalertbackend.jpa.entity.EventTag;
 import com.as.eventalertbackend.jpa.entity.User;
 import com.as.eventalertbackend.jpa.reopsitory.EventRepository;
-import com.as.eventalertbackend.jpa.reopsitory.EventSeverityRepository;
-import com.as.eventalertbackend.jpa.reopsitory.EventTagRepository;
-import com.as.eventalertbackend.jpa.reopsitory.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,46 +24,42 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class EventService {
 
     private final EventRepository eventRepository;
-    private final EventSeverityRepository severityRepository;
-    private final EventTagRepository tagRepository;
-    private final UserRepository userRepository;
 
+    private final EventSeverityService severityService;
+    private final EventTagService tagService;
+    private final UserService userService;
     private final NotificationService notificationService;
 
     @Autowired
     public EventService(EventRepository eventRepository,
-                        EventSeverityRepository severityRepository,
-                        EventTagRepository tagRepository,
-                        UserRepository userRepository,
+                        EventSeverityService severityService,
+                        EventTagService tagService,
+                        UserService userService,
                         NotificationService notificationService) {
         this.eventRepository = eventRepository;
-        this.severityRepository = severityRepository;
-        this.tagRepository = tagRepository;
-        this.userRepository = userRepository;
+        this.severityService = severityService;
+        this.tagService = tagService;
+        this.userService = userService;
         this.notificationService = notificationService;
     }
 
-    public EventDto findById(Long id) {
+    public Event findById(Long id) {
         return eventRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.EVENT_NOT_FOUND))
-                .toDto();
+                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.EVENT_NOT_FOUND));
     }
 
-    public List<EventDto> findAllByUserId(Long userId) {
-        return eventRepository.findByUserIdOrderByDateTimeDesc(userId).stream()
-                .map(Event::toDto)
-                .collect(Collectors.toList());
+    public List<Event> findAllByUserId(Long userId) {
+        return eventRepository.findByUserIdOrderByDateTimeDesc(userId);
     }
 
     @Transactional
-    public PageDto<EventDto> findByFilter(EventFilterRequestDto filterRequestDto, int pageSize, int pageNumber, Order order) {
+    public Page<Event> findByFilter(EventFilterRequestDto filterRequestDto, int pageSize, int pageNumber, Order order) {
         if (pageSize > AppConstants.MAX_PAGES) {
             throw new InvalidActionException(ApiErrorMessage.FILTER_MAX_PAGE_SIZE);
         }
@@ -142,25 +133,18 @@ public class EventService {
                 eventsPage.getTotalElements(),
                 eventsPage.getContent().stream().mapToLong(Event::getId).toArray());
 
-        return new PageDto<>(
-                eventsPage.getTotalPages(),
-                eventsPage.getTotalElements(),
-                eventsPage.getContent().stream()
-                        .map(Event::toDto)
-                        .collect(Collectors.toList())
-        );
+        return eventsPage;
     }
 
-    public EventDto save(EventRequestDto eventRequestDto) {
-        EventDto newEventDto = createOrUpdate(new Event(), eventRequestDto).toDto();
-        notificationService.send(newEventDto.getId());
-        return newEventDto;
+    public Event save(EventRequestDto eventRequestDto) {
+        Event newEvent = createOrUpdate(new Event(), eventRequestDto);
+        notificationService.send(newEvent);
+        return newEvent;
     }
 
-    public EventDto updateById(EventRequestDto eventRequestDto, Long id) {
-        Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.EVENT_NOT_FOUND));
-        return createOrUpdate(event, eventRequestDto).toDto();
+    public Event updateById(EventRequestDto eventRequestDto, Long id) {
+        Event event = findById(id);
+        return createOrUpdate(event, eventRequestDto);
     }
 
     public void deleteById(Long id) {
@@ -172,12 +156,9 @@ public class EventService {
     }
 
     private Event createOrUpdate(Event event, EventRequestDto eventRequestDto) {
-        User user = userRepository.findById(eventRequestDto.getUserId())
-                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.USER_NOT_FOUND));
-        EventTag tag = tagRepository.findById(eventRequestDto.getTagId())
-                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.TAG_NOT_FOUND));
-        EventSeverity severity = severityRepository.findById(eventRequestDto.getSeverityId())
-                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.SEVERITY_NOT_FOUND));
+        User user = userService.findById(eventRequestDto.getUserId());
+        EventTag tag = tagService.findById(eventRequestDto.getTagId());
+        EventSeverity severity = severityService.findById(eventRequestDto.getSeverityId());
 
         if (isNullOrEmpty(user.getFirstName())) {
             throw new InvalidActionException(ApiErrorMessage.PROFILE_FIRST_NAME_MANDATORY);
