@@ -17,7 +17,7 @@ The technology stack consists of:
 ## Project scope
 The purpose of this project is to provide all the required features for users that may want to be aware of the incidents reported around them.  
 A user must be registered and authenticated in order to access these features.  
-Afterwards he can update his profile and report an event if needed.  
+Then he can update his profile and report an event if needed.  
 Also, he can search for the events reported by other users around his location.  
 A user who is an admin can also modify or delete other users, the events reported by them, the comments posted by them, etc.  
 
@@ -33,8 +33,9 @@ The connection details are specified in [application.yml](https://github.com/adr
 
 At application startup, Liquibase will run the [scripts](https://github.com/adrianscarlatescu/event-alert-backend/tree/master/src/main/resources/db/changelog/scripts) declared. 
 It will create the required tables and insert some basic data.
+* The property [app.storage.server-path](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L30) must be set to point to project's resources.
 * Push notifications feature:
-    * To skip this feature, set [app.notification.enabled](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L40) to `false`.
+    * To skip this feature, set [app.notification.enabled](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L43) to `false`.
     * In order to send push notifications, create a Firebase project and generate the service account private key.
 This key must be put in [firebase-service-account.json](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/firebase-service-account.json).
 
@@ -49,8 +50,8 @@ This key must be put in [firebase-service-account.json](https://github.com/adria
 The target is to get all the events filtered by the following *body*:
 ```
 {
-    "startDate": "2020-04-01T00:00:00",
-    "endDate": "2020-04-21T23:59:59",
+    "startDate": "2020-04-01",
+    "endDate": "2020-04-21",
     "latitude": 44.8481,
     "longitude": 24.8839,
     "radius": 100,
@@ -104,25 +105,9 @@ Response:
             },
             "user": {
                 "id": 1,
-                "joinDateTime": "2020-05-07T19:35:40",
-                "email": "test1@test.com",
                 "firstName": "Alan",
                 "lastName": "Walter",
-                "dateOfBirth": "1984-05-23",
-                "phoneNumber": "+03442777999",
-                "imagePath": "img/user_1.jpg",
-                "gender": "MALE",
-                "userRoles": [
-                    {
-                        "id": 2,
-                        "name": "ROLE_ADMIN"
-                    },
-                    {
-                        "id": 1,
-                        "name": "ROLE_USER"
-                    }
-                ],
-                "reportsNumber": 23
+                "imagePath": "img/user_1.jpg"
             },
             "distance": 4.263562194233072
         },
@@ -145,33 +130,17 @@ Response:
             },
             "user": {
                 "id": 1,
-                "joinDateTime": "2020-05-07T19:35:40",
-                "email": "test1@test.com",
                 "firstName": "Alan",
                 "lastName": "Walter",
-                "dateOfBirth": "1984-05-23",
-                "phoneNumber": "+03442777999",
-                "imagePath": "img/user_1.jpg",
-                "gender": "MALE",
-                "userRoles": [
-                    {
-                        "id": 2,
-                        "name": "ROLE_ADMIN"
-                    },
-                    {
-                        "id": 1,
-                        "name": "ROLE_USER"
-                    }
-                ],
-                "reportsNumber": 23
+                "imagePath": "img/user_1.jpg"
             },
             "distance": 0.9592219050088762
         }
     ]
 }
 ```
-Full Postman requests collection is available [here](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/EventAlert.postman_collection.json).  
-The variables *{{url}}*, *{{accessToken}}* and *{{refreshToken}}* have to be declared.
+Postman [collection](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/Event%20Alert%20-%20Collection.postman_collection.json) /
+[local environment](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/Event%20Alert%20-%20Local.postman_environment.json).  
 
 ## Client applications
 * [event-alert-android](https://github.com/adrianscarlatescu/event-alert-android)
