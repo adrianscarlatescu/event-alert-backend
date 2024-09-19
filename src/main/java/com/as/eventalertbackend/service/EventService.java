@@ -170,7 +170,7 @@ public class EventService {
             throw new InvalidActionException(ApiErrorMessage.PROFILE_LAST_NAME_MANDATORY);
         }
 
-        if (!storageService.imageExists(event.getImagePath())) {
+        if (!storageService.imageExists(eventRequest.getImagePath())) {
             throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
         }
 

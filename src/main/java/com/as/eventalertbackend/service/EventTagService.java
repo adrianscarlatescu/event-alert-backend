@@ -52,7 +52,7 @@ public class EventTagService {
     }
 
     private EventTag createOrUpdate(EventTag tag, EventTagRequest tagRequest) {
-        if (!storageService.imageExists(tag.getImagePath())) {
+        if (!storageService.imageExists(tagRequest.getImagePath())) {
             throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
         }
 
