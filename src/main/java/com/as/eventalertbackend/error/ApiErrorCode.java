@@ -9,6 +9,7 @@ public enum ApiErrorCode {
     FIELD_CONSTRAINT("field_constraint"),
     INVALID_ACTION("invalid_action"),
     RECORD_NOT_FOUND("record_not_found"),
+    RESOURCE_NOT_FOUND("resource_not_found"),
     STORAGE_FAIL("storage_fail");
 
     private final String value;

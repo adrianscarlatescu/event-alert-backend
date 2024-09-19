@@ -1,9 +1,9 @@
 package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.AppProperties;
-import com.as.eventalertbackend.jpa.entity.Event;
-import com.as.eventalertbackend.jpa.entity.Subscription;
-import com.as.eventalertbackend.jpa.reopsitory.SubscriptionRepository;
+import com.as.eventalertbackend.persistence.entity.Event;
+import com.as.eventalertbackend.persistence.entity.Subscription;
+import com.as.eventalertbackend.persistence.reopsitory.SubscriptionRepository;
 import com.google.firebase.messaging.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;

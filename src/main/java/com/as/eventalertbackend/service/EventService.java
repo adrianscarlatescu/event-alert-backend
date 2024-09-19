@@ -1,17 +1,18 @@
 package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.AppConstants;
-import com.as.eventalertbackend.dto.request.EventFilterRequestDto;
-import com.as.eventalertbackend.dto.request.EventRequestDto;
+import com.as.eventalertbackend.dto.request.EventFilterRequest;
+import com.as.eventalertbackend.dto.request.EventRequest;
 import com.as.eventalertbackend.enums.Order;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
-import com.as.eventalertbackend.jpa.entity.Event;
-import com.as.eventalertbackend.jpa.entity.EventSeverity;
-import com.as.eventalertbackend.jpa.entity.EventTag;
-import com.as.eventalertbackend.jpa.entity.User;
-import com.as.eventalertbackend.jpa.reopsitory.EventRepository;
+import com.as.eventalertbackend.error.exception.ResourceNotFoundException;
+import com.as.eventalertbackend.persistence.entity.Event;
+import com.as.eventalertbackend.persistence.entity.EventSeverity;
+import com.as.eventalertbackend.persistence.entity.EventTag;
+import com.as.eventalertbackend.persistence.entity.User;
+import com.as.eventalertbackend.persistence.reopsitory.EventRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,6 +35,7 @@ public class EventService {
     private final EventSeverityService severityService;
     private final EventTagService tagService;
     private final UserService userService;
+    private final StorageService storageService;
     private final NotificationService notificationService;
 
     @Autowired
@@ -41,11 +43,13 @@ public class EventService {
                         EventSeverityService severityService,
                         EventTagService tagService,
                         UserService userService,
+                        StorageService storageService,
                         NotificationService notificationService) {
         this.eventRepository = eventRepository;
         this.severityService = severityService;
         this.tagService = tagService;
         this.userService = userService;
+        this.storageService = storageService;
         this.notificationService = notificationService;
     }
 
@@ -59,16 +63,16 @@ public class EventService {
     }
 
     @Transactional
-    public Page<Event> findByFilter(EventFilterRequestDto filterRequestDto, int pageSize, int pageNumber, Order order) {
+    public Page<Event> findByFilter(EventFilterRequest filterRequest, int pageSize, int pageNumber, Order order) {
         if (pageSize > AppConstants.MAX_PAGES) {
             throw new InvalidActionException(ApiErrorMessage.FILTER_MAX_PAGE_SIZE);
         }
 
-        if (filterRequestDto.getStartDate().isAfter(filterRequestDto.getEndDate())) {
+        if (filterRequest.getStartDate().isAfter(filterRequest.getEndDate())) {
             throw new InvalidActionException(ApiErrorMessage.FILTER_END_DATE_AFTER_START_DATE);
         }
 
-        if (filterRequestDto.getEndDate().getYear() - filterRequestDto.getStartDate().getYear() > AppConstants.MAX_YEARS_INTERVAL) {
+        if (filterRequest.getEndDate().getYear() - filterRequest.getStartDate().getYear() > AppConstants.MAX_YEARS_INTERVAL) {
             throw new InvalidActionException(ApiErrorMessage.FILTER_MAX_YEARS_INTERVAL);
         }
 
@@ -76,18 +80,18 @@ public class EventService {
             order = Order.BY_DATE_DESCENDING;
         }
 
-        LocalDateTime startDateTime = filterRequestDto.getStartDate().atStartOfDay();
-        LocalDateTime endDateTime = filterRequestDto.getEndDate().atTime(23, 59, 59);
+        LocalDateTime startDateTime = filterRequest.getStartDate().atStartOfDay();
+        LocalDateTime endDateTime = filterRequest.getEndDate().atTime(23, 59, 59);
 
         log.info("Starting events retrieval; latitude: {}, longitude: {}, radius: {}, start date: {}, end date: {}, tags: {}, severities: {}",
-                filterRequestDto.getLatitude(), filterRequestDto.getLongitude(), filterRequestDto.getRadius(),
+                filterRequest.getLatitude(), filterRequest.getLongitude(), filterRequest.getRadius(),
                 startDateTime, endDateTime,
-                filterRequestDto.getTagsIds(), filterRequestDto.getSeveritiesIds());
+                filterRequest.getTagsIds(), filterRequest.getSeveritiesIds());
 
         List<EventRepository.DistanceProjection> distanceProjections = eventRepository.findByFilter(
-                filterRequestDto.getLatitude(), filterRequestDto.getLongitude(), filterRequestDto.getRadius(),
+                filterRequest.getLatitude(), filterRequest.getLongitude(), filterRequest.getRadius(),
                 startDateTime, endDateTime,
-                filterRequestDto.getTagsIds(), filterRequestDto.getSeveritiesIds());
+                filterRequest.getTagsIds(), filterRequest.getSeveritiesIds());
 
         if (order == Order.BY_DISTANCE_DESCENDING) {
             Collections.reverse(distanceProjections);
@@ -136,15 +140,14 @@ public class EventService {
         return eventsPage;
     }
 
-    public Event save(EventRequestDto eventRequestDto) {
-        Event newEvent = createOrUpdate(new Event(), eventRequestDto);
-        notificationService.send(newEvent);
-        return newEvent;
+    public Event save(EventRequest eventRequest) {
+        Event event = createOrUpdate(new Event(), eventRequest);
+        notificationService.send(event);
+        return event;
     }
 
-    public Event updateById(EventRequestDto eventRequestDto, Long id) {
-        Event event = findById(id);
-        return createOrUpdate(event, eventRequestDto);
+    public Event updateById(EventRequest eventRequest, Long id) {
+        return createOrUpdate(findById(id), eventRequest);
     }
 
     public void deleteById(Long id) {
@@ -155,34 +158,34 @@ public class EventService {
         }
     }
 
-    private Event createOrUpdate(Event event, EventRequestDto eventRequestDto) {
-        User user = userService.findById(eventRequestDto.getUserId());
-        EventTag tag = tagService.findById(eventRequestDto.getTagId());
-        EventSeverity severity = severityService.findById(eventRequestDto.getSeverityId());
+    private Event createOrUpdate(Event event, EventRequest eventRequest) {
+        User user = userService.findById(eventRequest.getUserId());
+        EventTag tag = tagService.findById(eventRequest.getTagId());
+        EventSeverity severity = severityService.findById(eventRequest.getSeverityId());
 
-        if (isNullOrEmpty(user.getFirstName())) {
+        if (user.getFirstName() == null || user.getFirstName().isEmpty()) {
             throw new InvalidActionException(ApiErrorMessage.PROFILE_FIRST_NAME_MANDATORY);
         }
-        if (isNullOrEmpty(user.getLastName())) {
+        if (user.getLastName() == null || user.getLastName().isEmpty()) {
             throw new InvalidActionException(ApiErrorMessage.PROFILE_LAST_NAME_MANDATORY);
         }
 
-        String description = eventRequestDto.getDescription() == null ?
-                null : eventRequestDto.getDescription().replaceAll("\n", " ");
+        if (!storageService.imageExists(event.getImagePath())) {
+            throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
+        }
 
-        event.setLatitude(eventRequestDto.getLatitude());
-        event.setLongitude(eventRequestDto.getLongitude());
-        event.setImagePath(eventRequestDto.getImagePath());
+        String description = eventRequest.getDescription() == null ?
+                null : eventRequest.getDescription().replaceAll("\n", " ");
+
+        event.setLatitude(eventRequest.getLatitude());
+        event.setLongitude(eventRequest.getLongitude());
+        event.setImagePath(eventRequest.getImagePath());
         event.setDescription(description);
         event.setSeverity(severity);
         event.setTag(tag);
         event.setUser(user);
 
         return eventRepository.save(event);
-    }
-
-    private boolean isNullOrEmpty(String s) {
-        return s == null || s.isEmpty();
     }
 
 }

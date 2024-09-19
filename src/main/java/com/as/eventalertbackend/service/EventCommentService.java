@@ -1,12 +1,12 @@
 package com.as.eventalertbackend.service;
 
-import com.as.eventalertbackend.dto.request.EventCommentRequestDto;
+import com.as.eventalertbackend.dto.request.EventCommentRequest;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
-import com.as.eventalertbackend.jpa.entity.Event;
-import com.as.eventalertbackend.jpa.entity.EventComment;
-import com.as.eventalertbackend.jpa.entity.User;
-import com.as.eventalertbackend.jpa.reopsitory.EventCommentRepository;
+import com.as.eventalertbackend.persistence.entity.Event;
+import com.as.eventalertbackend.persistence.entity.EventComment;
+import com.as.eventalertbackend.persistence.entity.User;
+import com.as.eventalertbackend.persistence.reopsitory.EventCommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,13 +38,12 @@ public class EventCommentService {
         return commentRepository.findByEventIdOrderByDateTimeDesc(id);
     }
 
-    public EventComment save(EventCommentRequestDto commentRequestDto) {
-        return createOrUpdate(new EventComment(), commentRequestDto);
+    public EventComment save(EventCommentRequest commentRequest) {
+        return createOrUpdate(new EventComment(), commentRequest);
     }
 
-    public EventComment updateById(EventCommentRequestDto commentRequestDto, Long id) {
-        EventComment comment = findById(id);
-        return createOrUpdate(comment, commentRequestDto);
+    public EventComment updateById(EventCommentRequest commentRequest, Long id) {
+        return createOrUpdate(findById(id), commentRequest);
     }
 
     public void deleteById(Long id) {
@@ -55,13 +54,13 @@ public class EventCommentService {
         }
     }
 
-    private EventComment createOrUpdate(EventComment comment, EventCommentRequestDto commentRequestDto) {
-        Event event = eventService.findById(commentRequestDto.getEventId());
-        User user = userService.findById(commentRequestDto.getEventId());
+    private EventComment createOrUpdate(EventComment comment, EventCommentRequest commentRequest) {
+        Event event = eventService.findById(commentRequest.getEventId());
+        User user = userService.findById(commentRequest.getEventId());
 
         comment.setEvent(event);
         comment.setUser(user);
-        comment.setComment(commentRequestDto.getComment());
+        comment.setComment(commentRequest.getComment());
 
         return commentRepository.save(comment);
     }

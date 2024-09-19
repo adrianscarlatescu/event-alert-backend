@@ -1,10 +1,10 @@
 package com.as.eventalertbackend.service;
 
-import com.as.eventalertbackend.dto.request.EventSeverityRequestDto;
+import com.as.eventalertbackend.dto.request.EventSeverityRequest;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
-import com.as.eventalertbackend.jpa.entity.EventSeverity;
-import com.as.eventalertbackend.jpa.reopsitory.EventSeverityRepository;
+import com.as.eventalertbackend.persistence.entity.EventSeverity;
+import com.as.eventalertbackend.persistence.reopsitory.EventSeverityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,22 +29,12 @@ public class EventSeverityService {
                 .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.SEVERITY_NOT_FOUND));
     }
 
-    public EventSeverity updateById(EventSeverityRequestDto severityRequestDto, Long id) {
-        EventSeverity severity = findById(id);
-
-        severity.setName(severityRequestDto.getName());
-        severity.setColor(severityRequestDto.getColor());
-
-        return severityRepository.save(severity);
+    public EventSeverity updateById(EventSeverityRequest severityRequest, Long id) {
+        return createOrUpdate(findById(id), severityRequest);
     }
 
-    public EventSeverity save(EventSeverityRequestDto severityRequestDto) {
-        EventSeverity severity = new EventSeverity();
-
-        severity.setName(severityRequestDto.getName());
-        severity.setColor(severityRequestDto.getColor());
-
-        return severityRepository.save(severity);
+    public EventSeverity save(EventSeverityRequest severityRequest) {
+        return createOrUpdate(new EventSeverity(), severityRequest);
     }
 
     public void deleteById(Long id) {
@@ -53,6 +43,13 @@ public class EventSeverityService {
         } else {
             throw new RecordNotFoundException(ApiErrorMessage.SEVERITY_NOT_FOUND);
         }
+    }
+
+    private EventSeverity createOrUpdate(EventSeverity severity, EventSeverityRequest severityRequest) {
+        severity.setName(severityRequest.getName());
+        severity.setColor(severityRequest.getColor());
+
+        return severityRepository.save(severity);
     }
 
 }

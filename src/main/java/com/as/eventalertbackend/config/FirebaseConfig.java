@@ -19,7 +19,7 @@ public class FirebaseConfig {
     @ConditionalOnProperty(value = "app.notification.enabled", havingValue = "true")
     public FirebaseMessaging firebaseMessaging() throws IOException {
         GoogleCredentials googleCredentials =
-                GoogleCredentials.fromStream(new ClassPathResource("static/firebase-service-account.json").getInputStream());
+                GoogleCredentials.fromStream(new ClassPathResource("firebase/firebase-service-account.json").getInputStream());
 
         FirebaseOptions firebaseOptions = FirebaseOptions.builder()
                 .setCredentials(googleCredentials)

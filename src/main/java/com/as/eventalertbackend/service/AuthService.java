@@ -1,13 +1,13 @@
 package com.as.eventalertbackend.service;
 
-import com.as.eventalertbackend.dto.request.AuthLoginRequestDto;
-import com.as.eventalertbackend.dto.request.AuthRegisterRequestDto;
-import com.as.eventalertbackend.dto.response.AuthTokensDto;
+import com.as.eventalertbackend.dto.request.AuthLoginRequest;
+import com.as.eventalertbackend.dto.request.AuthRegisterRequest;
+import com.as.eventalertbackend.dto.response.AuthTokensResponse;
 import com.as.eventalertbackend.enums.Role;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
-import com.as.eventalertbackend.jpa.entity.User;
-import com.as.eventalertbackend.jpa.entity.UserRole;
+import com.as.eventalertbackend.persistence.entity.User;
+import com.as.eventalertbackend.persistence.entity.UserRole;
 import com.as.eventalertbackend.security.jwt.JwtManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,29 +46,29 @@ public class AuthService {
         this.jwtManager = jwtManager;
     }
 
-    public User register(AuthRegisterRequestDto registerRequestDto) {
-        boolean emailExists = userService.existsByEmail(registerRequestDto.getEmail());
+    public User register(AuthRegisterRequest registerRequest) {
+        boolean emailExists = userService.existsByEmail(registerRequest.getEmail());
         if (emailExists) {
             throw new InvalidActionException(ApiErrorMessage.ACCOUNT_ALREADY_CREATED);
         }
 
-        if (!registerRequestDto.getPassword().equals(registerRequestDto.getConfirmPassword())) {
+        if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
             throw new InvalidActionException(ApiErrorMessage.PASSWORDS_NOT_MATCH);
         }
 
         UserRole userRole = userRoleService.findByName(Role.ROLE_USER);
 
-        User user = new User(registerRequestDto.getEmail(),
-                passwordEncoder.encode(registerRequestDto.getPassword()),
+        User user = new User(registerRequest.getEmail(),
+                passwordEncoder.encode(registerRequest.getPassword()),
                 Collections.singleton(userRole));
 
         return userService.save(user);
     }
 
     @Transactional
-    public AuthTokensDto login(AuthLoginRequestDto loginDto) {
-        String email = loginDto.getEmail();
-        String password = loginDto.getPassword();
+    public AuthTokensResponse login(AuthLoginRequest loginRequest) {
+        String email = loginRequest.getEmail();
+        String password = loginRequest.getPassword();
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, password)
@@ -78,17 +78,17 @@ public class AuthService {
         String accessToken = jwtManager.generateAccessToken(email);
         String refreshToken = jwtManager.generateRefreshToken(email);
 
-        return new AuthTokensDto(accessToken, refreshToken);
+        return new AuthTokensResponse(accessToken, refreshToken);
     }
 
-    public AuthTokensDto refreshToken(HttpServletRequest request) {
-        String refreshToken = jwtManager.parseJwt(request);
+    public AuthTokensResponse refreshToken(HttpServletRequest httpRequest) {
+        String refreshToken = jwtManager.parseJwt(httpRequest);
 
         String email = jwtManager.getEmailFromJwtToken(refreshToken);
         String accessToken = jwtManager.generateAccessToken(email);
 
         log.info("New access token generated for user with email: {}", email);
-        return new AuthTokensDto(accessToken, refreshToken);
+        return new AuthTokensResponse(accessToken, refreshToken);
     }
 
     @Transactional

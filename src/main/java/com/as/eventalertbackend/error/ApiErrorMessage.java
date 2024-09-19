@@ -15,6 +15,9 @@ public enum ApiErrorMessage {
     SUBSCRIPTION_NOT_FOUND("Subscription not found"),
     ALREADY_SUBSCRIBER("Already subscriber"),
 
+    IMAGE_NOT_FOUND("Image not found"),
+    INVALID_IMAGE_NAME("Invalid image name"),
+    FILE_LIST_FAIL("Could not list server files"),
     IMAGE_RETRIEVE_FAIL("Could not retrieve the image"),
     IMAGE_STORE_FAIL("Could not store the image"),
 

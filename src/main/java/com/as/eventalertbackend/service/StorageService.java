@@ -1,8 +1,10 @@
 package com.as.eventalertbackend.service;
 
+import com.as.eventalertbackend.AppProperties;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.StorageFailException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -16,16 +18,37 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 @Service
 @Slf4j
 public class StorageService {
 
-    public static final String IMG_PATH = "img/";
-    public static final String SERVER_PATH = "C:/Users/ADRIAN/IdeaProjects/event-alert-backend/src/main/resources/";
+    private final AppProperties appProperties;
 
-    public Resource readImage(String imgRelativePath) {
-        Path path = Paths.get(SERVER_PATH + imgRelativePath);
+    @Autowired
+    public StorageService(AppProperties appProperties) {
+        this.appProperties = appProperties;
+    }
+
+    public boolean imageExists(String imageRelativePath) {
+        File imagesDirectory = new File(appProperties.getStorage().getServerPath() + appProperties.getStorage().getImagesPath());
+        String[] filesNames = imagesDirectory.list();
+        if (filesNames == null) {
+            throw new StorageFailException(ApiErrorMessage.FILE_LIST_FAIL);
+        }
+
+        if (!imageRelativePath.startsWith(appProperties.getStorage().getImagesPath())) {
+            throw new StorageFailException(ApiErrorMessage.INVALID_IMAGE_NAME);
+        }
+
+        String imageName = imageRelativePath.substring(appProperties.getStorage().getImagesPath().length());
+        return Arrays.asList(filesNames).contains(imageName);
+    }
+
+    public Resource readImage(String imageRelativePath) {
+        Path path = Paths.get(appProperties.getStorage().getServerPath() + imageRelativePath);
         try {
             return new UrlResource(path.toUri());
         } catch (MalformedURLException e) {
@@ -38,10 +61,10 @@ public class StorageService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
         String name = file.getOriginalFilename() + dateTime.format(formatter) + ".jpg";
 
-        String serverImgPath = SERVER_PATH + IMG_PATH;
-        log.info("Begin image write request, directory: {}", serverImgPath);
+        String serverImagesPath = appProperties.getStorage().getServerPath() + appProperties.getStorage().getImagesPath();
+        log.info("Begin image write request, directory: {}", serverImagesPath);
 
-        File directory = new File(serverImgPath);
+        File directory = new File(serverImagesPath);
         if (!directory.exists()) {
             boolean isCreated = directory.mkdir();
             if (!isCreated) {
@@ -51,14 +74,14 @@ public class StorageService {
 
         try {
             byte[] bytes = file.getBytes();
-            Path path = Paths.get(serverImgPath + name);
+            Path path = Paths.get(serverImagesPath + name);
             Files.write(path, bytes);
             log.info("Image successfully stored: {}", name);
         } catch (IOException e) {
             throw new StorageFailException(ApiErrorMessage.IMAGE_STORE_FAIL);
         }
 
-        return IMG_PATH + name;
+        return appProperties.getStorage().getImagesPath() + name;
     }
 
 }

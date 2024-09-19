@@ -1,10 +1,9 @@
 package com.as.eventalertbackend.controller;
 
-import com.as.eventalertbackend.dto.request.EventTagRequestDto;
-import com.as.eventalertbackend.dto.response.EventTagDto;
-import com.as.eventalertbackend.jpa.entity.EventTag;
-import com.as.eventalertbackend.mapper.Mapper;
+import com.as.eventalertbackend.dto.request.EventTagRequest;
+import com.as.eventalertbackend.dto.response.EventTagResponse;
 import com.as.eventalertbackend.service.EventTagService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,44 +12,49 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/tags")
 public class EventTagController {
 
-    private final Mapper<EventTag, EventTagDto> mapper;
+    private final ModelMapper mapper;
     private final EventTagService tagService;
 
     @Autowired
-    public EventTagController(Mapper<EventTag, EventTagDto> mapper,
+    public EventTagController(ModelMapper mapper,
                               EventTagService tagService) {
         this.mapper = mapper;
         this.tagService = tagService;
     }
 
     @GetMapping
-    public ResponseEntity<List<EventTagDto>> getAll() {
-        return ResponseEntity.ok(mapper.mapTo(tagService.findAll()));
+    public ResponseEntity<List<EventTagResponse>> getAll() {
+        return ResponseEntity.ok(
+                tagService.findAll().stream()
+                        .map(tag -> mapper.map(tag, EventTagResponse.class))
+                        .collect(Collectors.toList())
+        );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EventTagDto> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(mapper.mapTo(tagService.findById(id)));
+    public ResponseEntity<EventTagResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(mapper.map(tagService.findById(id), EventTagResponse.class));
     }
 
     @Secured({"ROLE_ADMIN"})
     @PostMapping
-    public ResponseEntity<EventTagDto> save(@Valid @RequestBody EventTagRequestDto tagRequestDto) {
+    public ResponseEntity<EventTagResponse> save(@Valid @RequestBody EventTagRequest tagRequest) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(mapper.mapTo(tagService.save(tagRequestDto)));
+                .body(mapper.map(tagService.save(tagRequest), EventTagResponse.class));
     }
 
     @Secured({"ROLE_ADMIN"})
     @PutMapping("/{id}")
-    public ResponseEntity<EventTagDto> updateById(@Valid @RequestBody EventTagRequestDto tagRequestDto,
-                                                  @PathVariable("id") Long id) {
-        return ResponseEntity.ok(mapper.mapTo(tagService.updateById(tagRequestDto, id)));
+    public ResponseEntity<EventTagResponse> updateById(@Valid @RequestBody EventTagRequest tagRequest,
+                                                       @PathVariable("id") Long id) {
+        return ResponseEntity.ok(mapper.map(tagService.updateById(tagRequest, id), EventTagResponse.class));
     }
 
     @Secured({"ROLE_ADMIN"})

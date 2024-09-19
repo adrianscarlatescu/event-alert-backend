@@ -20,8 +20,8 @@ public class FileController {
     }
 
     @GetMapping("/image")
-    public ResponseEntity<Resource> singleImageDownload(@RequestParam("path") String imgPath) {
-        Resource resource = storageService.readImage(imgPath);
+    public ResponseEntity<Resource> singleImageDownload(@RequestParam("path") String imagePath) {
+        Resource resource = storageService.readImage(imagePath);
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("application/octet-stream"))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")

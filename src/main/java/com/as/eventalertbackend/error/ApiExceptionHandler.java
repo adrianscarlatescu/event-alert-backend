@@ -1,9 +1,10 @@
 package com.as.eventalertbackend.error;
 
-import com.as.eventalertbackend.dto.response.ApiErrorDto;
-import com.as.eventalertbackend.dto.response.ApiErrorsDto;
+import com.as.eventalertbackend.dto.response.ApiErrorResponse;
+import com.as.eventalertbackend.dto.response.ApiErrorsResponse;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
+import com.as.eventalertbackend.error.exception.ResourceNotFoundException;
 import com.as.eventalertbackend.error.exception.StorageFailException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,60 +22,56 @@ import java.util.stream.Collectors;
 public class ApiExceptionHandler {
 
     @ExceptionHandler({Exception.class})
-    public ResponseEntity<ApiErrorsDto> handle(Exception e, HttpServletRequest request) {
+    public ResponseEntity<ApiErrorsResponse> handle(Exception e, HttpServletRequest request) {
         logException(e, request);
-
-        ApiErrorsDto apiErrorsDto = new ApiErrorsDto(ApiErrorCode.TECHNICAL_ERROR.getValue(), e.getMessage());
-
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(apiErrorsDto);
+                .body(new ApiErrorsResponse(ApiErrorCode.TECHNICAL_ERROR.getValue(), e.getMessage()));
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
-    public ResponseEntity<ApiErrorsDto> handle(MethodArgumentNotValidException e, HttpServletRequest request) {
+    public ResponseEntity<ApiErrorsResponse> handle(MethodArgumentNotValidException e, HttpServletRequest request) {
         logException(e, request);
 
-        List<ApiErrorDto> errors = e.getBindingResult().getFieldErrors().stream()
-                .map(fieldError -> new ApiErrorDto(ApiErrorCode.FIELD_CONSTRAINT.getValue(), fieldError.getDefaultMessage()))
+        List<ApiErrorResponse> errors = e.getBindingResult().getFieldErrors().stream()
+                .map(fieldError -> new ApiErrorResponse(ApiErrorCode.FIELD_CONSTRAINT.getValue(), fieldError.getDefaultMessage()))
                 .collect(Collectors.toList());
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(new ApiErrorsDto(errors));
+                .body(new ApiErrorsResponse(errors));
     }
 
     @ExceptionHandler({InvalidActionException.class})
-    public ResponseEntity<ApiErrorsDto> handle(InvalidActionException e, HttpServletRequest request) {
+    public ResponseEntity<ApiErrorsResponse> handle(InvalidActionException e, HttpServletRequest request) {
         logException(e, request);
-
-        ApiErrorsDto apiErrorsDto = new ApiErrorsDto(ApiErrorCode.INVALID_ACTION.getValue(), e.getMessage());
-
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(apiErrorsDto);
+                .body(new ApiErrorsResponse(ApiErrorCode.INVALID_ACTION.getValue(), e.getMessage()));
     }
 
     @ExceptionHandler({RecordNotFoundException.class})
-    public ResponseEntity<ApiErrorsDto> handle(RecordNotFoundException e, HttpServletRequest request) {
+    public ResponseEntity<ApiErrorsResponse> handle(RecordNotFoundException e, HttpServletRequest request) {
         logException(e, request);
-
-        ApiErrorsDto apiErrorsDto = new ApiErrorsDto(ApiErrorCode.RECORD_NOT_FOUND.getValue(), e.getMessage());
-
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(apiErrorsDto);
+                .body(new ApiErrorsResponse(ApiErrorCode.RECORD_NOT_FOUND.getValue(), e.getMessage()));
+    }
+
+    @ExceptionHandler({ResourceNotFoundException.class})
+    public ResponseEntity<ApiErrorsResponse> handle(ResourceNotFoundException e, HttpServletRequest request) {
+        logException(e, request);
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new ApiErrorsResponse(ApiErrorCode.RESOURCE_NOT_FOUND.getValue(), e.getMessage()));
     }
 
     @ExceptionHandler({StorageFailException.class})
-    public ResponseEntity<ApiErrorsDto> handle(StorageFailException e, HttpServletRequest request) {
+    public ResponseEntity<ApiErrorsResponse> handle(StorageFailException e, HttpServletRequest request) {
         logException(e, request);
-
-        ApiErrorsDto apiErrorsDto = new ApiErrorsDto(ApiErrorCode.STORAGE_FAIL.getValue(), e.getMessage());
-
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(apiErrorsDto);
+                .body(new ApiErrorsResponse(ApiErrorCode.STORAGE_FAIL.getValue(), e.getMessage()));
     }
 
     private void logException(Exception e, HttpServletRequest request) {

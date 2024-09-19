@@ -1,12 +1,12 @@
 package com.as.eventalertbackend.service;
 
-import com.as.eventalertbackend.dto.request.SubscriptionRequestDto;
+import com.as.eventalertbackend.dto.request.SubscriptionRequest;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
-import com.as.eventalertbackend.jpa.entity.Subscription;
-import com.as.eventalertbackend.jpa.entity.User;
-import com.as.eventalertbackend.jpa.reopsitory.SubscriptionRepository;
+import com.as.eventalertbackend.persistence.entity.Subscription;
+import com.as.eventalertbackend.persistence.entity.User;
+import com.as.eventalertbackend.persistence.reopsitory.SubscriptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,8 +30,8 @@ public class SubscriptionService {
                 .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.SUBSCRIPTION_NOT_FOUND));
     }
 
-    public Subscription subscribe(Long userId, SubscriptionRequestDto subscriptionRequestDto) {
-        if (subscriptionRepository.existsByUserIdAndDeviceToken(userId, subscriptionRequestDto.getDeviceToken())) {
+    public Subscription subscribe(Long userId, SubscriptionRequest subscriptionRequest) {
+        if (subscriptionRepository.existsByUserIdAndDeviceToken(userId, subscriptionRequest.getDeviceToken())) {
             throw new InvalidActionException(ApiErrorMessage.ALREADY_SUBSCRIBER);
         }
 
@@ -39,19 +39,19 @@ public class SubscriptionService {
 
         Subscription subscription = new Subscription();
         subscription.setUser(user);
-        subscription.setDeviceToken(subscriptionRequestDto.getDeviceToken());
-        subscription.setLatitude(subscriptionRequestDto.getLatitude());
-        subscription.setLongitude(subscriptionRequestDto.getLongitude());
-        subscription.setRadius(subscriptionRequestDto.getRadius());
+        subscription.setDeviceToken(subscriptionRequest.getDeviceToken());
+        subscription.setLatitude(subscriptionRequest.getLatitude());
+        subscription.setLongitude(subscriptionRequest.getLongitude());
+        subscription.setRadius(subscriptionRequest.getRadius());
 
         return subscriptionRepository.save(subscription);
     }
 
-    public Subscription update(Long userId, SubscriptionRequestDto subscriptionRequestDto) {
-        Subscription subscription = find(userId, subscriptionRequestDto.getDeviceToken());
-        subscription.setLatitude(subscriptionRequestDto.getLatitude());
-        subscription.setLongitude(subscriptionRequestDto.getLongitude());
-        subscription.setRadius(subscriptionRequestDto.getRadius());
+    public Subscription update(Long userId, SubscriptionRequest subscriptionRequest) {
+        Subscription subscription = find(userId, subscriptionRequest.getDeviceToken());
+        subscription.setLatitude(subscriptionRequest.getLatitude());
+        subscription.setLongitude(subscriptionRequest.getLongitude());
+        subscription.setRadius(subscriptionRequest.getRadius());
         return subscriptionRepository.save(subscription);
     }
 

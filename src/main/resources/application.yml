@@ -26,6 +26,9 @@ spring:
       enabled: true
 
 app:
+  storage:
+    server-path: "C:/Users/ADRIAN/IdeaProjects/event-alert-backend/src/main/resources/"
+    images-path: "img/"
   security:
     secret: "SecretKeyToGenerateJWTs"
     access-token-expiration-time: 3600000 # 1 hour

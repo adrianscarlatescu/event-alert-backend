@@ -13,8 +13,17 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties("app")
 public class AppProperties {
 
+    private Storage storage;
     private Security security;
     private Notification notification;
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class Storage {
+        private String serverPath;
+        private String imagesPath;
+    }
 
     @Getter
     @Setter
