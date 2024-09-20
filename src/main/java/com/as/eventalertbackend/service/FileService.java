@@ -19,16 +19,15 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.stream.Stream;
 
 @Service
 @Slf4j
-public class StorageService {
+public class FileService {
 
     private final AppProperties appProperties;
 
     @Autowired
-    public StorageService(AppProperties appProperties) {
+    public FileService(AppProperties appProperties) {
         this.appProperties = appProperties;
     }
 

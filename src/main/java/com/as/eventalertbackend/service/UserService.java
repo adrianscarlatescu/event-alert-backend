@@ -24,15 +24,15 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
 
     private final UserRoleService userRoleService;
-    private final StorageService storageService;
+    private final FileService fileService;
 
     @Autowired
     public UserService(UserRepository userRepository,
                        UserRoleService userRoleService,
-                       StorageService storageService) {
+                       FileService fileService) {
         this.userRepository = userRepository;
         this.userRoleService = userRoleService;
-        this.storageService = storageService;
+        this.fileService = fileService;
     }
 
     @Override
@@ -64,7 +64,7 @@ public class UserService implements UserDetailsService {
             throw new InvalidActionException(ApiErrorMessage.DEFAULT_ROLE_MANDATORY);
         }
 
-        if (userRequest.getImagePath() != null && !storageService.imageExists(userRequest.getImagePath())) {
+        if (userRequest.getImagePath() != null && !fileService.imageExists(userRequest.getImagePath())) {
             throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
         }
 

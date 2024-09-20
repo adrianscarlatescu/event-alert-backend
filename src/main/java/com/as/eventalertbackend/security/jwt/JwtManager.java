@@ -22,22 +22,24 @@ public class JwtManager {
 
     public String generateAccessToken(String email) {
         Date now = new Date();
+        Date expiration = new Date(now.getTime() + appProperties.getSecurity().getAccessTokenExpirationTime());
         return Jwts.builder()
                 .setId(appProperties.getSecurity().getAccessTokenId())
                 .setSubject(email)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + appProperties.getSecurity().getAccessTokenExpirationTime()))
+                .setExpiration(expiration)
                 .signWith(SignatureAlgorithm.HS512, appProperties.getSecurity().getSecret())
                 .compact();
     }
 
     public String generateRefreshToken(String email) {
         Date now = new Date();
+        Date expiration = new Date(now.getTime() + appProperties.getSecurity().getRefreshTokenExpirationTime());
         return Jwts.builder()
                 .setId(appProperties.getSecurity().getRefreshTokenId())
                 .setSubject(email)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + appProperties.getSecurity().getRefreshTokenExpirationTime()))
+                .setExpiration(expiration)
                 .signWith(SignatureAlgorithm.HS512, appProperties.getSecurity().getSecret())
                 .compact();
     }

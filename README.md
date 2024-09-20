@@ -33,7 +33,6 @@ The connection details are specified in [application.yml](https://github.com/adr
 
 At application startup, Liquibase will run the [scripts](https://github.com/adrianscarlatescu/event-alert-backend/tree/master/src/main/resources/db/changelog/scripts) declared. 
 It will create the required tables and insert some basic data.
-* The property [app.storage.server-path](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L30) must be set to point to project's resources.
 * Push notifications feature:
     * To skip this feature, set [app.notification.enabled](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L43) to `false`.
     * In order to send push notifications, create a Firebase project and generate the service account private key.
@@ -41,10 +40,10 @@ This key must be put in [firebase-service-account.json](https://github.com/adria
 
 
 ## Database schema
-<img src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/database_schema.png" width="800">  
+<img src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/readme/database_schema.png" width="800">  
 
 ## Authorization diagram
-<img src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/authorization_diagram.png" width="800">
+<img src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/readme/authorization_diagram.png" width="800">
 
 ## Request - response example
 The target is to get all the events filtered by the following *body*:

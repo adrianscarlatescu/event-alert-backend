@@ -35,7 +35,7 @@ public class EventService {
     private final EventSeverityService severityService;
     private final EventTagService tagService;
     private final UserService userService;
-    private final StorageService storageService;
+    private final FileService fileService;
     private final NotificationService notificationService;
 
     @Autowired
@@ -43,13 +43,13 @@ public class EventService {
                         EventSeverityService severityService,
                         EventTagService tagService,
                         UserService userService,
-                        StorageService storageService,
+                        FileService fileService,
                         NotificationService notificationService) {
         this.eventRepository = eventRepository;
         this.severityService = severityService;
         this.tagService = tagService;
         this.userService = userService;
-        this.storageService = storageService;
+        this.fileService = fileService;
         this.notificationService = notificationService;
     }
 
@@ -170,7 +170,7 @@ public class EventService {
             throw new InvalidActionException(ApiErrorMessage.PROFILE_LAST_NAME_MANDATORY);
         }
 
-        if (!storageService.imageExists(eventRequest.getImagePath())) {
+        if (!fileService.imageExists(eventRequest.getImagePath())) {
             throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
         }
 

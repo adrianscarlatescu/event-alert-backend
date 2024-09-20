@@ -2,7 +2,6 @@ package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.dto.request.EventTagRequest;
 import com.as.eventalertbackend.error.ApiErrorMessage;
-import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
 import com.as.eventalertbackend.error.exception.ResourceNotFoundException;
 import com.as.eventalertbackend.persistence.entity.EventTag;
@@ -17,13 +16,13 @@ public class EventTagService {
 
     private final EventTagRepository tagRepository;
 
-    private final StorageService storageService;
+    private final FileService fileService;
 
     @Autowired
     public EventTagService(EventTagRepository tagRepository,
-                           StorageService storageService) {
+                           FileService fileService) {
         this.tagRepository = tagRepository;
-        this.storageService = storageService;
+        this.fileService = fileService;
     }
 
     public List<EventTag> findAll() {
@@ -52,7 +51,7 @@ public class EventTagService {
     }
 
     private EventTag createOrUpdate(EventTag tag, EventTagRequest tagRequest) {
-        if (!storageService.imageExists(tagRequest.getImagePath())) {
+        if (!fileService.imageExists(tagRequest.getImagePath())) {
             throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
         }
 

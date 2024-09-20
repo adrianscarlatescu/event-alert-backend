@@ -75,10 +75,10 @@ public class AuthService {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String accessToken = jwtManager.generateAccessToken(email);
-        String refreshToken = jwtManager.generateRefreshToken(email);
+        String accessTokenInfo = jwtManager.generateAccessToken(email);
+        String refreshTokenInfo = jwtManager.generateRefreshToken(email);
 
-        return new AuthTokensResponse(accessToken, refreshToken);
+        return new AuthTokensResponse(accessTokenInfo, refreshTokenInfo);
     }
 
     public AuthTokensResponse refreshToken(HttpServletRequest httpRequest) {

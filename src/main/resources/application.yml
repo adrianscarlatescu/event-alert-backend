@@ -27,7 +27,7 @@ spring:
 
 app:
   storage:
-    server-path: "C:/Users/ADRIAN/IdeaProjects/event-alert-backend/src/main/resources/"
+    server-path: "src/main/resources/"
     images-path: "img/"
   security:
     secret: "SecretKeyToGenerateJWTs"
