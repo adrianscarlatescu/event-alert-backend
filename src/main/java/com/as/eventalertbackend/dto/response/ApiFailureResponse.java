@@ -7,18 +7,18 @@ import java.util.Collections;
 import java.util.List;
 
 @Getter
-public class ApiErrorsResponse implements Serializable {
+public class ApiFailureResponse implements Serializable {
 
     private List<ApiErrorResponse> errors;
 
-    private ApiErrorsResponse() {
+    private ApiFailureResponse() {
     }
 
-    public ApiErrorsResponse(String code, String message) {
+    public ApiFailureResponse(String code, String message) {
         this.errors = Collections.singletonList(new ApiErrorResponse(code, message));
     }
 
-    public ApiErrorsResponse(List<ApiErrorResponse> errors) {
+    public ApiFailureResponse(List<ApiErrorResponse> errors) {
         this.errors = errors;
     }
 

@@ -1,7 +1,7 @@
 package com.as.eventalertbackend.error;
 
 import com.as.eventalertbackend.dto.response.ApiErrorResponse;
-import com.as.eventalertbackend.dto.response.ApiErrorsResponse;
+import com.as.eventalertbackend.dto.response.ApiFailureResponse;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
 import com.as.eventalertbackend.error.exception.ResourceNotFoundException;
@@ -22,15 +22,15 @@ import java.util.stream.Collectors;
 public class ApiExceptionHandler {
 
     @ExceptionHandler({Exception.class})
-    public ResponseEntity<ApiErrorsResponse> handle(Exception e, HttpServletRequest request) {
+    public ResponseEntity<ApiFailureResponse> handle(Exception e, HttpServletRequest request) {
         logException(e, request);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ApiErrorsResponse(ApiErrorCode.TECHNICAL_ERROR.getValue(), e.getMessage()));
+                .body(new ApiFailureResponse(ApiErrorCode.TECHNICAL_ERROR.getValue(), e.getMessage()));
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
-    public ResponseEntity<ApiErrorsResponse> handle(MethodArgumentNotValidException e, HttpServletRequest request) {
+    public ResponseEntity<ApiFailureResponse> handle(MethodArgumentNotValidException e, HttpServletRequest request) {
         logException(e, request);
 
         List<ApiErrorResponse> errors = e.getBindingResult().getFieldErrors().stream()
@@ -39,39 +39,39 @@ public class ApiExceptionHandler {
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(new ApiErrorsResponse(errors));
+                .body(new ApiFailureResponse(errors));
     }
 
     @ExceptionHandler({InvalidActionException.class})
-    public ResponseEntity<ApiErrorsResponse> handle(InvalidActionException e, HttpServletRequest request) {
+    public ResponseEntity<ApiFailureResponse> handle(InvalidActionException e, HttpServletRequest request) {
         logException(e, request);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(new ApiErrorsResponse(ApiErrorCode.INVALID_ACTION.getValue(), e.getMessage()));
+                .body(new ApiFailureResponse(ApiErrorCode.INVALID_ACTION.getValue(), e.getMessage()));
     }
 
     @ExceptionHandler({RecordNotFoundException.class})
-    public ResponseEntity<ApiErrorsResponse> handle(RecordNotFoundException e, HttpServletRequest request) {
+    public ResponseEntity<ApiFailureResponse> handle(RecordNotFoundException e, HttpServletRequest request) {
         logException(e, request);
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(new ApiErrorsResponse(ApiErrorCode.RECORD_NOT_FOUND.getValue(), e.getMessage()));
+                .body(new ApiFailureResponse(ApiErrorCode.RECORD_NOT_FOUND.getValue(), e.getMessage()));
     }
 
     @ExceptionHandler({ResourceNotFoundException.class})
-    public ResponseEntity<ApiErrorsResponse> handle(ResourceNotFoundException e, HttpServletRequest request) {
+    public ResponseEntity<ApiFailureResponse> handle(ResourceNotFoundException e, HttpServletRequest request) {
         logException(e, request);
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(new ApiErrorsResponse(ApiErrorCode.RESOURCE_NOT_FOUND.getValue(), e.getMessage()));
+                .body(new ApiFailureResponse(ApiErrorCode.RESOURCE_NOT_FOUND.getValue(), e.getMessage()));
     }
 
     @ExceptionHandler({StorageFailException.class})
-    public ResponseEntity<ApiErrorsResponse> handle(StorageFailException e, HttpServletRequest request) {
+    public ResponseEntity<ApiFailureResponse> handle(StorageFailException e, HttpServletRequest request) {
         logException(e, request);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ApiErrorsResponse(ApiErrorCode.STORAGE_FAIL.getValue(), e.getMessage()));
+                .body(new ApiFailureResponse(ApiErrorCode.STORAGE_FAIL.getValue(), e.getMessage()));
     }
 
     private void logException(Exception e, HttpServletRequest request) {

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
@@ -22,7 +23,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     List<DistanceProjection> findByFilter(
             Double latitude, Double longitude, Integer radius,
             LocalDateTime startDate, LocalDateTime endDate,
-            Long[] tagsIds, Long[] severitiesIds);
+            Set<Long> tagsIds, Set<Long> severitiesIds);
 
     @Query(value = "SELECT * FROM event WHERE id in ?1",
             countQuery = "SELECT COUNT(*) FROM event WHERE id in ?1",

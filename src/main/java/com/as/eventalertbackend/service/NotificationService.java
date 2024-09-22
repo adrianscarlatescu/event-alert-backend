@@ -57,7 +57,7 @@ public class NotificationService {
         String tag = event.getTag().getName().toLowerCase();
 
         String title = "New " + severity + " " + tag + " reported!";
-        String body = "Click the notification for more details.";
+        String body = "Click the notification for more details";
 
         Notification notification = Notification.builder()
                 .setTitle(title)
@@ -78,7 +78,7 @@ public class NotificationService {
         }
 
         try {
-            BatchResponse batchResponse = firebaseMessaging.sendAll(messages);
+            BatchResponse batchResponse = firebaseMessaging.sendEach(messages);
             log.info("Notifications sent, success: {}, fail: {}", batchResponse.getSuccessCount(), batchResponse.getFailureCount());
             batchResponse.getResponses().forEach(response -> {
                 if (!response.isSuccessful()) {

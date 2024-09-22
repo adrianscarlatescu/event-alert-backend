@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -20,11 +21,9 @@ public class EventFilterRequest implements Serializable {
     public Integer radius;
 
     @NotNull(message = "The start date is mandatory")
-    @PastOrPresent(message = "Invalid start date")
     public LocalDate startDate;
 
     @NotNull(message = "The end date is mandatory")
-    @PastOrPresent(message = "Invalid end date")
     public LocalDate endDate;
 
     @NotNull(message = "The latitude is mandatory")
@@ -36,9 +35,9 @@ public class EventFilterRequest implements Serializable {
     public Double longitude;
 
     @NotEmpty(message = "Minimum one tag is required")
-    public Long[] tagsIds;
+    public Set<Long> tagsIds;
 
     @NotEmpty(message = "Minimum one severity is required")
-    public Long[] severitiesIds;
+    public Set<Long> severitiesIds;
 
 }

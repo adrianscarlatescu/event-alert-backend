@@ -56,7 +56,7 @@ public class EventCommentService {
 
     private EventComment createOrUpdate(EventComment comment, EventCommentRequest commentRequest) {
         Event event = eventService.findById(commentRequest.getEventId());
-        User user = userService.findById(commentRequest.getEventId());
+        User user = userService.findById(commentRequest.getUserId());
 
         comment.setEvent(event);
         comment.setUser(user);
