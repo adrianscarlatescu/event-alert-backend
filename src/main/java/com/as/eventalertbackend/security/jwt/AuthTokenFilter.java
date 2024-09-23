@@ -1,5 +1,6 @@
 package com.as.eventalertbackend.security.jwt;
 
+import com.as.eventalertbackend.AppProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,6 +20,9 @@ import java.io.IOException;
 public class AuthTokenFilter extends OncePerRequestFilter {
 
     @Autowired
+    private AppProperties appProperties;
+
+    @Autowired
     private JwtManager jwtManager;
 
     @Autowired
@@ -27,6 +31,12 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
+        if (request.getRequestURI().endsWith(appProperties.getSecurity().getAuthLoginUrl()) ||
+                request.getRequestURI().endsWith(appProperties.getSecurity().getAuthRegisterUrl())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         try {
             String token = jwtManager.parseJwt(request);

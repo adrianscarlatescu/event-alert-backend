@@ -78,6 +78,7 @@ public class AuthService {
         String accessTokenInfo = jwtManager.generateAccessToken(email);
         String refreshTokenInfo = jwtManager.generateRefreshToken(email);
 
+        log.info("Login tokens generated for {}", email);
         return new AuthTokensResponse(accessTokenInfo, refreshTokenInfo);
     }
 
@@ -87,7 +88,7 @@ public class AuthService {
         String email = jwtManager.getEmailFromJwtToken(refreshToken);
         String accessToken = jwtManager.generateAccessToken(email);
 
-        log.info("New access token generated for user with email: {}", email);
+        log.info("Access token refreshed for {}", email);
         return new AuthTokensResponse(accessToken, refreshToken);
     }
 
