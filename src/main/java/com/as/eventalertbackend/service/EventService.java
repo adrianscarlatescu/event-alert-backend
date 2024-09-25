@@ -83,10 +83,10 @@ public class EventService {
         LocalDateTime startDateTime = filterRequest.getStartDate().atStartOfDay();
         LocalDateTime endDateTime = filterRequest.getEndDate().atTime(23, 59, 59);
 
-        /*log.info("Starting events retrieval; latitude: {}, longitude: {}, radius: {}, start date: {}, end date: {}, tags: {}, severities: {}",
+        log.info("Starting events retrieval; latitude: {}, longitude: {}, radius: {}, start date: {}, end date: {}, tags: {}, severities: {}",
                 filterRequest.getLatitude(), filterRequest.getLongitude(), filterRequest.getRadius(),
                 startDateTime, endDateTime,
-                filterRequest.getTagsIds(), filterRequest.getSeveritiesIds());*/
+                filterRequest.getTagsIds(), filterRequest.getSeveritiesIds());
 
         List<EventRepository.DistanceProjection> distanceProjections = eventRepository.findByFilter(
                 filterRequest.getLatitude(), filterRequest.getLongitude(), filterRequest.getRadius(),
@@ -132,10 +132,10 @@ public class EventService {
                         .ifPresent(distanceProjection -> event.setDistance(distanceProjection.getDistance()))
         );
 
-        /*log.info("Retrieved total pages: {}, total elements: {}, events: {}",
+        log.info("Retrieved total pages: {}, total elements: {}, events: {}",
                 eventsPage.getTotalPages(),
                 eventsPage.getTotalElements(),
-                eventsPage.getContent().stream().mapToLong(Event::getId).toArray());*/
+                eventsPage.getContent().stream().mapToLong(Event::getId).toArray());
 
         return eventsPage;
     }
