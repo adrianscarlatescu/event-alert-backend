@@ -16,6 +16,7 @@ public class SubscriptionResponse  implements Serializable {
     private Double latitude;
     private Double longitude;
     private Integer radius;
-    private String deviceToken;
+    private String firebaseToken;
+    private Boolean isActive;
 
 }

@@ -1,6 +1,7 @@
 package com.as.eventalertbackend.controller;
 
 import com.as.eventalertbackend.dto.request.SubscriptionRequest;
+import com.as.eventalertbackend.dto.request.SubscriptionStatusRequest;
 import com.as.eventalertbackend.dto.response.SubscriptionResponse;
 import com.as.eventalertbackend.persistence.entity.User;
 import com.as.eventalertbackend.service.SubscriptionService;
@@ -26,9 +27,9 @@ public class SubscriptionController {
         this.subscriptionService = subscriptionService;
     }
 
-    @GetMapping("/{deviceToken}")
-    public ResponseEntity<SubscriptionResponse> find(@PathVariable("deviceToken") String deviceToken) {
-        return ResponseEntity.ok(mapper.map(subscriptionService.find(getPrincipalId(), deviceToken), SubscriptionResponse.class));
+    @GetMapping("/{firebaseToken}")
+    public ResponseEntity<SubscriptionResponse> find(@PathVariable("firebaseToken") String firebaseToken) {
+        return ResponseEntity.ok(mapper.map(subscriptionService.find(getPrincipalId(), firebaseToken), SubscriptionResponse.class));
     }
 
     @PostMapping
@@ -41,9 +42,14 @@ public class SubscriptionController {
         return ResponseEntity.ok(mapper.map(subscriptionService.update(getPrincipalId(), subscriptionRequest), SubscriptionResponse.class));
     }
 
-    @DeleteMapping("/{deviceToken}")
-    public ResponseEntity<Void> unsubscribe(@PathVariable("deviceToken") String deviceToken) {
-        subscriptionService.delete(getPrincipalId(), deviceToken);
+    @PatchMapping
+    public ResponseEntity<SubscriptionResponse> updateStatus(@Valid @RequestBody SubscriptionStatusRequest subscriptionStatusRequest) {
+        return ResponseEntity.ok(mapper.map(subscriptionService.updateStatus(getPrincipalId(), subscriptionStatusRequest), SubscriptionResponse.class));
+    }
+
+    @DeleteMapping("/{firebaseToken}")
+    public ResponseEntity<Void> unsubscribe(@PathVariable("firebaseToken") String firebaseToken) {
+        subscriptionService.delete(getPrincipalId(), firebaseToken);
         return ResponseEntity.ok().build();
     }
 

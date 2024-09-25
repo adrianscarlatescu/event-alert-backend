@@ -14,14 +14,14 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
     @Query(value = "SELECT * " +
             "FROM subscription " +
             "WHERE ST_Distance_Sphere(point(latitude, longitude),point(?1, ?2)) / 1000 <= radius " +
-            "AND user_id != ?3",
+            "AND user_id != ?3 AND is_active = true",
             nativeQuery = true)
     List<Subscription> findByLocation(Double eventLatitude, Double eventLongitude, Long userIdToExclude);
 
-    boolean existsByUserIdAndDeviceToken(Long userId, String deviceToken);
+    boolean existsByUserIdAndFirebaseToken(Long userId, String firebaseToken);
 
-    Optional<Subscription> findByUserIdAndDeviceToken(Long userId, String deviceToken);
+    Optional<Subscription> findByUserIdAndFirebaseToken(Long userId, String firebaseToken);
 
-    void deleteByUserIdAndDeviceToken(Long userId, String deviceToken);
+    void deleteByUserIdAndFirebaseToken(Long userId, String firebaseToken);
 
 }

@@ -66,7 +66,7 @@ public class NotificationService {
 
         List<Message> messages = subscriptions.stream()
                 .map(subscription -> Message.builder()
-                        .setToken(subscription.getDeviceToken())
+                        .setToken(subscription.getFirebaseToken())
                         .setNotification(notification)
                         .putAllData(messageMap)
                         .build())

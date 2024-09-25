@@ -22,7 +22,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"test@test.com\",\r\n    \"password\": \"1234qwer\",\r\n    \"confirmPassword\": \"1234qwer\"\r\n}",
+							"raw": "{\r\n    \"email\": \"user6@test.com\",\r\n    \"password\": \"1234qwer\",\r\n    \"confirmPassword\": \"1234qwer\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -57,7 +57,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"test@test.com\",\r\n    \"password\": \"1234qwer\"\r\n}"
+							"raw": "{\r\n    \"email\": \"test6@test.com\",\r\n    \"password\": \"1234qwer\"\r\n}"
 						},
 						"url": {
 							"raw": "{{url}}/api/auth/login",
@@ -692,7 +692,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"latitude\": 44.8481,\r\n    \"longitude\": 24.8839,\r\n    \"imagePath\": \"img/event_1.jpg\",\r\n    \"severityId\": 2,\r\n    \"tagId\": 3,\r\n    \"userId\": 1\r\n}",
+							"raw": "{\r\n    \"latitude\": 44.8481,\r\n    \"longitude\": 24.8839,\r\n    \"imagePath\": \"img/event_1.jpg\",\r\n    \"severityId\": 2,\r\n    \"tagId\": 3,\r\n    \"userId\": 2\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -725,7 +725,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"latitude\": 44.8481,\r\n    \"longitude\": 24.8839,\r\n    \"imagePath\": \"img/event_1.jpg\",\r\n    \"severityId\": 1,\r\n    \"tagId\": 3,\r\n    \"userId\": 1\r\n}"
+							"raw": "{\r\n    \"latitude\": 44.8481,\r\n    \"longitude\": 24.8839,\r\n    \"imagePath\": \"img/event_1.jpg\",\r\n    \"severityId\": 1,\r\n    \"tagId\": 3,\r\n    \"userId\": 2\r\n}"
 						},
 						"url": {
 							"raw": "{{url}}/api/events/43",

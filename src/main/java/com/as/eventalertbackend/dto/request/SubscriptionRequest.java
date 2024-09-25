@@ -26,7 +26,7 @@ public class SubscriptionRequest implements Serializable {
     @NotNull(message = "The radius is mandatory")
     private Integer radius;
 
-    @NotBlank(message = "The device token is mandatory")
-    private String deviceToken;
+    @NotBlank(message = "The Firebase token is mandatory")
+    private String firebaseToken;
 
 }
