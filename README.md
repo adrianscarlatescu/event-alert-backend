@@ -138,8 +138,8 @@ Response:
     ]
 }
 ```
-Postman [collection](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/Event%20Alert%20-%20Collection.postman_collection.json) /
-[local environment](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/Event%20Alert%20-%20Local.postman_environment.json).  
+Postman [collection](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/postman/Event%20Alert%20-%20Collection.postman_collection.json) /
+[local environment](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/postman/Event%20Alert%20-%20Local.postman_environment.json).  
 
 ## Client applications
 * [event-alert-android](https://github.com/adrianscarlatescu/event-alert-android)
