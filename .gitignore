@@ -3,4 +3,3 @@
 target/**
 .idea/**
 .mvn/**
-src/main/resources/firebase/**
