@@ -38,8 +38,6 @@ It will create the required tables and insert some basic data.
   This key must be stored in `/resources/firebase/firebase-service-account.json`.
   * Set [app.notification.enabled](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L43) to `true`.
 
-
-
 ## Database schema
 <img src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/readme/database_schema.png" width="800">  
 
