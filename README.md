@@ -9,10 +9,10 @@ The technology stack consists of:
 * [Hibernate](https://hibernate.org/) - The Object-Relational Mapping framework used to map the object-oriented domain models to the relational database.
 * [MySQL Server](https://dev.mysql.com/doc/refman/5.7/en/) - The database server.
 * [Liquibase](https://www.liquibase.com/) - The library for tracking, managing and applying database schema changes.
-* [JUnit](https://junit.org/junit4/) - The framework used to write repeatable tests.
-* [Mockito](https://site.mockito.org/) - The mocking framework used to add dummy functionality that is used in unit testing.
 * [JWT](https://jwt.io/introduction/) - The standard used to securely transmit the information.
 * [Project Lombok](https://projectlombok.org/) - The library used to minimize boilerplate code and save development time.
+* [JUnit](https://junit.org/junit4/) - The framework used to write unit tests. (*Tests removed*)
+* [Mockito](https://site.mockito.org/) - The mocking framework used to add dummy functionality that is used in unit testing. (*Tests removed*)
 
 ## Project scope
 The purpose of this project is to provide all the required features for users that may want to be aware of the incidents reported around them.  
@@ -43,10 +43,10 @@ It will create the required tables and insert some basic data.
   * Set [app.notification.enabled](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L43) to `true`.
 
 ## Database schema
-<img src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/readme/database_schema.png" width="800">  
+<img alt="Database schema" src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/readme/database_schema.png" width="800">  
 
 ## Authorization diagram
-<img src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/readme/authorization_diagram.png" width="800">
+<img alt="Authorization diagram" src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/readme/authorization_diagram.png" width="800">
 
 ## Request - response example
 The target is to get all the events filtered by the following *body*:
