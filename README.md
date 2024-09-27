@@ -34,9 +34,10 @@ The connection details are specified in [application.yml](https://github.com/adr
 At application startup, Liquibase will run the [scripts](https://github.com/adrianscarlatescu/event-alert-backend/tree/master/src/main/resources/db/changelog/scripts) declared. 
 It will create the required tables and insert some basic data.
 * Push notifications feature (to skip this feature, nothing has to be done):
-    * Set [app.notification.enabled](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L43) `true`.
-    * In order to send push notifications, create a Firebase project and generate the service account private key.
-This key must be put in `src\main\resources\firebase\firebase-service-account.json`.
+  * Create a [Firebase](https://console.firebase.google.com/) project and generate the service account private key.
+  This key must be stored in `/resources/firebase/firebase-service-account.json`.
+  * Set [app.notification.enabled](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L43) to `true`.
+
 
 
 ## Database schema
