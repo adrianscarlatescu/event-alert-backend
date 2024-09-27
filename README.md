@@ -33,10 +33,10 @@ The connection details are specified in [application.yml](https://github.com/adr
 
 At application startup, Liquibase will run the [scripts](https://github.com/adrianscarlatescu/event-alert-backend/tree/master/src/main/resources/db/changelog/scripts) declared. 
 It will create the required tables and insert some basic data.
-* Push notifications feature:
-    * To skip this feature, set [app.notification.enabled](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L43) to `false`.
+* Push notifications feature (to skip this feature, nothing has to be done):
+    * Set [app.notification.enabled](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L43) `true`.
     * In order to send push notifications, create a Firebase project and generate the service account private key.
-This key must be put in [firebase-service-account.json](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/firebase-service-account.json).
+This key must be put in `src\main\resources\firebase\firebase-service-account.json`.
 
 
 ## Database schema
@@ -83,7 +83,7 @@ Response:
 ```
 {
     "totalPages": 1,
-    "totalElements": 2,
+    "totalElements": 1,
     "content": [
         {
             "id": 20,
@@ -109,31 +109,6 @@ Response:
                 "imagePath": "img/user_1.jpg"
             },
             "distance": 4.263562194233072
-        },
-        {
-            "id": 16,
-            "dateTime": "2020-04-15T22:21:43",
-            "latitude": 44.8466356,
-            "longitude": 24.8753764,
-            "imagePath": "img/event_16.jpg",
-            "description": null,
-            "severity": {
-                "id": 4,
-                "name": "Trivial",
-                "color": 11192420
-            },
-            "tag": {
-                "id": 20,
-                "name": "Traffic accident",
-                "imagePath": "img/tag_traffic_accident.png"
-            },
-            "user": {
-                "id": 1,
-                "firstName": "Alan",
-                "lastName": "Walter",
-                "imagePath": "img/user_1.jpg"
-            },
-            "distance": 0.9592219050088762
         }
     ]
 }
