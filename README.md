@@ -28,16 +28,14 @@ In order to run the application locally, the following steps must be set:
   * MySQL Server 5.7
   * Maven 3.9.2
 
-
 * The MySQL database must be created with the following commands:
-``` 
+```
 create database event_alert;
 create user 'event_alert_user' identified by '1234qwer';
 grant all on event_alert.* to 'event_alert_user';
 ```
-The connection details are specified in [application.yml](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L13,L15).
-
-At application startup, Liquibase will run the [scripts](https://github.com/adrianscarlatescu/event-alert-backend/tree/master/src/main/resources/db/changelog/scripts) declared. 
+&emsp;&emsp;The connection details are specified in [application.yml](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L13,L15).<br/>
+&emsp;&emsp;At application startup, Liquibase will run the [scripts](https://github.com/adrianscarlatescu/event-alert-backend/tree/master/src/main/resources/db/changelog/scripts) declared. 
 It will create the required tables and insert some basic data.
 * Push notifications feature (to skip this feature, nothing has to be done):
   * Create a [Firebase](https://console.firebase.google.com/) project and generate the service account private key.
