@@ -23,6 +23,12 @@ A user who is an admin can also modify or delete other users, the events reporte
 
 ## Run prerequisites
 In order to run the application locally, the following steps must be set:
+* Minimum software versions:
+  * JDK 17
+  * MySQL Server 5.7
+  * Maven 3.9.2
+
+
 * The MySQL database must be created with the following commands:
 ``` 
 create database event_alert;
