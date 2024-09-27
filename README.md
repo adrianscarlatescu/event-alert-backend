@@ -35,7 +35,7 @@ At application startup, Liquibase will run the [scripts](https://github.com/adri
 It will create the required tables and insert some basic data.
 * Push notifications feature (to skip this feature, nothing has to be done):
   * Create a [Firebase](https://console.firebase.google.com/) project and generate the service account private key.
-  This key must be stored in `/resources/firebase/firebase-service-account.json`.
+  This key must be put in `/resources/firebase/firebase-service-account.json`.
   * Set [app.notification.enabled](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L43) to `true`.
 
 ## Database schema
