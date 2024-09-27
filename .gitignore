@@ -1,6 +1,6 @@
 .classpath
 .project
-.settings/
-.target/
-.idea/
-./src/main/resources/firebase
+target/**
+.idea/**
+.mvn/**
+src/main/resources/firebase/**
