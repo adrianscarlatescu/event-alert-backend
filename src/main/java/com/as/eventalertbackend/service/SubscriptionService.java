@@ -62,6 +62,7 @@ public class SubscriptionService {
 
     public Subscription update(SubscriptionRequest subscriptionRequest) {
         Subscription subscription = find(subscriptionRequest.getUserId(), subscriptionRequest.getDeviceId());
+        subscription.setFirebaseToken(subscriptionRequest.getFirebaseToken());
         subscription.setLatitude(subscriptionRequest.getLatitude());
         subscription.setLongitude(subscriptionRequest.getLongitude());
         subscription.setRadius(subscriptionRequest.getRadius());
