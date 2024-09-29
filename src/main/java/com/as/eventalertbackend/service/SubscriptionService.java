@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 @Slf4j
 public class SubscriptionService {
 
@@ -40,7 +41,6 @@ public class SubscriptionService {
         return subscriptionRepository.existsByUserIdAndDeviceId(userId, deviceId);
     }
 
-    @Transactional
     public Subscription subscribe(SubscriptionRequest subscriptionRequest) {
         if (subscriptionExists(subscriptionRequest.getUserId(), subscriptionRequest.getDeviceId())) {
             throw new InvalidActionException(ApiErrorMessage.ALREADY_SUBSCRIBER);
@@ -60,7 +60,6 @@ public class SubscriptionService {
         return subscriptionRepository.save(subscription);
     }
 
-    @Transactional
     public Subscription update(SubscriptionRequest subscriptionRequest) {
         Subscription subscription = find(subscriptionRequest.getUserId(), subscriptionRequest.getDeviceId());
         subscription.setLatitude(subscriptionRequest.getLatitude());
@@ -69,24 +68,26 @@ public class SubscriptionService {
         return subscriptionRepository.save(subscription);
     }
 
-    @Transactional
     public Subscription updateStatus(Long userId, String deviceToken, SubscriptionStatusRequest subscriptionStatusRequest) {
         Subscription subscription = find(userId, deviceToken);
         subscription.setIsActive(subscriptionStatusRequest.getIsActive());
         return subscriptionRepository.save(subscription);
     }
 
-    @Transactional
-    public void updateTokens(String deviceId, SubscriptionTokenRequest subscriptionTokenRequest) {
+
+    public void updateToken(String deviceId, SubscriptionTokenRequest subscriptionTokenRequest) {
         log.info("Updating token for device");
         List<Subscription> subscriptions = subscriptionRepository.findAllByDeviceId(deviceId);
 
-        subscriptions.forEach(subscription -> subscription.setFirebaseToken(subscriptionTokenRequest.getFirebaseToken()));
-        subscriptionRepository.saveAll(subscriptions);
-        log.info("Tokens successfully updated");
+        if (!subscriptions.isEmpty()) {
+            subscriptions.forEach(subscription -> subscription.setFirebaseToken(subscriptionTokenRequest.getFirebaseToken()));
+            subscriptionRepository.saveAll(subscriptions);
+            log.info("Tokens successfully updated");
+        } else {
+            log.info("No subscriptions eligible, skip update");
+        }
     }
 
-    @Transactional
     public void delete(Long userId, String deviceId) {
         if (subscriptionExists(userId, deviceId)) {
             subscriptionRepository.deleteByUserIdAndDeviceId(userId, deviceId);

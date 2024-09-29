@@ -38,6 +38,7 @@ public class AppProperties {
         private String authHeader;
         private String authRegisterUrl;
         private String authLoginUrl;
+        private String subscriptionTokenUrl;
     }
 
     @Getter

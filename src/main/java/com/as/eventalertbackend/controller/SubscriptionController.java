@@ -7,7 +7,6 @@ import com.as.eventalertbackend.dto.response.SubscriptionResponse;
 import com.as.eventalertbackend.service.SubscriptionService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,10 +57,10 @@ public class SubscriptionController {
         return ResponseEntity.ok(mapper.map(subscriptionService.updateStatus(userId, deviceId, subscriptionStatusRequest), SubscriptionResponse.class));
     }
 
-    @PatchMapping(path = "/{deviceId}/tokens")
-    public ResponseEntity<Void> updateTokens(@PathVariable("deviceId") String deviceId,
-                                             @Valid @RequestBody SubscriptionTokenRequest subscriptionTokenRequest) {
-        subscriptionService.updateTokens(deviceId, subscriptionTokenRequest);
+    @PatchMapping(path = "/{deviceId}/token")
+    public ResponseEntity<Void> updateToken(@PathVariable("deviceId") String deviceId,
+                                            @Valid @RequestBody SubscriptionTokenRequest subscriptionTokenRequest) {
+        subscriptionService.updateToken(deviceId, subscriptionTokenRequest);
         return ResponseEntity.ok().build();
     }
 

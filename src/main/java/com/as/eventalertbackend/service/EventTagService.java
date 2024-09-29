@@ -8,10 +8,12 @@ import com.as.eventalertbackend.persistence.entity.EventTag;
 import com.as.eventalertbackend.persistence.reopsitory.EventTagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class EventTagService {
 
     private final EventTagRepository tagRepository;

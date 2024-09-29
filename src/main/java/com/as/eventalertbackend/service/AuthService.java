@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 
 @Service
+@Transactional
 @Slf4j
 public class AuthService {
 
@@ -65,7 +66,6 @@ public class AuthService {
         return userService.save(user);
     }
 
-    @Transactional
     public AuthTokensResponse login(AuthLoginRequest loginRequest) {
         String email = loginRequest.getEmail();
         String password = loginRequest.getPassword();

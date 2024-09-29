@@ -7,10 +7,12 @@ import com.as.eventalertbackend.persistence.entity.EventSeverity;
 import com.as.eventalertbackend.persistence.reopsitory.EventSeverityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class EventSeverityService {
 
     private final EventSeverityRepository severityRepository;

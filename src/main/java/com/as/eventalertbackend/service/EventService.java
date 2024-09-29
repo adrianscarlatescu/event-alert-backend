@@ -28,6 +28,7 @@ import java.util.List;
 
 @Service
 @Slf4j
+@Transactional
 public class EventService {
 
     private final EventRepository eventRepository;
@@ -62,7 +63,6 @@ public class EventService {
         return eventRepository.findByUserIdOrderByDateTimeDesc(userId);
     }
 
-    @Transactional
     public Page<Event> findByFilter(EventFilterRequest filterRequest, int pageSize, int pageNumber, Order order) {
         if (pageSize > AppConstants.MAX_PAGES) {
             throw new InvalidActionException(ApiErrorMessage.FILTER_MAX_PAGE_SIZE);

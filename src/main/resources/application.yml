@@ -39,6 +39,7 @@ app:
     auth-header: "Authorization"
     auth-register-url: "/auth/register"
     auth-login-url: "/auth/login"
+    subscription-token-url: "/subscriptions/*/token"
   notification:
     enabled: false # Credentials must be set in firebase-service-account.json in order to connect to Firebase
     event-id-key: "eventId"
