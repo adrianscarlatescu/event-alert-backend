@@ -26,7 +26,7 @@ public enum ApiErrorMessage {
     SEVERITY_NOT_FOUND("Severity not found"),
     TAG_NOT_FOUND("Tag not found"),
     COMMENT_NOT_FOUND("Comment not found"),
-    EVENT_NOT_FOUND("Comment not found"),
+    EVENT_NOT_FOUND("Event not found"),
 
     DEFAULT_ROLE_MANDATORY("The default role is mandatory"),
 

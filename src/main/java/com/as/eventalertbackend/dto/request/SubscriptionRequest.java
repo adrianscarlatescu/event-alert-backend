@@ -13,6 +13,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class SubscriptionRequest implements Serializable {
 
+    @NotNull(message = "The user is mandatory")
+    private Long userId;
+
     @NotNull(message = "The latitude is mandatory")
     @PositiveOrZero(message = "The latitude must be positive or 0")
     private Double latitude;
@@ -25,6 +28,9 @@ public class SubscriptionRequest implements Serializable {
     @Max(value = AppConstants.MAX_RADIUS, message = "The radius must be less than " + AppConstants.MAX_RADIUS + " km")
     @NotNull(message = "The radius is mandatory")
     private Integer radius;
+
+    @NotBlank(message = "The device identifier is mandatory")
+    private String deviceId;
 
     @NotBlank(message = "The Firebase token is mandatory")
     private String firebaseToken;

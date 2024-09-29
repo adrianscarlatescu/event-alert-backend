@@ -2,6 +2,7 @@ package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.dto.request.SubscriptionRequest;
 import com.as.eventalertbackend.dto.request.SubscriptionStatusRequest;
+import com.as.eventalertbackend.dto.request.SubscriptionTokenRequest;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
@@ -12,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -28,20 +31,26 @@ public class SubscriptionService {
         this.userService = userService;
     }
 
-    public Subscription find(Long userId, String firebaseToken) {
-        return subscriptionRepository.findByUserIdAndFirebaseToken(userId, firebaseToken)
+    public Subscription find(Long userId, String deviceId) {
+        return subscriptionRepository.findByUserIdAndDeviceId(userId, deviceId)
                 .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.SUBSCRIPTION_NOT_FOUND));
     }
 
-    public Subscription subscribe(Long userId, SubscriptionRequest subscriptionRequest) {
-        if (subscriptionRepository.existsByUserIdAndFirebaseToken(userId, subscriptionRequest.getFirebaseToken())) {
+    public Boolean subscriptionExists(Long userId, String deviceId) {
+        return subscriptionRepository.existsByUserIdAndDeviceId(userId, deviceId);
+    }
+
+    @Transactional
+    public Subscription subscribe(SubscriptionRequest subscriptionRequest) {
+        if (subscriptionExists(subscriptionRequest.getUserId(), subscriptionRequest.getDeviceId())) {
             throw new InvalidActionException(ApiErrorMessage.ALREADY_SUBSCRIBER);
         }
 
-        User user = userService.findById(userId);
+        User user = userService.findById(subscriptionRequest.getUserId());
 
         Subscription subscription = new Subscription();
         subscription.setUser(user);
+        subscription.setDeviceId(subscriptionRequest.getDeviceId());
         subscription.setFirebaseToken(subscriptionRequest.getFirebaseToken());
         subscription.setLatitude(subscriptionRequest.getLatitude());
         subscription.setLongitude(subscriptionRequest.getLongitude());
@@ -51,24 +60,36 @@ public class SubscriptionService {
         return subscriptionRepository.save(subscription);
     }
 
-    public Subscription update(Long userId, SubscriptionRequest subscriptionRequest) {
-        Subscription subscription = find(userId, subscriptionRequest.getFirebaseToken());
+    @Transactional
+    public Subscription update(SubscriptionRequest subscriptionRequest) {
+        Subscription subscription = find(subscriptionRequest.getUserId(), subscriptionRequest.getDeviceId());
         subscription.setLatitude(subscriptionRequest.getLatitude());
         subscription.setLongitude(subscriptionRequest.getLongitude());
         subscription.setRadius(subscriptionRequest.getRadius());
         return subscriptionRepository.save(subscription);
     }
 
-    public Subscription updateStatus(Long userId, SubscriptionStatusRequest subscriptionStatusRequest) {
-        Subscription subscription = find(userId, subscriptionStatusRequest.getFirebaseToken());
+    @Transactional
+    public Subscription updateStatus(Long userId, String deviceToken, SubscriptionStatusRequest subscriptionStatusRequest) {
+        Subscription subscription = find(userId, deviceToken);
         subscription.setIsActive(subscriptionStatusRequest.getIsActive());
         return subscriptionRepository.save(subscription);
     }
 
     @Transactional
-    public void delete(Long userId, String firebaseToken) {
-        if (subscriptionRepository.existsByUserIdAndFirebaseToken(userId, firebaseToken)) {
-            subscriptionRepository.deleteByUserIdAndFirebaseToken(userId, firebaseToken);
+    public void updateTokens(String deviceId, SubscriptionTokenRequest subscriptionTokenRequest) {
+        log.info("Updating token for device");
+        List<Subscription> subscriptions = subscriptionRepository.findAllByDeviceId(deviceId);
+
+        subscriptions.forEach(subscription -> subscription.setFirebaseToken(subscriptionTokenRequest.getFirebaseToken()));
+        subscriptionRepository.saveAll(subscriptions);
+        log.info("Tokens successfully updated");
+    }
+
+    @Transactional
+    public void delete(Long userId, String deviceId) {
+        if (subscriptionExists(userId, deviceId)) {
+            subscriptionRepository.deleteByUserIdAndDeviceId(userId, deviceId);
         } else {
             throw new RecordNotFoundException(ApiErrorMessage.SUBSCRIPTION_NOT_FOUND);
         }

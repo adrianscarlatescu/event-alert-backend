@@ -18,10 +18,12 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
             nativeQuery = true)
     List<Subscription> findByLocation(Double eventLatitude, Double eventLongitude, Long userIdToExclude);
 
-    boolean existsByUserIdAndFirebaseToken(Long userId, String firebaseToken);
+    boolean existsByUserIdAndDeviceId(Long userId, String deviceId);
 
-    Optional<Subscription> findByUserIdAndFirebaseToken(Long userId, String firebaseToken);
+    Optional<Subscription> findByUserIdAndDeviceId(Long userId, String deviceId);
 
-    void deleteByUserIdAndFirebaseToken(Long userId, String firebaseToken);
+    List<Subscription> findAllByDeviceId(String deviceId);
+
+    void deleteByUserIdAndDeviceId(Long userId, String deviceId);
 
 }

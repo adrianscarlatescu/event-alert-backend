@@ -24,6 +24,7 @@ public class Subscription {
     private Double latitude;
     private Double longitude;
     private Integer radius;
+    private String deviceId;
     private String firebaseToken;
     private Boolean isActive;
 
