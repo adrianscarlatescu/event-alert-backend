@@ -1,7 +1,6 @@
 package com.as.eventalertbackend.controller;
 
-import com.as.eventalertbackend.handler.exception.StorageFailException;
-import com.as.eventalertbackend.service.StorageService;
+import com.as.eventalertbackend.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -13,16 +12,16 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 public class FileController {
 
-    private final StorageService service;
+    private final FileService fileService;
 
     @Autowired
-    public FileController(StorageService service) {
-        this.service = service;
+    public FileController(FileService fileService) {
+        this.fileService = fileService;
     }
 
     @GetMapping("/image")
-    public ResponseEntity singleImageDownload(@RequestParam("path") String imgPath) throws StorageFailException {
-        Resource resource = service.readImage(imgPath);
+    public ResponseEntity<Resource> singleImageDownload(@RequestParam("path") String imagePath) {
+        Resource resource = fileService.readImage(imagePath);
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("application/octet-stream"))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
@@ -30,8 +29,8 @@ public class FileController {
     }
 
     @PostMapping("/image")
-    public ResponseEntity singleImageUpload(@RequestPart("image") MultipartFile image) throws StorageFailException {
-        return ResponseEntity.ok("\"" + service.writeImage(image) + "\"");
+    public ResponseEntity<String> singleImageUpload(@RequestPart("image") MultipartFile image) {
+        return ResponseEntity.ok("\"" + fileService.writeImage(image) + "\"");
     }
 
 }

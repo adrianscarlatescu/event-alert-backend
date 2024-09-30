@@ -1,20 +1,20 @@
 package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.AppConstants;
-import com.as.eventalertbackend.controller.request.EventBody;
-import com.as.eventalertbackend.controller.request.EventFilterBody;
-import com.as.eventalertbackend.controller.response.PagedResponse;
-import com.as.eventalertbackend.data.model.Event;
-import com.as.eventalertbackend.data.model.EventSeverity;
-import com.as.eventalertbackend.data.model.EventTag;
-import com.as.eventalertbackend.data.model.User;
-import com.as.eventalertbackend.data.reopsitory.EventRepository;
+import com.as.eventalertbackend.dto.request.EventFilterRequest;
+import com.as.eventalertbackend.dto.request.EventRequest;
 import com.as.eventalertbackend.enums.Order;
-import com.as.eventalertbackend.handler.exception.IllegalActionException;
-import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
+import com.as.eventalertbackend.error.ApiErrorMessage;
+import com.as.eventalertbackend.error.exception.InvalidActionException;
+import com.as.eventalertbackend.error.exception.RecordNotFoundException;
+import com.as.eventalertbackend.error.exception.ResourceNotFoundException;
+import com.as.eventalertbackend.persistence.entity.Event;
+import com.as.eventalertbackend.persistence.entity.EventSeverity;
+import com.as.eventalertbackend.persistence.entity.EventTag;
+import com.as.eventalertbackend.persistence.entity.User;
+import com.as.eventalertbackend.persistence.reopsitory.EventRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -23,86 +23,75 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @Service
 @Slf4j
+@Transactional
 public class EventService {
 
-    private final EventRepository repository;
+    private final EventRepository eventRepository;
 
-    private final EventSeverityService eventSeverityService;
-    private final EventTagService eventTagService;
+    private final EventSeverityService severityService;
+    private final EventTagService tagService;
     private final UserService userService;
+    private final FileService fileService;
     private final NotificationService notificationService;
 
-    @Value("${app.notification.enabled}")
-    private boolean isNotificationEnabled;
-
     @Autowired
-    public EventService(EventRepository repository,
-                        EventSeverityService eventSeverityService,
-                        EventTagService eventTagService,
+    public EventService(EventRepository eventRepository,
+                        EventSeverityService severityService,
+                        EventTagService tagService,
                         UserService userService,
+                        FileService fileService,
                         NotificationService notificationService) {
-        this.repository = repository;
-        this.eventSeverityService = eventSeverityService;
-        this.eventTagService = eventTagService;
+        this.eventRepository = eventRepository;
+        this.severityService = severityService;
+        this.tagService = tagService;
         this.userService = userService;
+        this.fileService = fileService;
         this.notificationService = notificationService;
     }
 
     public Event findById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "No record for event " + id,
-                        "Event not found"));
+        return eventRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.EVENT_NOT_FOUND));
     }
 
-    public List<Event> findByUserId(Long userId) {
-        return repository.findByUserIdOrderByDateTimeDesc(userId);
+    public List<Event> findAllByUserId(Long userId) {
+        return eventRepository.findByUserIdOrderByDateTimeDesc(userId);
     }
 
-    @Transactional
-    public PagedResponse<Event> findByFilter(EventFilterBody body, int pageSize, int pageNumber, Order order) {
+    public Page<Event> findByFilter(EventFilterRequest filterRequest, int pageSize, int pageNumber, Order order) {
         if (pageSize > AppConstants.MAX_PAGES) {
-            throw new IllegalActionException(
-                    "The page size " + pageSize + " is greater than maximum allowed " + AppConstants.MAX_PAGES,
-                    "The page size must be less than " + AppConstants.MAX_PAGES);
+            throw new InvalidActionException(ApiErrorMessage.FILTER_MAX_PAGE_SIZE);
         }
 
-        if (body.getStartDate().isAfter(body.getEndDate())) {
-            throw new IllegalActionException(
-                    "Start date " + body.getStartDate().toString() + " is after end date " + body.getEndDate().toString(),
-                    "The end date must be after the start date");
+        if (filterRequest.getStartDate().isAfter(filterRequest.getEndDate())) {
+            throw new InvalidActionException(ApiErrorMessage.FILTER_END_DATE_AFTER_START_DATE);
         }
 
-        if (body.getEndDate().getYear() - body.getStartDate().getYear() > AppConstants.MAX_YEARS_INTERVAL) {
-            throw new IllegalActionException(
-                    "The difference between the start year " + body.getStartDate().getYear() +
-                            " and the end year " + body.getEndDate().getYear() +
-                            " is greater than maximum allowed " + AppConstants.MAX_YEARS_INTERVAL,
-                    "The years interval must be maximum " + AppConstants.MAX_YEARS_INTERVAL);
+        if (filterRequest.getEndDate().getYear() - filterRequest.getStartDate().getYear() > AppConstants.MAX_YEARS_INTERVAL) {
+            throw new InvalidActionException(ApiErrorMessage.FILTER_MAX_YEARS_INTERVAL);
         }
 
         if (order == null) {
             order = Order.BY_DATE_DESCENDING;
         }
 
-        LocalDateTime startDateTime = body.getStartDate().atStartOfDay();
-        LocalDateTime endDateTime = body.getEndDate().atTime(23, 59, 59);
+        LocalDateTime startDateTime = filterRequest.getStartDate().atStartOfDay();
+        LocalDateTime endDateTime = filterRequest.getEndDate().atTime(23, 59, 59);
 
         log.info("Starting events retrieval; latitude: {}, longitude: {}, radius: {}, start date: {}, end date: {}, tags: {}, severities: {}",
-                body.getLatitude(), body.getLongitude(), body.getRadius(),
+                filterRequest.getLatitude(), filterRequest.getLongitude(), filterRequest.getRadius(),
                 startDateTime, endDateTime,
-                body.getTagsIds(), body.getSeveritiesIds());
+                filterRequest.getTagsIds(), filterRequest.getSeveritiesIds());
 
-        List<EventRepository.DistanceProjection> distanceProjections = repository.findByFilter(
-                body.getLatitude(), body.getLongitude(), body.getRadius(),
+        List<EventRepository.DistanceProjection> distanceProjections = eventRepository.findByFilter(
+                filterRequest.getLatitude(), filterRequest.getLongitude(), filterRequest.getRadius(),
                 startDateTime, endDateTime,
-                body.getTagsIds(), body.getSeveritiesIds());
+                filterRequest.getTagsIds(), filterRequest.getSeveritiesIds());
 
         if (order == Order.BY_DISTANCE_DESCENDING) {
             Collections.reverse(distanceProjections);
@@ -134,98 +123,69 @@ public class EventService {
                 break;
         }
 
-        Page<Event> eventPages = repository.findByFilter(
-                eventsIds,
-                startDateTime, endDateTime,
-                body.getTagsIds(), body.getSeveritiesIds(),
-                pageRequest
-        );
+        Page<Event> eventsPage = eventRepository.findByIds(eventsIds, pageRequest);
 
-        eventPages.get().forEach(event ->
+        eventsPage.get().forEach(event ->
                 distanceProjections.stream()
                         .filter(distanceProjection -> distanceProjection.getId().longValue() == event.getId().longValue())
                         .findFirst()
                         .ifPresent(distanceProjection -> event.setDistance(distanceProjection.getDistance()))
         );
 
-        PagedResponse<Event> pagedResponse = new PagedResponse<>();
-        pagedResponse.setTotalPages(eventPages.getTotalPages());
-        pagedResponse.setTotalElements(eventPages.getTotalElements());
-        pagedResponse.setContent(eventPages.getContent());
+        log.info("Retrieved total pages: {}, total elements: {}, events: {}",
+                eventsPage.getTotalPages(),
+                eventsPage.getTotalElements(),
+                eventsPage.getContent().stream().mapToLong(Event::getId).toArray());
 
-        log.info("Retrieved pages: {}, elements: {}, events: {}",
-                eventPages.getTotalPages(),
-                eventPages.getTotalElements(),
-                eventPages.getContent().stream().mapToLong(Event::getId).toArray());
-
-        return pagedResponse;
+        return eventsPage;
     }
 
-    public Event save(Event event) {
-        return repository.save(event);
+    public Event save(EventRequest eventRequest) {
+        Event event = createOrUpdate(new Event(), eventRequest);
+        notificationService.send(event);
+        return event;
     }
 
-    public Event save(EventBody body) {
-        return save(new Event(), body);
-    }
-
-    public Event updateById(EventBody body, Long id) {
-        Event dbObj = findById(id);
-        return save(dbObj, body);
+    public Event updateById(EventRequest eventRequest, Long id) {
+        return createOrUpdate(findById(id), eventRequest);
     }
 
     public void deleteById(Long id) {
-        if (repository.existsById(id)) {
-            repository.deleteById(id);
+        if (eventRepository.existsById(id)) {
+            eventRepository.deleteById(id);
         } else {
-            throw new RecordNotFoundException(
-                    "No record for event " + id,
-                    "Event not found");
+            throw new RecordNotFoundException(ApiErrorMessage.EVENT_NOT_FOUND);
         }
     }
 
-    private Event save(Event dbObj, EventBody body) {
-        User user = userService.findById(body.getUserId());
-        EventTag tag = eventTagService.findById(body.getTagId());
-        EventSeverity severity = eventSeverityService.findById(body.getSeverityId());
+    private Event createOrUpdate(Event event, EventRequest eventRequest) {
+        User user = userService.findById(eventRequest.getUserId());
+        EventTag tag = tagService.findById(eventRequest.getTagId());
+        EventSeverity severity = severityService.findById(eventRequest.getSeverityId());
 
-        List<String> descriptions = new ArrayList<>();
-        boolean isFirstNameInvalid = isNullOrEmpty(user.getFirstName());
-        boolean isLastNameInvalid = isNullOrEmpty(user.getLastName());
-        if (isFirstNameInvalid) {
-            descriptions.add("The first name is mandatory");
+        if (user.getFirstName() == null || user.getFirstName().isEmpty()) {
+            throw new InvalidActionException(ApiErrorMessage.PROFILE_FIRST_NAME_MANDATORY);
         }
-        if (isLastNameInvalid) {
-            descriptions.add("The last name is mandatory");
+        if (user.getLastName() == null || user.getLastName().isEmpty()) {
+            throw new InvalidActionException(ApiErrorMessage.PROFILE_LAST_NAME_MANDATORY);
         }
 
-        if (!descriptions.isEmpty()) {
-            String message = "Could not create the event, missing user " + user.getId() + " mandatory data";
-            throw new IllegalActionException(message, descriptions);
+        if (!fileService.imageExists(eventRequest.getImagePath())) {
+            throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
         }
 
-        String description = body.getDescription() == null ?
-                null : body.getDescription().replaceAll("\n", " ");
+        String description = eventRequest.getDescription() == null ?
+                null : eventRequest.getDescription().replaceAll("\n", " ");
 
-        dbObj.setLatitude(body.getLatitude());
-        dbObj.setLongitude(body.getLongitude());
-        dbObj.setImagePath(body.getImagePath());
-        dbObj.setDescription(description);
-        dbObj.setSeverity(severity);
-        dbObj.setTag(tag);
-        dbObj.setUser(user);
+        event.setLatitude(eventRequest.getLatitude());
+        event.setLongitude(eventRequest.getLongitude());
+        event.setImagePath(eventRequest.getImagePath());
+        event.setDescription(description);
+        event.setSeverity(severity);
+        event.setTag(tag);
+        event.setUser(user);
 
-        Event newEvent = repository.save(dbObj);
-
-        if (isNotificationEnabled) {
-            notificationService.send(newEvent);
-        }
-
-        return newEvent;
-    }
-
-    private boolean isNullOrEmpty(String s) {
-        return s == null || s.isEmpty();
+        return eventRepository.save(event);
     }
 
 }

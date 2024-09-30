@@ -1,5 +1,6 @@
 package com.as.eventalertbackend.security.jwt;
 
+import com.as.eventalertbackend.AppProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,7 +20,11 @@ import java.io.IOException;
 public class AuthTokenFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JwtUtils jwtUtils;
+    private AppProperties appProperties;
+
+    @Autowired
+    private JwtManager jwtManager;
+
     @Autowired
     private UserDetailsService userService;
 
@@ -27,29 +32,34 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        try {
-            String token = jwtUtils.parseJwt(request);
+        if (request.getRequestURI().endsWith(appProperties.getSecurity().getAuthLoginUrl()) ||
+                request.getRequestURI().endsWith(appProperties.getSecurity().getAuthRegisterUrl())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-            boolean isNull = token == null;
+        try {
+            String token = jwtManager.parseJwt(request);
+
+            boolean isTokenNull = token == null;
             boolean isAccessToken = false;
+            boolean isRefreshToken = false;
             boolean isValid = false;
 
-            if (isNull) {
-                log.error("Null token, request URI: {}", request.getRequestURI());
+            if (isTokenNull) {
+                log.warn("Null token, endpoint: {}", request.getRequestURI());
             } else {
-                isAccessToken = jwtUtils.isAccessToken(token);
-                if (!isAccessToken) {
-                    log.error("Invalid access token signature: {}, request URI: {}", token, request.getRequestURI());
-                }
+                isAccessToken = jwtManager.isAccessToken(token);
+                isRefreshToken = jwtManager.isRefreshToken(token);
 
-                isValid = jwtUtils.validateJwtToken(token);
+                isValid = jwtManager.validateJwtToken(token);
                 if (!isValid) {
-                    log.error("Invalid token: {}, request URI: {}", token, request.getRequestURI());
+                    log.error("Invalid token: {}, endpoint: {}", token, request.getRequestURI());
                 }
             }
 
-            if (!isNull && isAccessToken && isValid) {
-                String email = jwtUtils.getEmailFromJwtToken(token);
+            if (!isTokenNull && isValid && (isAccessToken || isRefreshToken)) {
+                String email = jwtManager.getEmailFromJwtToken(token);
                 UserDetails userDetails = userService.loadUserByUsername(email);
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

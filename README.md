@@ -8,42 +8,51 @@ The technology stack consists of:
 * [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) - The cross-platform messaging solution to send notifications.
 * [Hibernate](https://hibernate.org/) - The Object-Relational Mapping framework used to map the object-oriented domain models to the relational database.
 * [MySQL Server](https://dev.mysql.com/doc/refman/5.7/en/) - The database server.
-* [JUnit](https://junit.org/junit4/) - The framework used to write repeatable tests.
-* [Mockito](https://site.mockito.org/) - The mocking framework used to add dummy functionality that is used in unit testing.
+* [Liquibase](https://www.liquibase.com/) - The library for tracking, managing and applying database schema changes.
+* [OAuth 2.0](https://oauth.net/2/) - The protocol used for authorization.
 * [JWT](https://jwt.io/introduction/) - The standard used to securely transmit the information.
 * [Project Lombok](https://projectlombok.org/) - The library used to minimize boilerplate code and save development time.
 
 ## Project scope
 The purpose of this project is to provide all the required features for users that may want to be aware of the incidents reported around them.  
 A user must be registered and authenticated in order to access these features.  
-Afterwards he can update his profile and report an event if needed.  
+Then he can update his profile and report an event if needed.  
 Also, he can search for the events reported by other users around his location.  
 A user who is an admin can also modify or delete other users, the events reported by them, the comments posted by them, etc.  
 
 ## Run prerequisites
 In order to run the application locally, the following steps must be set:
-* Run the commands highlighted in this [script](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/database_query.sql#L1,L6) in order to have the database ready.
-The connection details are specified in [application.yml](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L10,L12).
-* Push notifications feature:
-    * To skip this feature, set [app.notification.enabled](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L30) to `false`.
-    * In order to send push notifications, create a Firebase project and generate the service account private key.
-This key must be put in [firebase-service-account.json](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/firebase-service-account.json).
+* Minimum software versions:
+  * JDK 17
+  * MySQL Server 5.7
+  * Maven 3.9.2
 
+* The MySQL database must be created with the following commands:
+```
+create database event_alert;
+create user 'event_alert_user' identified by '1234qwer';
+grant all on event_alert.* to 'event_alert_user';
+```
+&emsp;&emsp;The connection details are specified in [application.yml](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L13,L15).<br/>
+&emsp;&emsp;At application startup, Liquibase will run the [scripts](https://github.com/adrianscarlatescu/event-alert-backend/tree/master/src/main/resources/db/changelog/scripts) declared. 
+It will create the required tables and insert some basic data.
+* Push notifications feature (to skip this feature, nothing has to be done):
+  * Create a [Firebase](https://console.firebase.google.com/) project and generate the service account private key.
+  This key must be put in `/resources/firebase/firebase-service-account.json`.
+  * Set [app.notification.enabled](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L43) to `true`.
 
 ## Database schema
-<img src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/database_schema.png" width="800">  
-
-* Note: dummy data was added with the following [script](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/database_query.sql).
+<img alt="Database schema" src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/readme/database_schema.png" width="800">  
 
 ## Authorization diagram
-<img src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/authorization_diagram.png" width="800">
+<img alt="Authorization diagram" src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/readme/authorization_diagram.png" width="800">
 
 ## Request - response example
 The target is to get all the events filtered by the following *body*:
 ```
 {
-    "startDate": "2020-04-01T00:00:00",
-    "endDate": "2020-04-21T23:59:59",
+    "startDate": "2020-04-01",
+    "endDate": "2020-04-21",
     "latitude": 44.8481,
     "longitude": 24.8839,
     "radius": 100,
@@ -76,7 +85,7 @@ Response:
 ```
 {
     "totalPages": 1,
-    "totalElements": 2,
+    "totalElements": 1,
     "content": [
         {
             "id": 20,
@@ -97,74 +106,17 @@ Response:
             },
             "user": {
                 "id": 1,
-                "joinDateTime": "2020-05-07T19:35:40",
-                "email": "test1@test.com",
                 "firstName": "Alan",
                 "lastName": "Walter",
-                "dateOfBirth": "1984-05-23",
-                "phoneNumber": "+03442777999",
-                "imagePath": "img/user_1.jpg",
-                "gender": "MALE",
-                "userRoles": [
-                    {
-                        "id": 2,
-                        "name": "ROLE_ADMIN"
-                    },
-                    {
-                        "id": 1,
-                        "name": "ROLE_USER"
-                    }
-                ],
-                "reportsNumber": 23
+                "imagePath": "img/user_1.jpg"
             },
             "distance": 4.263562194233072
-        },
-        {
-            "id": 16,
-            "dateTime": "2020-04-15T22:21:43",
-            "latitude": 44.8466356,
-            "longitude": 24.8753764,
-            "imagePath": "img/event_16.jpg",
-            "description": null,
-            "severity": {
-                "id": 4,
-                "name": "Trivial",
-                "color": 11192420
-            },
-            "tag": {
-                "id": 20,
-                "name": "Traffic accident",
-                "imagePath": "img/tag_traffic_accident.png"
-            },
-            "user": {
-                "id": 1,
-                "joinDateTime": "2020-05-07T19:35:40",
-                "email": "test1@test.com",
-                "firstName": "Alan",
-                "lastName": "Walter",
-                "dateOfBirth": "1984-05-23",
-                "phoneNumber": "+03442777999",
-                "imagePath": "img/user_1.jpg",
-                "gender": "MALE",
-                "userRoles": [
-                    {
-                        "id": 2,
-                        "name": "ROLE_ADMIN"
-                    },
-                    {
-                        "id": 1,
-                        "name": "ROLE_USER"
-                    }
-                ],
-                "reportsNumber": 23
-            },
-            "distance": 0.9592219050088762
         }
     ]
 }
 ```
-Full Postman requests collection is available [here](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/static/EventAlert.postman_collection.json).  
-The variables *{{url}}*, *{{accessToken}}* and *{{refreshToken}}* have to be declared.
+Postman [collection](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/postman/Event%20Alert%20-%20Collection.postman_collection.json) /
+[local environment](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/postman/Event%20Alert%20-%20Local.postman_environment.json).  
 
 ## Client applications
 * [event-alert-android](https://github.com/adrianscarlatescu/event-alert-android)

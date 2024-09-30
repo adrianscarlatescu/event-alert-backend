@@ -1,12 +1,13 @@
 package com.as.eventalertbackend.controller;
 
-import com.as.eventalertbackend.controller.request.SubscriptionBody;
-import com.as.eventalertbackend.data.model.Subscription;
-import com.as.eventalertbackend.data.model.User;
+import com.as.eventalertbackend.dto.request.SubscriptionRequest;
+import com.as.eventalertbackend.dto.request.SubscriptionStatusRequest;
+import com.as.eventalertbackend.dto.request.SubscriptionTokenRequest;
+import com.as.eventalertbackend.dto.response.SubscriptionResponse;
 import com.as.eventalertbackend.service.SubscriptionService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -15,35 +16,59 @@ import javax.validation.Valid;
 @RequestMapping("/subscriptions")
 public class SubscriptionController {
 
-    private final SubscriptionService service;
+    private final ModelMapper mapper;
+    private final SubscriptionService subscriptionService;
 
     @Autowired
-    public SubscriptionController(SubscriptionService service) {
-        this.service = service;
+    public SubscriptionController(ModelMapper mapper,
+                                  SubscriptionService subscriptionService) {
+        this.mapper = mapper;
+        this.subscriptionService = subscriptionService;
     }
 
-    @GetMapping
-    public ResponseEntity<Subscription> find(@RequestParam("deviceToken") String deviceToken) {
-        return ResponseEntity.ok(service.find(getPrincipalId(), deviceToken));
+    @RequestMapping(method = RequestMethod.HEAD, path = "/{userId}/{deviceId}")
+    public ResponseEntity<Void> subscriptionExists(@PathVariable("userId") Long userId,
+                                                   @PathVariable("deviceId") String deviceId) {
+        return subscriptionService.subscriptionExists(userId, deviceId) ?
+                ResponseEntity.ok().build() :
+                ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/{userId}/{deviceId}")
+    public ResponseEntity<SubscriptionResponse> find(@PathVariable("userId") Long userId,
+                                                     @PathVariable("deviceId") String deviceId) {
+        return ResponseEntity.ok(mapper.map(subscriptionService.find(userId, deviceId), SubscriptionResponse.class));
     }
 
     @PostMapping
-    public ResponseEntity<Subscription> subscribe(@Valid @RequestBody SubscriptionBody body) {
-        return ResponseEntity.ok(service.subscribe(getPrincipalId(), body));
+    public ResponseEntity<SubscriptionResponse> subscribe(@Valid @RequestBody SubscriptionRequest subscriptionRequest) {
+        return ResponseEntity.ok(mapper.map(subscriptionService.subscribe(subscriptionRequest), SubscriptionResponse.class));
     }
 
     @PutMapping
-    public ResponseEntity<Subscription> update(@Valid @RequestBody SubscriptionBody body) {
-        return ResponseEntity.ok(service.update(getPrincipalId(), body));
+    public ResponseEntity<SubscriptionResponse> update(@Valid @RequestBody SubscriptionRequest subscriptionRequest) {
+        return ResponseEntity.ok(mapper.map(subscriptionService.update(subscriptionRequest), SubscriptionResponse.class));
     }
 
-    @DeleteMapping
-    public void unsubscribe(@RequestParam("deviceToken") String deviceToken) {
-        service.delete(getPrincipalId(), deviceToken);
+    @PatchMapping(path = "/{userId}/{deviceId}/status")
+    public ResponseEntity<SubscriptionResponse> updateStatus(@PathVariable("userId") Long userId,
+                                                             @PathVariable("deviceId") String deviceId,
+                                                             @Valid @RequestBody SubscriptionStatusRequest subscriptionStatusRequest) {
+        return ResponseEntity.ok(mapper.map(subscriptionService.updateStatus(userId, deviceId, subscriptionStatusRequest), SubscriptionResponse.class));
     }
 
-    private Long getPrincipalId() {
-        return ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
+    @PatchMapping(path = "/{deviceId}/token")
+    public ResponseEntity<Void> updateToken(@PathVariable("deviceId") String deviceId,
+                                            @Valid @RequestBody SubscriptionTokenRequest subscriptionTokenRequest) {
+        subscriptionService.updateToken(deviceId, subscriptionTokenRequest);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{userId}/{deviceId}")
+    public ResponseEntity<Void> unsubscribe(@PathVariable("userId") Long userId,
+                                            @PathVariable("deviceId") String deviceId) {
+        subscriptionService.delete(userId, deviceId);
+        return ResponseEntity.ok().build();
     }
 
 }

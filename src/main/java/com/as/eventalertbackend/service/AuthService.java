@@ -1,14 +1,14 @@
 package com.as.eventalertbackend.service;
 
-import com.as.eventalertbackend.controller.request.AuthLoginBody;
-import com.as.eventalertbackend.controller.request.AuthRegisterBody;
-import com.as.eventalertbackend.controller.response.AuthRefreshTokenResponse;
-import com.as.eventalertbackend.controller.response.AuthTokensResponse;
-import com.as.eventalertbackend.data.model.User;
-import com.as.eventalertbackend.data.model.UserRole;
+import com.as.eventalertbackend.dto.request.AuthLoginRequest;
+import com.as.eventalertbackend.dto.request.AuthRegisterRequest;
+import com.as.eventalertbackend.dto.response.AuthTokensResponse;
 import com.as.eventalertbackend.enums.Role;
-import com.as.eventalertbackend.handler.exception.IllegalActionException;
-import com.as.eventalertbackend.security.jwt.JwtUtils;
+import com.as.eventalertbackend.error.ApiErrorMessage;
+import com.as.eventalertbackend.error.exception.InvalidActionException;
+import com.as.eventalertbackend.persistence.entity.User;
+import com.as.eventalertbackend.persistence.entity.UserRole;
+import com.as.eventalertbackend.security.jwt.JwtManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,78 +23,73 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 
 @Service
+@Transactional
 @Slf4j
 public class AuthService {
 
     private final UserService userService;
     private final UserRoleService userRoleService;
+
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final JwtUtils jwtUtils;
+    private final JwtManager jwtManager;
 
     @Autowired
     public AuthService(UserService userService,
                        UserRoleService userRoleService,
                        PasswordEncoder passwordEncoder,
                        AuthenticationManager authenticationManager,
-                       JwtUtils jwtUtils) {
+                       JwtManager jwtManager) {
         this.userService = userService;
         this.userRoleService = userRoleService;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
-        this.jwtUtils = jwtUtils;
+        this.jwtManager = jwtManager;
     }
 
-    public User register(AuthRegisterBody body) {
-        boolean isEmail = userService.existsByEmail(body.getEmail());
-        if (isEmail) {
-            throw new IllegalActionException(
-                    "Email already registered " + body.getEmail(),
-                    "The account is already created");
+    public User register(AuthRegisterRequest registerRequest) {
+        boolean emailExists = userService.existsByEmail(registerRequest.getEmail());
+        if (emailExists) {
+            throw new InvalidActionException(ApiErrorMessage.ACCOUNT_ALREADY_CREATED);
         }
 
-        if (!body.getPassword().equals(body.getConfirmPassword())) {
-            throw new IllegalActionException(
-                    "Passwords don't match " + body.getEmail(),
-                    "The passwords are not identical");
+        if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
+            throw new InvalidActionException(ApiErrorMessage.PASSWORDS_NOT_MATCH);
         }
 
-        UserRole role = userRoleService.findByName(Role.ROLE_USER);
+        UserRole userRole = userRoleService.findByName(Role.ROLE_USER);
 
-        User user = new User(body.getEmail(),
-                passwordEncoder.encode(body.getPassword()),
-                Collections.singleton(role));
+        User user = new User(registerRequest.getEmail(),
+                passwordEncoder.encode(registerRequest.getPassword()),
+                Collections.singleton(userRole));
 
         return userService.save(user);
     }
 
-    @Transactional
-    public AuthTokensResponse login(AuthLoginBody body) {
-        String email = body.getEmail();
-        String password = body.getPassword();
+    public AuthTokensResponse login(AuthLoginRequest loginRequest) {
+        String email = loginRequest.getEmail();
+        String password = loginRequest.getPassword();
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, password)
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String accessToken = jwtUtils.generateAccessToken(email);
-        String refreshToken = jwtUtils.generateRefreshToken(email);
+        String accessTokenInfo = jwtManager.generateAccessToken(email);
+        String refreshTokenInfo = jwtManager.generateRefreshToken(email);
 
-        return new AuthTokensResponse(accessToken, refreshToken);
+        log.info("Login tokens generated for {}", email);
+        return new AuthTokensResponse(accessTokenInfo, refreshTokenInfo);
     }
 
-    public AuthRefreshTokenResponse refreshToken(HttpServletRequest request) {
-        String token = jwtUtils.parseJwt(request);
-        if (token == null || !jwtUtils.validateJwtToken(token) || !jwtUtils.isRefreshToken(token)) {
-            throw new IllegalActionException("Invalid token: " + token, "Invalid token");
-        }
+    public AuthTokensResponse refreshToken(HttpServletRequest httpRequest) {
+        String refreshToken = jwtManager.parseJwt(httpRequest);
 
-        String email = jwtUtils.getEmailFromJwtToken(token);
-        String accessToken = jwtUtils.generateAccessToken(email);
+        String email = jwtManager.getEmailFromJwtToken(refreshToken);
+        String accessToken = jwtManager.generateAccessToken(email);
 
-        log.info("New access token generated for user with email: {}, access token: {}", email, accessToken);
-        return new AuthRefreshTokenResponse(accessToken);
+        log.info("Access token refreshed for {}", email);
+        return new AuthTokensResponse(accessToken, refreshToken);
     }
 
     @Transactional

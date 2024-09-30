@@ -1,63 +1,70 @@
 package com.as.eventalertbackend.service;
 
-import com.as.eventalertbackend.controller.request.EventCommentBody;
-import com.as.eventalertbackend.data.model.EventComment;
-import com.as.eventalertbackend.data.reopsitory.EventCommentRepository;
-import com.as.eventalertbackend.handler.exception.RecordNotFoundException;
+import com.as.eventalertbackend.dto.request.EventCommentRequest;
+import com.as.eventalertbackend.error.ApiErrorMessage;
+import com.as.eventalertbackend.error.exception.RecordNotFoundException;
+import com.as.eventalertbackend.persistence.entity.Event;
+import com.as.eventalertbackend.persistence.entity.EventComment;
+import com.as.eventalertbackend.persistence.entity.User;
+import com.as.eventalertbackend.persistence.reopsitory.EventCommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class EventCommentService {
 
-    private final EventCommentRepository repository;
+    private final EventCommentRepository commentRepository;
 
-    private final UserService userService;
     private final EventService eventService;
+    private final UserService userService;
 
     @Autowired
-    public EventCommentService(EventCommentRepository repository, UserService userService, EventService eventService) {
-        this.repository = repository;
-        this.userService = userService;
+    public EventCommentService(EventCommentRepository commentRepository,
+                               EventService eventService,
+                               UserService userService) {
+        this.commentRepository = commentRepository;
         this.eventService = eventService;
+        this.userService = userService;
     }
 
     public EventComment findById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        "No record for comment " + id,
-                        "Comment not found"));
+        return commentRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.COMMENT_NOT_FOUND));
     }
 
-    public List<EventComment> findByEventId(Long id) {
-        return repository.findByEventIdOrderByDateTimeDesc(id);
+    public List<EventComment> findAllByEventId(Long id) {
+        return commentRepository.findByEventIdOrderByDateTimeDesc(id);
     }
 
-    public EventComment save(EventCommentBody body) {
-        return update(new EventComment(), body);
+    public EventComment save(EventCommentRequest commentRequest) {
+        return createOrUpdate(new EventComment(), commentRequest);
     }
 
-    public EventComment updateById(EventCommentBody body, Long id) {
-        return update(findById(id), body);
+    public EventComment updateById(EventCommentRequest commentRequest, Long id) {
+        return createOrUpdate(findById(id), commentRequest);
     }
 
     public void deleteById(Long id) {
-        if (repository.existsById(id)) {
-            repository.deleteById(id);
+        if (commentRepository.existsById(id)) {
+            commentRepository.deleteById(id);
         } else {
-            throw new RecordNotFoundException(
-                    "No record for comment " + id,
-                    "EventComment not found");
+            throw new RecordNotFoundException(ApiErrorMessage.COMMENT_NOT_FOUND);
         }
     }
 
-    private EventComment update(EventComment dbObj, EventCommentBody body) {
-        dbObj.setEvent(eventService.findById(body.getEventId()));
-        dbObj.setUser(userService.findById(body.getUserId()));
-        dbObj.setComment(body.getComment());
-        return repository.save(dbObj);
+    private EventComment createOrUpdate(EventComment comment, EventCommentRequest commentRequest) {
+        Event event = eventService.findById(commentRequest.getEventId());
+        User user = userService.findById(commentRequest.getUserId());
+
+        comment.setEvent(event);
+        comment.setUser(user);
+        comment.setComment(commentRequest.getComment());
+
+        return commentRepository.save(comment);
     }
 
 }

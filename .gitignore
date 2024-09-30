@@ -1,0 +1,8 @@
+.classpath
+.project
+target/**
+.idea/**
+.mvn/**
+mvnw
+mvnw.cmd
+/src/main/resources/firebase/firebase-service-account.json
