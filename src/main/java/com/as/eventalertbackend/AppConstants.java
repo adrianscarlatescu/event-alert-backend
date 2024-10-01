@@ -2,8 +2,6 @@ package com.as.eventalertbackend;
 
 public abstract class AppConstants {
 
-    public static final String APP_NAME = "Event Alert";
-
     public static final String PHONE_NUMBER_PATTERN = "^\\+[0-9]{11}$";
 
     public static final int MIN_PASSWORD_LENGTH = 8;

@@ -13,17 +13,12 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties("app")
 public class AppProperties {
 
-    private Storage storage;
+    private String name;
+    private String imagesDirectoryPath;
+
     private Security security;
     private Notification notification;
 
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    public static class Storage {
-        private String serverPath;
-        private String imagesPath;
-    }
 
     @Getter
     @Setter
@@ -46,6 +41,7 @@ public class AppProperties {
     @NoArgsConstructor
     public static class Notification {
         private Boolean enabled;
+        private String firebaseServiceAccountPath;
         private String eventIdKey;
         private String eventDateTimeKey;
         private String eventTagNameKey;

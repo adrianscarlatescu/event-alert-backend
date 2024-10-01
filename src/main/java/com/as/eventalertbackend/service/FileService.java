@@ -5,6 +5,7 @@ import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.StorageFailException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -31,56 +31,59 @@ public class FileService {
         this.appProperties = appProperties;
     }
 
-    public boolean imageExists(String imageRelativePath) {
-        File imagesDirectory = new File(appProperties.getStorage().getServerPath() + appProperties.getStorage().getImagesPath());
+    public boolean imageExists(String imagePath) {
+        String imagesPath = appProperties.getImagesDirectoryPath();
+        ClassPathResource imagesResource = new ClassPathResource(imagesPath);
+
+        File imagesDirectory;
+        try {
+            imagesDirectory = imagesResource.getFile();
+        } catch (IOException e) {
+            throw new StorageFailException(ApiErrorMessage.FILE_LIST_FAIL);
+        }
+
         String[] filesNames = imagesDirectory.list();
         if (filesNames == null) {
             throw new StorageFailException(ApiErrorMessage.FILE_LIST_FAIL);
         }
 
-        if (!imageRelativePath.startsWith(appProperties.getStorage().getImagesPath())) {
+        if (!imagePath.startsWith(imagesPath)) {
             throw new StorageFailException(ApiErrorMessage.INVALID_IMAGE_NAME);
         }
 
-        String imageName = imageRelativePath.substring(appProperties.getStorage().getImagesPath().length());
+        String imageName = imagePath.substring(imagesPath.length());
         return Arrays.asList(filesNames).contains(imageName);
     }
 
-    public Resource readImage(String imageRelativePath) {
-        Path path = Paths.get(appProperties.getStorage().getServerPath() + imageRelativePath);
+    public Resource readImage(String imagePath) {
+        ClassPathResource imageResource = new ClassPathResource(imagePath);
         try {
-            return new UrlResource(path.toUri());
-        } catch (MalformedURLException e) {
+            return new UrlResource(imageResource.getURI());
+        } catch (IOException e) {
             throw new StorageFailException(ApiErrorMessage.IMAGE_RETRIEVE_FAIL);
         }
     }
 
     public String writeImage(MultipartFile file) {
+        String imagesPath = appProperties.getImagesDirectoryPath();
+
         LocalDateTime dateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
-        String name = file.getOriginalFilename() + dateTime.format(formatter) + ".jpg";
+        String imageName = file.getOriginalFilename() + dateTime.format(formatter) + ".jpg";
 
-        String serverImagesPath = appProperties.getStorage().getServerPath() + appProperties.getStorage().getImagesPath();
-        log.info("Begin image write request, directory: {}", serverImagesPath);
-
-        File directory = new File(serverImagesPath);
-        if (!directory.exists()) {
-            boolean isCreated = directory.mkdir();
-            if (!isCreated) {
-                throw new StorageFailException(ApiErrorMessage.IMAGE_STORE_FAIL);
-            }
-        }
+        ClassPathResource imagesResource = new ClassPathResource(imagesPath);
+        log.info("Begin image write request");
 
         try {
             byte[] bytes = file.getBytes();
-            Path path = Paths.get(serverImagesPath + name);
+            Path path = Paths.get(imagesResource.getFile().getPath(), imageName);
             Files.write(path, bytes);
-            log.info("Image successfully stored: {}", name);
+            log.info("Image successfully stored: {}", imageName);
         } catch (IOException e) {
             throw new StorageFailException(ApiErrorMessage.IMAGE_STORE_FAIL);
         }
 
-        return appProperties.getStorage().getImagesPath() + name;
+        return imagesPath + imageName;
     }
 
 }

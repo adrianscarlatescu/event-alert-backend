@@ -26,9 +26,8 @@ spring:
       enabled: true
 
 app:
-  storage:
-    server-path: "src/main/resources/"
-    images-path: "img/"
+  name: "Event Alert"
+  images-directory-path: "img/"
   security:
     secret: "SecretKeyToGenerateJWTs"
     access-token-expiration-time: 3600000 # 1 hour
@@ -41,7 +40,8 @@ app:
     auth-login-url: "/auth/login"
     subscription-token-url: "/subscriptions/*/token"
   notification:
-    enabled: false # Credentials must be set in firebase-service-account.json in order to connect to Firebase
+    firebase-service-account-path: "firebase/firebase-service-account.json"
+    enabled: false
     event-id-key: "eventId"
     event-date-time-key: "eventDateTime"
     event-tag-name-key: "eventTagName"

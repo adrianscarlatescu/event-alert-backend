@@ -22,7 +22,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"user6@test.com\",\r\n    \"password\": \"1234qwer\",\r\n    \"confirmPassword\": \"1234qwer\"\r\n}",
+							"raw": "{\r\n    \"email\": \"test@test.com\",\r\n    \"password\": \"1234qwer\",\r\n    \"confirmPassword\": \"1234qwer\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -57,7 +57,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"test6@test.com\",\r\n    \"password\": \"1234qwer\"\r\n}"
+							"raw": "{\r\n    \"email\": \"test@test.com\",\r\n    \"password\": \"1234qwer\"\r\n}"
 						},
 						"url": {
 							"raw": "{{url}}/api/auth/login",
@@ -909,8 +909,9 @@
 					"const authPassword = pm.environment.get('authPassword');\r",
 					"const accessToken = pm.environment.get('accessToken');\r",
 					"const refreshToken = pm.environment.get('refreshToken');\r",
-					"const accessTokenExpirationTime = accessToken ? parseToken(accessToken).exp * 1000 : undefined;\r",
-					"const refreshTokenExpirationTime = refreshToken ? parseToken(refreshToken).exp * 1000 : undefined;\r",
+					"const offset = 60000;\r",
+					"const accessTokenExpirationTime = accessToken ? parseToken(accessToken).exp * 1000 - offset : undefined;\r",
+					"const refreshTokenExpirationTime = refreshToken ? parseToken(refreshToken).exp * 1000 - offset : undefined;\r",
 					"const now = Date.now();\r",
 					"\r",
 					"if ((!accessToken && !refreshToken) || \r",
