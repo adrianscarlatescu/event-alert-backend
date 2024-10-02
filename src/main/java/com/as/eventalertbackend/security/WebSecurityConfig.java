@@ -73,9 +73,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, appProperties.getSecurity().getAuthRegisterUrl()).permitAll()
-                .antMatchers(HttpMethod.POST, appProperties.getSecurity().getAuthLoginUrl()).permitAll()
-                .antMatchers(HttpMethod.PATCH, appProperties.getSecurity().getSubscriptionTokenUrl()).permitAll()
+                .regexMatchers(HttpMethod.POST, appProperties.getSecurity().getAuthRegisterUrlRegex()).permitAll()
+                .regexMatchers(HttpMethod.POST, appProperties.getSecurity().getAuthLoginUrlRegex()).permitAll()
+                .regexMatchers(HttpMethod.PATCH, appProperties.getSecurity().getSubscriptionTokenUrlRegex()).permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

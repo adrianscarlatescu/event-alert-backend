@@ -31,9 +31,9 @@ public class AppProperties {
         private String refreshTokenId;
         private String tokenPrefix;
         private String authHeader;
-        private String authRegisterUrl;
-        private String authLoginUrl;
-        private String subscriptionTokenUrl;
+        private String authRegisterUrlRegex;
+        private String authLoginUrlRegex;
+        private String subscriptionTokenUrlRegex;
     }
 
     @Getter

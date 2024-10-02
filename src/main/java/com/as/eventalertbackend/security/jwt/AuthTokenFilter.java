@@ -32,8 +32,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        if (request.getRequestURI().endsWith(appProperties.getSecurity().getAuthLoginUrl()) ||
-                request.getRequestURI().endsWith(appProperties.getSecurity().getAuthRegisterUrl())) {
+        if (request.getRequestURI().matches(appProperties.getSecurity().getAuthLoginUrlRegex()) ||
+                request.getRequestURI().matches(appProperties.getSecurity().getAuthRegisterUrlRegex()) ||
+                request.getRequestURI().matches(appProperties.getSecurity().getSubscriptionTokenUrlRegex())) {
             filterChain.doFilter(request, response);
             return;
         }

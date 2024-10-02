@@ -36,9 +36,9 @@ app:
     refresh-token-id: "RefreshTokenId"
     token-prefix: "Bearer "
     auth-header: "Authorization"
-    auth-register-url: "/auth/register"
-    auth-login-url: "/auth/login"
-    subscription-token-url: "/subscriptions/*/token"
+    auth-register-url-regex: ".*\\/auth\\/login$"
+    auth-login-url-regex: ".*\\/auth\\/register$"
+    subscription-token-url-regex: ".*\\/subscriptions\\/.*\\/token$"
   notification:
     firebase-service-account-path: "firebase/firebase-service-account.json"
     enabled: false
