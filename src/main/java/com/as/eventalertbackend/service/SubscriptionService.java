@@ -66,13 +66,13 @@ public class SubscriptionService {
         subscription.setLatitude(subscriptionRequest.getLatitude());
         subscription.setLongitude(subscriptionRequest.getLongitude());
         subscription.setRadius(subscriptionRequest.getRadius());
-        return subscriptionRepository.save(subscription);
+        return subscription;
     }
 
     public Subscription updateStatus(Long userId, String deviceToken, SubscriptionStatusRequest subscriptionStatusRequest) {
         Subscription subscription = find(userId, deviceToken);
         subscription.setIsActive(subscriptionStatusRequest.getIsActive());
-        return subscriptionRepository.save(subscription);
+        return subscription;
     }
 
 
@@ -82,7 +82,6 @@ public class SubscriptionService {
 
         if (!subscriptions.isEmpty()) {
             subscriptions.forEach(subscription -> subscription.setFirebaseToken(subscriptionTokenRequest.getFirebaseToken()));
-            subscriptionRepository.saveAll(subscriptions);
             log.info("Tokens successfully updated");
         } else {
             log.info("No subscriptions eligible, skip update");

@@ -41,7 +41,7 @@ public class EventCommentService {
     }
 
     public EventComment save(EventCommentRequest commentRequest) {
-        return createOrUpdate(new EventComment(), commentRequest);
+        return commentRepository.save(createOrUpdate(new EventComment(), commentRequest));
     }
 
     public EventComment updateById(EventCommentRequest commentRequest, Long id) {
@@ -64,7 +64,7 @@ public class EventCommentService {
         comment.setUser(user);
         comment.setComment(commentRequest.getComment());
 
-        return commentRepository.save(comment);
+        return comment;
     }
 
 }

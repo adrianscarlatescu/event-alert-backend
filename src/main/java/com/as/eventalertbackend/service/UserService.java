@@ -81,7 +81,7 @@ public class UserService implements UserDetailsService {
         Set<UserRole> userRoles = userRoleService.findAllByName(userRequest.getRoles());
         user.setUserRoles(userRoles);
 
-        return userRepository.save(user);
+        return user;
     }
 
     public void deleteById(Long id) {

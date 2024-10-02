@@ -31,12 +31,12 @@ public class EventSeverityService {
                 .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.SEVERITY_NOT_FOUND));
     }
 
-    public EventSeverity updateById(EventSeverityRequest severityRequest, Long id) {
-        return createOrUpdate(findById(id), severityRequest);
+    public EventSeverity save(EventSeverityRequest severityRequest) {
+        return severityRepository.save(createOrUpdate(new EventSeverity(), severityRequest));
     }
 
-    public EventSeverity save(EventSeverityRequest severityRequest) {
-        return createOrUpdate(new EventSeverity(), severityRequest);
+    public EventSeverity updateById(EventSeverityRequest severityRequest, Long id) {
+        return createOrUpdate(findById(id), severityRequest);
     }
 
     public void deleteById(Long id) {
@@ -51,7 +51,7 @@ public class EventSeverityService {
         severity.setName(severityRequest.getName());
         severity.setColor(severityRequest.getColor());
 
-        return severityRepository.save(severity);
+        return severity;
     }
 
 }

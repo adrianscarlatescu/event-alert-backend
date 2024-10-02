@@ -141,7 +141,7 @@ public class EventService {
     }
 
     public Event save(EventRequest eventRequest) {
-        Event event = createOrUpdate(new Event(), eventRequest);
+        Event event = eventRepository.save(createOrUpdate(new Event(), eventRequest));
         notificationService.send(event);
         return event;
     }
@@ -185,7 +185,7 @@ public class EventService {
         event.setTag(tag);
         event.setUser(user);
 
-        return eventRepository.save(event);
+        return event;
     }
 
 }

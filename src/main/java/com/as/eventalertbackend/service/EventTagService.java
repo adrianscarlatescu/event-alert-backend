@@ -36,12 +36,12 @@ public class EventTagService {
                 .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.TAG_NOT_FOUND));
     }
 
-    public EventTag updateById(EventTagRequest tagRequest, Long id) {
-        return createOrUpdate(findById(id), tagRequest);
+    public EventTag save(EventTagRequest tagRequest) {
+        return tagRepository.save(createOrUpdate(new EventTag(), tagRequest));
     }
 
-    public EventTag save(EventTagRequest tagRequest) {
-        return createOrUpdate(new EventTag(), tagRequest);
+    public EventTag updateById(EventTagRequest tagRequest, Long id) {
+        return createOrUpdate(findById(id), tagRequest);
     }
 
     public void deleteById(Long id) {
@@ -60,7 +60,7 @@ public class EventTagService {
         tag.setName(tagRequest.getName());
         tag.setImagePath(tagRequest.getImagePath());
 
-        return tagRepository.save(tag);
+        return tag;
     }
 
 }
