@@ -1,5 +1,6 @@
 package com.as.eventalertbackend.service;
 
+import com.as.eventalertbackend.AppProperties;
 import com.as.eventalertbackend.dto.request.AuthLoginRequest;
 import com.as.eventalertbackend.dto.request.AuthRegisterRequest;
 import com.as.eventalertbackend.dto.response.AuthTokensResponse;
@@ -27,6 +28,8 @@ import java.util.Collections;
 @Slf4j
 public class AuthService {
 
+    private final AppProperties appProperties;
+
     private final UserService userService;
     private final UserRoleService userRoleService;
 
@@ -35,11 +38,13 @@ public class AuthService {
     private final JwtManager jwtManager;
 
     @Autowired
-    public AuthService(UserService userService,
+    public AuthService(AppProperties appProperties,
+                       UserService userService,
                        UserRoleService userRoleService,
                        PasswordEncoder passwordEncoder,
                        AuthenticationManager authenticationManager,
                        JwtManager jwtManager) {
+        this.appProperties = appProperties;
         this.userService = userService;
         this.userRoleService = userRoleService;
         this.passwordEncoder = passwordEncoder;
@@ -70,10 +75,12 @@ public class AuthService {
         String email = loginRequest.getEmail();
         String password = loginRequest.getPassword();
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(email, password)
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (!appProperties.getMockedUsersEmails().contains(email)) {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, password)
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
 
         String accessTokenInfo = jwtManager.generateAccessToken(email);
         String refreshTokenInfo = jwtManager.generateRefreshToken(email);

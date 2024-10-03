@@ -50,3 +50,4 @@ app:
     event-severity-color-key: "eventSeverityColor"
     event-latitude-key: "eventLatitude"
     event-longitude-key: "eventLongitude"
+  mocked-users-emails: user1@test.com, user2@test.com, user3@test.com, user4@test.com, user5@test.com

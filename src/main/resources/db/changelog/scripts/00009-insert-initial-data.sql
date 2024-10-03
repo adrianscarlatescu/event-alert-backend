@@ -3,16 +3,16 @@ values (1, 'ROLE_USER');
 insert into role(id, name)
 values (2, 'ROLE_ADMIN');
 
-insert into user(id, email, password, first_name, last_name, date_of_birth, gender, image_path, phone_number, join_date_time)
-values (1, "user1@test.com", "$2a$10$xvvhcQT/8KfBVSPejV5eNO0Um8r0UHZb7JwltNepuo06ZMNJb4J5G", "Alan", "Walter", "1984-05-23", "MALE", "img/user_1.jpg", "+03442777999", now());
-insert into user(id, email, password, first_name, last_name, date_of_birth, gender, image_path, phone_number, join_date_time)
-values (2, "user2@test.com", "$2a$10$xvvhcQT/8KfBVSPejV5eNO0Um8r0UHZb7JwltNepuo06ZMNJb4J5G", "John", "Smith", "1987-10-16", "MALE", "img/user_2.jpg", "+44627779991", now());
-insert into user(id, email, password, first_name, last_name, date_of_birth, gender, image_path, phone_number, join_date_time)
-values (3, "user3@test.com", "$2a$10$xvvhcQT/8KfBVSPejV5eNO0Um8r0UHZb7JwltNepuo06ZMNJb4J5G", "Cindy", "Milner", "1990-09-27", "FEMALE", "img/user_3.jpg", "+44848992441", now());
-insert into user(id, email, password, first_name, last_name, date_of_birth, gender, image_path, phone_number, join_date_time)
-values (4, "user4@test.com", "$2a$10$xvvhcQT/8KfBVSPejV5eNO0Um8r0UHZb7JwltNepuo06ZMNJb4J5G", "Andrew", "Carter", "1992-02-14", "MALE", "img/user_4.jpg", "+44226812612", now());
-insert into user(id, email, password, first_name, last_name, date_of_birth, gender, image_path, phone_number, join_date_time)
-values (5, "user5@test.com", "$2a$10$xvvhcQT/8KfBVSPejV5eNO0Um8r0UHZb7JwltNepuo06ZMNJb4J5G", "Amy", "Patterson", "1991-06-12", "FEMALE", "img/user_5.jpg", "+44226812555", now());
+insert into user(id, email, first_name, last_name, date_of_birth, gender, image_path, phone_number, join_date_time)
+values (1, "user1@test.com" , "Alan", "Walter", "1984-05-23", "MALE", "img/user_1.jpg", "+03442777999", now());
+insert into user(id, email, first_name, last_name, date_of_birth, gender, image_path, phone_number, join_date_time)
+values (2, "user2@test.com", "John", "Smith", "1987-10-16", "MALE", "img/user_2.jpg", "+44627779991", now());
+insert into user(id, email, first_name, last_name, date_of_birth, gender, image_path, phone_number, join_date_time)
+values (3, "user3@test.com", "Cindy", "Milner", "1990-09-27", "FEMALE", "img/user_3.jpg", "+44848992441", now());
+insert into user(id, email, first_name, last_name, date_of_birth, gender, image_path, phone_number, join_date_time)
+values (4, "user4@test.com", "Andrew", "Carter", "1992-02-14", "MALE", "img/user_4.jpg", "+44226812612", now());
+insert into user(id, email, first_name, last_name, date_of_birth, gender, image_path, phone_number, join_date_time)
+values (5, "user5@test.com", "Amy", "Patterson", "1991-06-12", "FEMALE", "img/user_5.jpg", "+44226812555", now());
 
 insert into users_roles(user_id, role_id)
 values (1, 1);
@@ -28,7 +28,7 @@ insert into users_roles(user_id, role_id)
 values (5, 1);
 
 insert into tag(id, name, image_path)
-values (1, "Other", null);
+values (1, "Other", "img/tag_other.png");
 insert into tag(id, name, image_path)
 values (2, "Fire", "img/tag_fire.png");
 insert into tag(id, name, image_path)

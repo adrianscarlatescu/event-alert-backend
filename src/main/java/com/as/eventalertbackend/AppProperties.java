@@ -6,6 +6,8 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Set;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,6 +17,7 @@ public class AppProperties {
 
     private String name;
     private String imagesDirectoryPath;
+    private Set<String> mockedUsersEmails;
 
     private Security security;
     private Notification notification;
