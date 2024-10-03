@@ -22,9 +22,15 @@ public class Event {
     @CreationTimestamp
     private LocalDateTime dateTime;
 
+    @Column(nullable = false)
     private Double latitude;
+
+    @Column(nullable = false)
     private Double longitude;
+
+    @Column(nullable = false)
     private String imagePath;
+
     private String description;
 
     @OneToMany(mappedBy = "event")

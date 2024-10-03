@@ -3,6 +3,7 @@ package com.as.eventalertbackend.security.jwt;
 import com.as.eventalertbackend.AppProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,9 +33,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        if (request.getRequestURI().matches(appProperties.getSecurity().getAuthLoginUrlRegex()) ||
-                request.getRequestURI().matches(appProperties.getSecurity().getAuthRegisterUrlRegex()) ||
-                request.getRequestURI().matches(appProperties.getSecurity().getSubscriptionTokenUrlRegex())) {
+        if ((HttpMethod.POST.name().equals(request.getMethod()) && request.getRequestURI().matches(appProperties.getSecurity().getAuthLoginUrlRegex())) ||
+                (HttpMethod.POST.name().equals(request.getMethod()) && request.getRequestURI().matches(appProperties.getSecurity().getAuthRegisterUrlRegex())) ||
+                (HttpMethod.PATCH.name().equals(request.getMethod()) && request.getRequestURI().matches(appProperties.getSecurity().getSubscriptionTokenUrlRegex()))) {
             filterChain.doFilter(request, response);
             return;
         }

@@ -1,11 +1,13 @@
 package com.as.eventalertbackend.dto.request;
 
+import com.as.eventalertbackend.AppConstants;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @Getter
@@ -13,6 +15,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class EventCommentRequest implements Serializable {
 
+    @Size(max = AppConstants.MAX_COMMENT_LENGTH,
+            message = "The comment must have at most " + AppConstants.MAX_COMMENT_LENGTH + " characters")
     @NotBlank(message = "The comment is mandatory")
     private String comment;
 

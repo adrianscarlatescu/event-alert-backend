@@ -22,6 +22,7 @@ public class EventComment {
     @CreationTimestamp
     private LocalDateTime dateTime;
 
+    @Column(nullable = false)
     private String comment;
 
     @ManyToOne

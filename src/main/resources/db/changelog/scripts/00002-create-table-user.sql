@@ -2,14 +2,14 @@ CREATE TABLE user
 (
     id             BIGINT AUTO_INCREMENT NOT NULL,
     join_date_time datetime              NULL,
-    email          VARCHAR(255)          NULL,
-    password       VARCHAR(255)          NULL,
-    first_name     VARCHAR(255)          NULL,
-    last_name      VARCHAR(255)          NULL,
+    email          VARCHAR(50)           NULL,
+    password       VARCHAR(40)           NULL,
+    first_name     VARCHAR(25)         NULL,
+    last_name      VARCHAR(25)         NULL,
     date_of_birth  date                  NULL,
-    phone_number   VARCHAR(255)          NULL,
-    image_path     VARCHAR(255)          NULL,
-    gender         VARCHAR(255)          NULL,
+    phone_number   VARCHAR(15)           NULL,
+    image_path     VARCHAR(255)           NULL,
+    gender         VARCHAR(50)           NULL,
     reports_number INT                   NOT NULL,
     CONSTRAINT pk_user PRIMARY KEY (id)
 );

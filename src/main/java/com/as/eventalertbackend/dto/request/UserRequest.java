@@ -10,6 +10,7 @@ import lombok.Setter;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -18,8 +19,12 @@ import java.util.Set;
 @NoArgsConstructor
 public class UserRequest {
 
+    @Size(max = AppConstants.MAX_USER_NAME_LENGTH,
+            message = "The first name must have at most " + AppConstants.MAX_USER_NAME_LENGTH + " characters")
     private String firstName;
 
+    @Size(max = AppConstants.MAX_USER_NAME_LENGTH,
+            message = "The last name must have at most " + AppConstants.MAX_USER_NAME_LENGTH + " characters")
     private String lastName;
 
     @Past(message = "Invalid date of birth")

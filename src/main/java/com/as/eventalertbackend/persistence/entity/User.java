@@ -33,10 +33,13 @@ public class User implements UserDetails {
 
     @Column(unique = true)
     private String email;
+
+    @Column(nullable = false)
     private String password;
 
     private String firstName;
     private String lastName;
+
     private LocalDate dateOfBirth;
     private String phoneNumber;
     private String imagePath;

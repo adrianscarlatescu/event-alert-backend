@@ -2,12 +2,12 @@ CREATE TABLE subscription
 (
     id             BIGINT AUTO_INCREMENT NOT NULL,
     user_id        BIGINT                NOT NULL,
-    latitude       DOUBLE                NULL,
-    longitude      DOUBLE                NULL,
+    latitude       DOUBLE                NOT NULL,
+    longitude      DOUBLE                NOT NULL,
     radius         INT                   NULL,
-    device_id      VARCHAR(255)          NULL,
-    firebase_token VARCHAR(255)          NULL,
-    is_active      BIT(1)                NULL,
+    device_id      VARCHAR(255)          NOT NULL,
+    firebase_token VARCHAR(255)          NOT NULL,
+    is_active      BIT(1)                NOT NULL,
     CONSTRAINT pk_subscription PRIMARY KEY (id)
 );
 

@@ -2,7 +2,7 @@ CREATE TABLE comment
 (
     id        BIGINT AUTO_INCREMENT NOT NULL,
     date_time datetime              NULL,
-    comment   VARCHAR(255)          NULL,
+    comment   VARCHAR(1000)         NOT NULL,
     event_id  BIGINT                NOT NULL,
     user_id   BIGINT                NOT NULL,
     CONSTRAINT pk_comment PRIMARY KEY (id)

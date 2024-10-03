@@ -1,5 +1,6 @@
 package com.as.eventalertbackend.dto.request;
 
+import com.as.eventalertbackend.AppConstants;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,6 +8,7 @@ import lombok.Setter;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @Getter
@@ -34,6 +36,8 @@ public class EventRequest implements Serializable {
     @NotNull(message = "The user is mandatory")
     private Long userId;
 
+    @Size(max = AppConstants.MAX_DESCRIPTION_LENGTH,
+            message = "The description must have at most " + AppConstants.MAX_DESCRIPTION_LENGTH + " characters")
     private String description;
 
 }

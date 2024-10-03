@@ -32,7 +32,7 @@ public enum ApiErrorMessage {
 
     FILTER_MAX_PAGE_SIZE("The page size must be less than " + AppConstants.MAX_PAGES),
     FILTER_END_DATE_AFTER_START_DATE("The end date must be after the start date"),
-    FILTER_MAX_YEARS_INTERVAL("The years interval must be maximum " + AppConstants.MAX_YEARS_INTERVAL),
+    FILTER_MAX_YEARS_INTERVAL("The years interval must be at most " + AppConstants.MAX_YEARS_INTERVAL),
 
     PROFILE_FIRST_NAME_MANDATORY("Profile first name is mandatory"),
     PROFILE_LAST_NAME_MANDATORY("Profile last name is mandatory");
