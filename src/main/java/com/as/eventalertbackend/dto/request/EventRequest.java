@@ -17,11 +17,11 @@ import java.io.Serializable;
 public class EventRequest implements Serializable {
 
     @NotNull(message = "The latitude is mandatory")
-    @PositiveOrZero(message = "The latitude must be positive or 0")
+    @PositiveOrZero(message = "The latitude must be greater or equal to 0")
     private Double latitude;
 
     @NotNull(message = "The longitude is mandatory")
-    @PositiveOrZero(message = "The longitude must be positive or 0")
+    @PositiveOrZero(message = "The longitude must be greater or equal to 0")
     private Double longitude;
 
     @NotBlank(message = "The image path is mandatory")
@@ -37,7 +37,7 @@ public class EventRequest implements Serializable {
     private Long userId;
 
     @Size(max = AppConstants.MAX_DESCRIPTION_LENGTH,
-            message = "The description must have at most " + AppConstants.MAX_DESCRIPTION_LENGTH + " characters")
+            message = "The description must not exceed " + AppConstants.MAX_DESCRIPTION_LENGTH + " characters")
     private String description;
 
 }

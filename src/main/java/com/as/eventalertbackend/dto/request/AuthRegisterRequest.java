@@ -18,7 +18,7 @@ public class AuthRegisterRequest implements Serializable {
     @Email(message = "Invalid email")
     @NotBlank(message = "The email is mandatory")
     @Size(max = AppConstants.MAX_EMAIL_LENGTH,
-            message = "The email must have at most " + AppConstants.MAX_EMAIL_LENGTH + " characters")
+            message = "The email must not exceed " + AppConstants.MAX_EMAIL_LENGTH + " characters")
     private String email;
 
     @NotBlank(message = "The password is mandatory")
@@ -28,7 +28,7 @@ public class AuthRegisterRequest implements Serializable {
                     AppConstants.MAX_PASSWORD_LENGTH + " characters")
     private String password;
 
-    @NotBlank(message = "The password must be confirmed")
+    @NotBlank(message = "The confirmation password is mandatory")
     private String confirmPassword;
 
 }

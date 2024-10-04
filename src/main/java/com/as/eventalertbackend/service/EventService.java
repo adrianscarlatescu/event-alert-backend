@@ -169,6 +169,9 @@ public class EventService {
         if (user.getLastName() == null || user.getLastName().isEmpty()) {
             throw new InvalidActionException(ApiErrorMessage.PROFILE_LAST_NAME_MANDATORY);
         }
+        if (user.getPhoneNumber() == null || user.getPhoneNumber().isEmpty()) {
+            throw new InvalidActionException(ApiErrorMessage.PROFILE_PHONE_NUMBER_MANDATORY);
+        }
 
         if (!fileService.imageExists(eventRequest.getImagePath())) {
             throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);

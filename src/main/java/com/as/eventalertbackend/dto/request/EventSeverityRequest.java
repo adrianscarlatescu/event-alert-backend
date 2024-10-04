@@ -17,7 +17,7 @@ public class EventSeverityRequest implements Serializable {
 
     @NotBlank(message = "The name is mandatory")
     @Size(max = AppConstants.MAX_SEVERITY_NAME_LENGTH,
-            message = "The name must have at most " + AppConstants.MAX_SEVERITY_NAME_LENGTH + " characters")
+            message = "The name must not exceed " + AppConstants.MAX_SEVERITY_NAME_LENGTH + " characters")
     private String name;
 
     @NotNull(message = "The color is mandatory")

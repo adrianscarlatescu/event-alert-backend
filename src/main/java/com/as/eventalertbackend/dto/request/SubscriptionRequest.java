@@ -17,11 +17,11 @@ public class SubscriptionRequest implements Serializable {
     private Long userId;
 
     @NotNull(message = "The latitude is mandatory")
-    @PositiveOrZero(message = "The latitude must be positive or 0")
+    @PositiveOrZero(message = "The latitude must be greater or equal to 0")
     private Double latitude;
 
     @NotNull(message = "The longitude is mandatory")
-    @PositiveOrZero(message = "The longitude must be positive or 0")
+    @PositiveOrZero(message = "The longitude must be greater or equal to 0")
     private Double longitude;
 
     @Min(value = AppConstants.MIN_RADIUS, message = "The radius must be greater or equal to " + AppConstants.MIN_RADIUS + " km")

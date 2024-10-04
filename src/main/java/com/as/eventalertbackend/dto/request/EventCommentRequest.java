@@ -16,7 +16,7 @@ import java.io.Serializable;
 public class EventCommentRequest implements Serializable {
 
     @Size(max = AppConstants.MAX_COMMENT_LENGTH,
-            message = "The comment must have at most " + AppConstants.MAX_COMMENT_LENGTH + " characters")
+            message = "The comment must not exceed " + AppConstants.MAX_COMMENT_LENGTH + " characters")
     @NotBlank(message = "The comment is mandatory")
     private String comment;
 

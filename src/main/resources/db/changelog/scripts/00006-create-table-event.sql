@@ -4,7 +4,7 @@ CREATE TABLE event
     date_time     datetime              NULL,
     latitude      DOUBLE                NOT NULL,
     longitude     DOUBLE                NOT NULL,
-    image_path    VARCHAR(255)           NOT NULL,
+    image_path    VARCHAR(255)          NOT NULL,
     `description` VARCHAR(1000)         NULL,
     severity_id   BIGINT                NOT NULL,
     tag_id        BIGINT                NOT NULL,

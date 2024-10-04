@@ -30,12 +30,13 @@ public enum ApiErrorMessage {
 
     DEFAULT_ROLE_MANDATORY("The default role is mandatory"),
 
-    FILTER_MAX_PAGE_SIZE("The page size must be less than " + AppConstants.MAX_PAGES),
+    FILTER_MAX_PAGE_SIZE("The page size must be less or equal to " + AppConstants.MAX_PAGES),
     FILTER_END_DATE_AFTER_START_DATE("The end date must be after the start date"),
-    FILTER_MAX_YEARS_INTERVAL("The years interval must be at most " + AppConstants.MAX_YEARS_INTERVAL),
+    FILTER_MAX_YEARS_INTERVAL("The interval between the start date and the end date must not exceed " + AppConstants.MAX_YEARS_INTERVAL),
 
-    PROFILE_FIRST_NAME_MANDATORY("Profile first name is mandatory"),
-    PROFILE_LAST_NAME_MANDATORY("Profile last name is mandatory");
+    PROFILE_FIRST_NAME_MANDATORY("The profile first name is mandatory"),
+    PROFILE_LAST_NAME_MANDATORY("The profile last name is mandatory"),
+    PROFILE_PHONE_NUMBER_MANDATORY("The profile phone number is mandatory");
 
     private final String value;
 

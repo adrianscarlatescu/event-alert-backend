@@ -2,7 +2,7 @@ package com.as.eventalertbackend;
 
 public abstract class AppConstants {
 
-    public static final String PHONE_NUMBER_PATTERN = "^\\+?[0-9]{11,14}$";
+    public static final String PHONE_NUMBER_PATTERN = "^[- +()0-9]{10,20}$";
 
     public static final int MIN_PASSWORD_LENGTH = 8;
     public static final int MAX_PASSWORD_LENGTH = 40;
@@ -15,7 +15,7 @@ public abstract class AppConstants {
 
     public static final int MIN_RADIUS = 1;
     public static final int MAX_RADIUS = 10_000;
-    public static final int MAX_YEARS_INTERVAL = 1;
+    public static final int MAX_YEARS_INTERVAL = 2;
     public static final int MAX_PAGES = 100;
 
 }
