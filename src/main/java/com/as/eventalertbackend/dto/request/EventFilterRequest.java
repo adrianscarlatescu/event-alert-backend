@@ -27,11 +27,11 @@ public class EventFilterRequest implements Serializable {
     public LocalDate endDate;
 
     @NotNull(message = "The latitude is mandatory")
-    @PositiveOrZero(message = "The latitude must be positive or 0")
+    @PositiveOrZero(message = "The latitude must be greater or equal to 0")
     public Double latitude;
 
     @NotNull(message = "The longitude is mandatory")
-    @PositiveOrZero(message = "The longitude must be positive or 0")
+    @PositiveOrZero(message = "The longitude must be greater or equal to 0")
     public Double longitude;
 
     @NotEmpty(message = "At least one tag is required")
