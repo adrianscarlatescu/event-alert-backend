@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "comment")
+@Table(name = "event_comment")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,7 +20,7 @@ public class EventComment {
     private Long id;
 
     @CreationTimestamp
-    private LocalDateTime dateTime;
+    private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private String comment;

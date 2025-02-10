@@ -60,7 +60,7 @@ public class EventService {
     }
 
     public List<Event> findAllByUserId(Long userId) {
-        return eventRepository.findByUserIdOrderByDateTimeDesc(userId);
+        return eventRepository.findByUserIdOrderByCreatedAtDesc(userId);
     }
 
     public Page<Event> findByFilter(EventFilterRequest filterRequest, int pageSize, int pageNumber, Order order) {
@@ -107,10 +107,10 @@ public class EventService {
                 pageRequest = PageRequest.of(pageNumber, pageSize);
                 break;
             case BY_DATE_ASCENDING:
-                pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("date_time"));
+                pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("created_at"));
                 break;
             case BY_DATE_DESCENDING:
-                pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("date_time").descending());
+                pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("created_at").descending());
                 break;
             case BY_SEVERITY_ASCENDING:
                 pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("severity_id"));

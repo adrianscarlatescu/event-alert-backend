@@ -42,14 +42,14 @@ public class UserController {
         return ResponseEntity.ok(mapper.map(userService.findById(id), UserResponse.class));
     }
 
-    @Secured({"ROLE_ADMIN"})
+    @Secured({"ADMIN"})
     @PutMapping("/users/{id}")
     public ResponseEntity<UserResponse> updateById(@Valid @RequestBody UserRequest userRequest,
                                                    @PathVariable("id") Long id) {
         return ResponseEntity.ok(mapper.map(userService.updateById(userRequest, id), UserResponse.class));
     }
 
-    @Secured({"ROLE_ADMIN"})
+    @Secured({"ADMIN"})
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
         userService.deleteById(id);

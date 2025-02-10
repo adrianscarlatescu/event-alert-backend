@@ -4,9 +4,9 @@ import com.as.eventalertbackend.error.ApiErrorMessage;
 import lombok.Getter;
 
 @Getter
-public abstract class AbstractApiException extends RuntimeException {
+public abstract class ApiException extends RuntimeException {
 
-    public AbstractApiException(ApiErrorMessage apiErrorMessage) {
+    public ApiException(ApiErrorMessage apiErrorMessage) {
         super(apiErrorMessage.getValue());
     }
 

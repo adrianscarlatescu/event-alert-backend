@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class EventCommentResponse implements Serializable {
 
     private Long id;
-    private LocalDateTime dateTime;
+    private LocalDateTime createdAt;
     private String comment;
     private UserBaseResponse user;
 

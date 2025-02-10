@@ -97,7 +97,7 @@ public class NotificationService {
     private Map<String, String> getMessageMap(Event event) {
         Map<String, String> messageMap = new HashMap<>();
         messageMap.put(appProperties.getNotification().getEventIdKey(), String.valueOf(event.getId()));
-        messageMap.put(appProperties.getNotification().getEventDateTimeKey(), event.getDateTime().toString());
+        messageMap.put(appProperties.getNotification().getEventCreatedAt(), event.getCreatedAt().toString());
         messageMap.put(appProperties.getNotification().getEventTagNameKey(), event.getTag().getName());
         messageMap.put(appProperties.getNotification().getEventTagImagePathKey(), event.getTag().getImagePath());
         messageMap.put(appProperties.getNotification().getEventSeverityNameKey(), event.getSeverity().getName());

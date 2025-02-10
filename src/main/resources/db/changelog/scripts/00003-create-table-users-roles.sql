@@ -6,7 +6,7 @@ CREATE TABLE users_roles
 );
 
 ALTER TABLE users_roles
-    ADD CONSTRAINT fk_userol_on_user FOREIGN KEY (user_id) REFERENCES user (id);
+    ADD CONSTRAINT fk_users_roles_on_user FOREIGN KEY (user_id) REFERENCES user (id);
 
 ALTER TABLE users_roles
-    ADD CONSTRAINT fk_userol_on_user_role FOREIGN KEY (role_id) REFERENCES `role` (id);
+    ADD CONSTRAINT fk_users_roles_on_user_role FOREIGN KEY (role_id) REFERENCES user_role (id);

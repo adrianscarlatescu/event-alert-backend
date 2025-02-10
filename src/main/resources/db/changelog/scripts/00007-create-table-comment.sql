@@ -1,15 +1,15 @@
-CREATE TABLE comment
+CREATE TABLE event_comment
 (
-    id        BIGINT AUTO_INCREMENT NOT NULL,
-    date_time datetime              NULL,
-    comment   VARCHAR(1000)         NOT NULL,
-    event_id  BIGINT                NOT NULL,
-    user_id   BIGINT                NOT NULL,
-    CONSTRAINT pk_comment PRIMARY KEY (id)
+    id          BIGINT AUTO_INCREMENT NOT NULL,
+    created_at  DATETIME              NOT NULL,
+    comment     VARCHAR(1000)         NOT NULL,
+    event_id    BIGINT                NOT NULL,
+    user_id     BIGINT                NOT NULL,
+    CONSTRAINT pk_event_comment PRIMARY KEY (id)
 );
 
-ALTER TABLE comment
-    ADD CONSTRAINT FK_COMMENT_ON_EVENT FOREIGN KEY (event_id) REFERENCES event (id);
+ALTER TABLE event_comment
+    ADD CONSTRAINT fk_comment_on_event FOREIGN KEY (event_id) REFERENCES event (id);
 
-ALTER TABLE comment
-    ADD CONSTRAINT FK_COMMENT_ON_USER FOREIGN KEY (user_id) REFERENCES user (id);
+ALTER TABLE event_comment
+    ADD CONSTRAINT fk_comment_on_user FOREIGN KEY (user_id) REFERENCES user (id);

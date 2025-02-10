@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface EventCommentRepository extends JpaRepository<EventComment, Long> {
 
-    List<EventComment> findByEventIdOrderByDateTimeDesc(Long id);
+    List<EventComment> findByEventIdOrderByCreatedAtDesc(Long id);
 
 }

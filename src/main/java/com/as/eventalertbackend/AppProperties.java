@@ -46,7 +46,7 @@ public class AppProperties {
         private Boolean enabled;
         private String firebaseServiceAccountPath;
         private String eventIdKey;
-        private String eventDateTimeKey;
+        private String eventCreatedAt;
         private String eventTagNameKey;
         private String eventTagImagePathKey;
         private String eventSeverityNameKey;

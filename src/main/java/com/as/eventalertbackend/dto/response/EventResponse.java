@@ -14,7 +14,7 @@ import java.util.Set;
 public class EventResponse implements Serializable {
 
     private Long id;
-    private LocalDateTime dateTime;
+    private LocalDateTime createdAt;
     private Double latitude;
     private Double longitude;
     private String imagePath;

@@ -42,7 +42,7 @@ public class EventSeverityController {
         return ResponseEntity.ok(mapper.map(severityService.findById(id), EventSeverityResponse.class));
     }
 
-    @Secured({"ROLE_ADMIN"})
+    @Secured({"ADMIN"})
     @PostMapping
     public ResponseEntity<EventSeverityResponse> save(@Valid @RequestBody EventSeverityRequest severityRequest) {
         return ResponseEntity
@@ -50,14 +50,14 @@ public class EventSeverityController {
                 .body(mapper.map(severityService.save(severityRequest), EventSeverityResponse.class));
     }
 
-    @Secured({"ROLE_ADMIN"})
+    @Secured({"ADMIN"})
     @PutMapping("/{id}")
     public ResponseEntity<EventSeverityResponse> updateById(@Valid @RequestBody EventSeverityRequest severityRequest,
                                                             @PathVariable("id") Long id) {
         return ResponseEntity.ok(mapper.map(severityService.updateById(severityRequest, id), EventSeverityResponse.class));
     }
 
-    @Secured({"ROLE_ADMIN"})
+    @Secured({"ADMIN"})
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
         severityService.deleteById(id);

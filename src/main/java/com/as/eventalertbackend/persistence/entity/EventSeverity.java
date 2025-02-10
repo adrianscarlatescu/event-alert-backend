@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Table(name = "severity")
+@Table(name = "event_severity")
 @Getter
 @Setter
 @NoArgsConstructor

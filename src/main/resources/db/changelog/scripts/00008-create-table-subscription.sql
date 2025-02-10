@@ -4,7 +4,7 @@ CREATE TABLE subscription
     user_id        BIGINT                NOT NULL,
     latitude       DOUBLE                NOT NULL,
     longitude      DOUBLE                NOT NULL,
-    radius         INT                   NULL,
+    radius         INT                   NOT NULL,
     device_id      VARCHAR(255)          NOT NULL,
     firebase_token VARCHAR(255)          NOT NULL,
     is_active      BIT(1)                NOT NULL,

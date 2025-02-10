@@ -16,7 +16,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Query(value = "SELECT id, ST_Distance_Sphere(point(latitude, longitude),point(?1, ?2)) / 1000 AS distance " +
             "FROM event " +
-            "WHERE date_time BETWEEN ?4 AND ?5 AND tag_id IN ?6 AND severity_id IN ?7 " +
+            "WHERE created_at BETWEEN ?4 AND ?5 AND tag_id IN ?6 AND severity_id IN ?7 " +
             "HAVING distance <= ?3 " +
             "ORDER BY distance ASC",
             nativeQuery = true)
@@ -30,7 +30,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             nativeQuery = true)
     Page<Event> findByIds(long[] eventsIds, Pageable pageable);
 
-    List<Event> findByUserIdOrderByDateTimeDesc(Long userId);
+    List<Event> findByUserIdOrderByCreatedAtDesc(Long userId);
 
     interface DistanceProjection {
         Long getId();

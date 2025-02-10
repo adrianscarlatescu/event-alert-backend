@@ -62,7 +62,7 @@ public class AuthService {
             throw new InvalidActionException(ApiErrorMessage.PASSWORDS_NOT_MATCH);
         }
 
-        UserRole userRole = userRoleService.findByName(Role.ROLE_USER);
+        UserRole userRole = userRoleService.findByName(Role.BASIC);
 
         User user = new User(registerRequest.getEmail(),
                 passwordEncoder.encode(registerRequest.getPassword()),

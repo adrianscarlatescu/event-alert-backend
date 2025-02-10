@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
+@Table(name = "event")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,7 +21,7 @@ public class Event {
     private Long id;
 
     @CreationTimestamp
-    private LocalDateTime dateTime;
+    private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private Double latitude;
@@ -53,7 +54,7 @@ public class Event {
 
     @Override
     public String toString() {
-        return "{id: " + id + ", date_time: " + dateTime.toString() +
+        return "{id: " + id + ", created_at: " + createdAt.toString() +
                 ", latitude: " + latitude + ", longitude: " + longitude +
                 ", tag_id: " + tag.getId() + ", severity_id: " + severity.getId() + ", user_id: " + user.getId() +
                 ", image_path: " + imagePath + ", description: " + description +

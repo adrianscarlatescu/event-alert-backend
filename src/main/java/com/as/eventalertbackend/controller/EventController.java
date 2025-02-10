@@ -71,14 +71,14 @@ public class EventController {
                 .body(mapper.map(eventService.save(eventRequest), EventResponse.class));
     }
 
-    @Secured({"ROLE_ADMIN"})
+    @Secured({"ADMIN"})
     @PutMapping("/{id}")
     public ResponseEntity<EventResponse> updateById(@Valid @RequestBody EventRequest eventRequest,
                                                     @PathVariable("id") Long id) {
         return ResponseEntity.ok(mapper.map(eventService.updateById(eventRequest, id), EventResponse.class));
     }
 
-    @Secured({"ROLE_ADMIN"})
+    @Secured({"ADMIN"})
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
         eventService.deleteById(id);

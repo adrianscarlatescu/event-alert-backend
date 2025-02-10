@@ -24,13 +24,15 @@ public class UserRequest {
             message = "The last name must not exceed " + AppConstants.MAX_USER_NAME_LENGTH + " characters")
     private String lastName;
 
-    @Past(message = "Invalid date of birth")
+    @Past(message = "The date of birth must be in the past")
     private LocalDate dateOfBirth;
 
     @NotBlank(message = "The phone number is mandatory")
     @Pattern(regexp = AppConstants.PHONE_NUMBER_PATTERN, message = "The phone number does not match the expected format")
     private String phoneNumber;
 
+    @Size(max = AppConstants.MAX_IMAGE_PATH_LENGTH,
+            message = "The image path must not exceed " + AppConstants.MAX_IMAGE_PATH_LENGTH + " characters")
     private String imagePath;
 
     private Gender gender;

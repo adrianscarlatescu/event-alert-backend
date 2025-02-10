@@ -44,14 +44,14 @@ public class EventCommentController {
                 .body(mapper.map(commentService.save(commentRequest), EventCommentResponse.class));
     }
 
-    @Secured({"ROLE_ADMIN"})
+    @Secured({"ADMIN"})
     @PutMapping("/{id}")
     public ResponseEntity<EventCommentResponse> updateById(@Valid @RequestBody EventCommentRequest commentRequest,
                                                            @PathVariable("id") Long id) {
         return ResponseEntity.ok(mapper.map(commentService.updateById(commentRequest, id), EventCommentResponse.class));
     }
 
-    @Secured({"ROLE_ADMIN"})
+    @Secured({"ADMIN"})
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
         commentService.deleteById(id);

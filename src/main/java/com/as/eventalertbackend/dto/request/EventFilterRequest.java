@@ -21,9 +21,11 @@ public class EventFilterRequest implements Serializable {
     public Integer radius;
 
     @NotNull(message = "The start date is mandatory")
+    @PastOrPresent(message = "The start date must be in the past or present")
     public LocalDate startDate;
 
     @NotNull(message = "The end date is mandatory")
+    @PastOrPresent(message = "The end date must be in the past or present")
     public LocalDate endDate;
 
     @NotNull(message = "The latitude is mandatory")

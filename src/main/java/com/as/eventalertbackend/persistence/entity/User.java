@@ -29,7 +29,7 @@ public class User implements UserDetails {
     private Long id;
 
     @CreationTimestamp
-    private LocalDateTime joinDateTime;
+    private LocalDateTime joinedAt;
 
     @Column(unique = true)
     private String email;

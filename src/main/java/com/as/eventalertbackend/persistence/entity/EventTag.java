@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Table(name = "tag")
+@Table(name = "event_tag")
 @Getter
 @Setter
 @NoArgsConstructor

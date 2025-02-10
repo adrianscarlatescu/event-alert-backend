@@ -62,7 +62,7 @@ public class UserService implements UserDetailsService {
 
     public User updateById(UserRequest userRequest, Long id) {
         if (userRequest.getRoles().stream()
-                .noneMatch(role -> role == Role.ROLE_USER)) {
+                .noneMatch(role -> role == Role.BASIC)) {
             throw new InvalidActionException(ApiErrorMessage.DEFAULT_ROLE_MANDATORY);
         }
 

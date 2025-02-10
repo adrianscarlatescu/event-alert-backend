@@ -36,7 +36,9 @@ public enum ApiErrorMessage {
 
     PROFILE_FIRST_NAME_MANDATORY("The profile first name is mandatory"),
     PROFILE_LAST_NAME_MANDATORY("The profile last name is mandatory"),
-    PROFILE_PHONE_NUMBER_MANDATORY("The profile phone number is mandatory");
+    PROFILE_PHONE_NUMBER_MANDATORY("The profile phone number is mandatory"),
+
+    FIELD_INVALID_FORMAT("Invalid format or value not accepted");
 
     private final String value;
 

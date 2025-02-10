@@ -6,9 +6,11 @@ import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
 import com.as.eventalertbackend.error.exception.ResourceNotFoundException;
 import com.as.eventalertbackend.error.exception.StorageFailException;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -27,6 +29,14 @@ public class ApiExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ApiFailureResponse(ApiErrorCode.TECHNICAL_ERROR.getValue(), e.getMessage()));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiFailureResponse> handleException(InvalidFormatException e, HttpServletRequest request) {
+        logException(e, request);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ApiFailureResponse(ApiErrorCode.FIELD_CONSTRAINT.getValue(), ApiErrorMessage.FIELD_INVALID_FORMAT.getValue()));
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})

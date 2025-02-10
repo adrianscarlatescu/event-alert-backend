@@ -42,7 +42,7 @@ public class EventTagController {
         return ResponseEntity.ok(mapper.map(tagService.findById(id), EventTagResponse.class));
     }
 
-    @Secured({"ROLE_ADMIN"})
+    @Secured({"ADMIN"})
     @PostMapping
     public ResponseEntity<EventTagResponse> save(@Valid @RequestBody EventTagRequest tagRequest) {
         return ResponseEntity
@@ -50,14 +50,14 @@ public class EventTagController {
                 .body(mapper.map(tagService.save(tagRequest), EventTagResponse.class));
     }
 
-    @Secured({"ROLE_ADMIN"})
+    @Secured({"ADMIN"})
     @PutMapping("/{id}")
     public ResponseEntity<EventTagResponse> updateById(@Valid @RequestBody EventTagRequest tagRequest,
                                                        @PathVariable("id") Long id) {
         return ResponseEntity.ok(mapper.map(tagService.updateById(tagRequest, id), EventTagResponse.class));
     }
 
-    @Secured({"ROLE_ADMIN"})
+    @Secured({"ADMIN"})
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
         tagService.deleteById(id);

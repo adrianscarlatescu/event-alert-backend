@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Table(name = "role")
+@Table(name = "user_role")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,6 +21,8 @@ public class UserRole {
 
     @Enumerated(EnumType.STRING)
     private Role name;
+
+    private String description;
 
     @ManyToMany(mappedBy = "userRoles")
     private Set<User> users;

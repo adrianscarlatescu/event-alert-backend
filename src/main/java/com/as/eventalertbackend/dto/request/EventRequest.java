@@ -25,6 +25,8 @@ public class EventRequest implements Serializable {
     private Double longitude;
 
     @NotBlank(message = "The image path is mandatory")
+    @Size(max = AppConstants.MAX_IMAGE_PATH_LENGTH,
+            message = "The image path must not exceed " + AppConstants.MAX_IMAGE_PATH_LENGTH + " characters")
     private String imagePath;
 
     @NotNull(message = "The severity is mandatory")

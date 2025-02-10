@@ -37,7 +37,7 @@ public class EventCommentService {
     }
 
     public List<EventComment> findAllByEventId(Long id) {
-        return commentRepository.findByEventIdOrderByDateTimeDesc(id);
+        return commentRepository.findByEventIdOrderByCreatedAtDesc(id);
     }
 
     public EventComment save(EventCommentRequest commentRequest) {
