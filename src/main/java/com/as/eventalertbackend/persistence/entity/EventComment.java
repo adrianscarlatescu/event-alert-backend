@@ -22,15 +22,14 @@ public class EventComment {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
     private String comment;
 
     @ManyToOne
-    @JoinColumn(name = "event_id", nullable = false)
+    @JoinColumn(name = "event_id")
     private Event event;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
 }

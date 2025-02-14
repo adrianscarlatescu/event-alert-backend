@@ -4,7 +4,7 @@ import com.as.eventalertbackend.AppProperties;
 import com.as.eventalertbackend.dto.request.AuthLoginRequest;
 import com.as.eventalertbackend.dto.request.AuthRegisterRequest;
 import com.as.eventalertbackend.dto.response.AuthTokensResponse;
-import com.as.eventalertbackend.enums.Role;
+import com.as.eventalertbackend.enums.UserRoleCode;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.persistence.entity.User;
@@ -62,7 +62,7 @@ public class AuthService {
             throw new InvalidActionException(ApiErrorMessage.PASSWORDS_NOT_MATCH);
         }
 
-        UserRole userRole = userRoleService.findByName(Role.BASIC);
+        UserRole userRole = userRoleService.findByCode(UserRoleCode.BASIC);
 
         User user = new User(registerRequest.getEmail(),
                 passwordEncoder.encode(registerRequest.getPassword()),

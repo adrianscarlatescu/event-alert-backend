@@ -1,6 +1,6 @@
 package com.as.eventalertbackend.dto.response;
 
-import com.as.eventalertbackend.enums.Role;
+import com.as.eventalertbackend.enums.UserRoleCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +13,6 @@ import java.io.Serializable;
 public class UserRoleResponse implements Serializable {
 
     private Long id;
-    private Role name;
+    private UserRoleCode name;
 
 }

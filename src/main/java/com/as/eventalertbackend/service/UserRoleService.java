@@ -1,6 +1,6 @@
 package com.as.eventalertbackend.service;
 
-import com.as.eventalertbackend.enums.Role;
+import com.as.eventalertbackend.enums.UserRoleCode;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
 import com.as.eventalertbackend.persistence.entity.UserRole;
@@ -22,13 +22,13 @@ public class UserRoleService {
         this.repository = repository;
     }
 
-    public UserRole findByName(Role role) {
-        return repository.findByName(role)
+    public UserRole findByCode(UserRoleCode userRoleCode) {
+        return repository.findByCode(userRoleCode)
                 .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.ROLE_NOT_FOUND));
     }
 
-    public Set<UserRole> findAllByName(Set<Role> roles) {
-        return repository.findAllByNameIn(roles);
+    public Set<UserRole> findAllByCode(Set<UserRoleCode> userRoleCodes) {
+        return repository.findAllByCodeIn(userRoleCodes);
     }
 
 }

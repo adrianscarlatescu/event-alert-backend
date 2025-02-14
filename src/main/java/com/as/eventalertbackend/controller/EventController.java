@@ -4,7 +4,7 @@ import com.as.eventalertbackend.dto.request.EventFilterRequest;
 import com.as.eventalertbackend.dto.request.EventRequest;
 import com.as.eventalertbackend.dto.response.EventResponse;
 import com.as.eventalertbackend.dto.response.PageResponse;
-import com.as.eventalertbackend.enums.Order;
+import com.as.eventalertbackend.enums.OrderCode;
 import com.as.eventalertbackend.persistence.entity.Event;
 import com.as.eventalertbackend.service.EventService;
 import org.modelmapper.ModelMapper;
@@ -37,8 +37,8 @@ public class EventController {
     public ResponseEntity<PageResponse<EventResponse>> getByFilter(@Valid @RequestBody EventFilterRequest filterRequest,
                                                                    @RequestParam("pageSize") int pageSize,
                                                                    @RequestParam("pageNumber") int pageNumber,
-                                                                   @RequestParam(required = false, value = "order") Order order) {
-        Page<Event> eventsPage = eventService.findByFilter(filterRequest, pageSize, pageNumber, order);
+                                                                   @RequestParam(required = false, value = "orderCode") OrderCode orderCode) {
+        Page<Event> eventsPage = eventService.findByFilter(filterRequest, pageSize, pageNumber, orderCode);
         return ResponseEntity.ok(
                 new PageResponse<>(
                         eventsPage.getTotalPages(),

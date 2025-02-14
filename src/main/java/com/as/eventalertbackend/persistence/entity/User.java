@@ -1,6 +1,6 @@
 package com.as.eventalertbackend.persistence.entity;
 
-import com.as.eventalertbackend.enums.Gender;
+import com.as.eventalertbackend.enums.GenderCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,21 +31,22 @@ public class User implements UserDetails {
     @CreationTimestamp
     private LocalDateTime joinedAt;
 
-    @Column(unique = true)
     private String email;
 
-    @Column(nullable = false)
     private String password;
 
     private String firstName;
+
     private String lastName;
 
     private LocalDate dateOfBirth;
+
     private String phoneNumber;
+
     private String imagePath;
 
     @Enumerated(EnumType.STRING)
-    private Gender gender;
+    private GenderCode genderCode;
 
     @OneToMany(mappedBy = "user")
     private Set<Event> events;
@@ -63,7 +64,7 @@ public class User implements UserDetails {
     private Set<Subscription> subscriptions;
 
     @Formula("(SELECT COUNT(e.id) FROM event e WHERE e.user_id = id)")
-    private int reportsNumber;
+    private Integer reportsNumber;
 
     public User(String email, String password, Set<UserRole> userRoles) {
         this.email = email;
@@ -74,7 +75,7 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return userRoles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
+                .map(role -> new SimpleGrantedAuthority(role.getCode().name()))
                 .collect(Collectors.toSet());
     }
 

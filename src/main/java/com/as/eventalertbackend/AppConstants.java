@@ -12,7 +12,6 @@ public abstract class AppConstants {
     public static final int MAX_USER_NAME_LENGTH = 25;
     public static final int MAX_COMMENT_LENGTH = 1000;
     public static final int MAX_DESCRIPTION_LENGTH = 1000;
-    public static final int MAX_IMAGE_PATH_LENGTH = 255;
 
     public static final int MIN_RADIUS = 1;
     public static final int MAX_RADIUS = 10_000;

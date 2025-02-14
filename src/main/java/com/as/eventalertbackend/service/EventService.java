@@ -3,14 +3,14 @@ package com.as.eventalertbackend.service;
 import com.as.eventalertbackend.AppConstants;
 import com.as.eventalertbackend.dto.request.EventFilterRequest;
 import com.as.eventalertbackend.dto.request.EventRequest;
-import com.as.eventalertbackend.enums.Order;
+import com.as.eventalertbackend.enums.OrderCode;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
 import com.as.eventalertbackend.error.exception.ResourceNotFoundException;
 import com.as.eventalertbackend.persistence.entity.Event;
 import com.as.eventalertbackend.persistence.entity.EventSeverity;
-import com.as.eventalertbackend.persistence.entity.EventTag;
+import com.as.eventalertbackend.persistence.entity.EventType;
 import com.as.eventalertbackend.persistence.entity.User;
 import com.as.eventalertbackend.persistence.reopsitory.EventRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -63,7 +63,7 @@ public class EventService {
         return eventRepository.findByUserIdOrderByCreatedAtDesc(userId);
     }
 
-    public Page<Event> findByFilter(EventFilterRequest filterRequest, int pageSize, int pageNumber, Order order) {
+    public Page<Event> findByFilter(EventFilterRequest filterRequest, int pageSize, int pageNumber, OrderCode orderCode) {
         if (pageSize > AppConstants.MAX_PAGES) {
             throw new InvalidActionException(ApiErrorMessage.FILTER_MAX_PAGE_SIZE);
         }
@@ -76,8 +76,8 @@ public class EventService {
             throw new InvalidActionException(ApiErrorMessage.FILTER_MAX_YEARS_INTERVAL);
         }
 
-        if (order == null) {
-            order = Order.BY_DATE_DESCENDING;
+        if (orderCode == null) {
+            orderCode = OrderCode.BY_DATE_DESCENDING;
         }
 
         LocalDateTime startDateTime = filterRequest.getStartDate().atStartOfDay();
@@ -93,7 +93,7 @@ public class EventService {
                 startDateTime, endDateTime,
                 filterRequest.getTagsIds(), filterRequest.getSeveritiesIds());
 
-        if (order == Order.BY_DISTANCE_DESCENDING) {
+        if (orderCode == OrderCode.BY_DISTANCE_DESCENDING) {
             Collections.reverse(distanceProjections);
         }
 
@@ -102,7 +102,7 @@ public class EventService {
                 .toArray();
 
         PageRequest pageRequest;
-        switch (order) {
+        switch (orderCode) {
             default:
                 pageRequest = PageRequest.of(pageNumber, pageSize);
                 break;
@@ -160,7 +160,7 @@ public class EventService {
 
     private Event createOrUpdate(Event event, EventRequest eventRequest) {
         User user = userService.findById(eventRequest.getUserId());
-        EventTag tag = tagService.findById(eventRequest.getTagId());
+        EventType tag = tagService.findById(eventRequest.getTagId());
         EventSeverity severity = severityService.findById(eventRequest.getSeverityId());
 
         if (user.getFirstName() == null || user.getFirstName().isEmpty()) {
@@ -185,7 +185,7 @@ public class EventService {
         event.setImagePath(eventRequest.getImagePath());
         event.setDescription(description);
         event.setSeverity(severity);
-        event.setTag(tag);
+        event.setType(tag);
         event.setUser(user);
 
         return event;

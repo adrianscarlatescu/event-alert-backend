@@ -20,8 +20,6 @@ public class EventTagRequest implements Serializable {
     private String name;
 
     @NotBlank(message = "The image path is mandatory")
-    @Size(max = AppConstants.MAX_IMAGE_PATH_LENGTH,
-            message = "The image path must not exceed " + AppConstants.MAX_IMAGE_PATH_LENGTH + " characters")
     private String imagePath;
 
 }

@@ -1,5 +1,6 @@
 package com.as.eventalertbackend.persistence.entity;
 
+import com.as.eventalertbackend.enums.EventTypeCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,23 +9,28 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Table(name = "event_tag")
+@Table(name = "event_type")
 @Getter
 @Setter
 @NoArgsConstructor
-public class EventTag {
+public class EventType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String name;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private EventTypeCategory category;
 
-    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private EventTypeCode code;
+
+    private String label;
+
     private String imagePath;
 
-    @OneToMany(mappedBy = "tag")
+    @OneToMany(mappedBy = "type")
     private Set<Event> events;
 
 }

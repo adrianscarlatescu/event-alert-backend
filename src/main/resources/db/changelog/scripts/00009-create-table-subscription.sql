@@ -12,4 +12,10 @@ CREATE TABLE subscription
 );
 
 ALTER TABLE subscription
-    ADD CONSTRAINT FK_SUBSCRIPTION_ON_USER FOREIGN KEY (user_id) REFERENCES user (id);
+    ADD CONSTRAINT check_range_min_radius CHECK (radius >= 1);
+
+ALTER TABLE subscription
+    ADD CONSTRAINT check_range_min_radius CHECK (radius <= 10000);
+
+ALTER TABLE subscription
+    ADD CONSTRAINT fk_subscription_on_user FOREIGN KEY (user_id) REFERENCES user (id);

@@ -1,8 +1,8 @@
 package com.as.eventalertbackend.dto.request;
 
 import com.as.eventalertbackend.AppConstants;
-import com.as.eventalertbackend.enums.Gender;
-import com.as.eventalertbackend.enums.Role;
+import com.as.eventalertbackend.enums.GenderCode;
+import com.as.eventalertbackend.enums.UserRoleCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,13 +31,11 @@ public class UserRequest {
     @Pattern(regexp = AppConstants.PHONE_NUMBER_PATTERN, message = "The phone number does not match the expected format")
     private String phoneNumber;
 
-    @Size(max = AppConstants.MAX_IMAGE_PATH_LENGTH,
-            message = "The image path must not exceed " + AppConstants.MAX_IMAGE_PATH_LENGTH + " characters")
     private String imagePath;
 
-    private Gender gender;
+    private GenderCode genderCode;
 
     @NotEmpty(message = "At least one role is required")
-    private Set<Role> roles;
+    private Set<UserRoleCode> userRoleCodes;
 
 }

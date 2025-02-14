@@ -1,0 +1,50 @@
+package com.as.eventalertbackend.enums;
+
+public enum EventTypeCode {
+
+    // Human-made
+    BLOCKED_ROAD,
+    DRUG_ACTIVITY,
+    ELECTRICAL_SHOCK,
+    EXPLOSION,
+    FIGHT_ASSAULT,
+    FIRE,
+    GAS_LEAK,
+    GUNFIRE,
+    INDUSTRIAL_ACCIDENT,
+    INFRASTRUCTURE_DAMAGE,
+    KIDNAPPING,
+    MISSING_PERSON,
+    MURDER_CRIME,
+    NUCLEAR_RADIATION,
+    POLLUTION,
+    POWER_OUTAGE,
+    PROTEST_RIOT,
+    TERRORIST_ATTACK,
+    TRAFFIC_ACCIDENT,
+    VANDALISM,
+
+    // Natural
+    AVALANCHE,
+    DANGEROUS_ANIMAL,
+    DROUGHT,
+    EARTHQUAKE,
+    FLOOD,
+    FOG,
+    HIGH_TEMPERATURE,
+    HURRICANE,
+    LANDSLIDE,
+    LOW_TEMPERATURE,
+    RAIN,
+    ROBBERY_BURGLARY,
+    SINKHOLE,
+    SNOW,
+    STORM,
+    TSUNAMI,
+    VOLCANIC_ERUPTION,
+    WILDFIRE,
+
+    // Other
+    OTHER,
+
+}

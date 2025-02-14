@@ -4,7 +4,7 @@ import com.as.eventalertbackend.dto.request.EventTagRequest;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
 import com.as.eventalertbackend.error.exception.ResourceNotFoundException;
-import com.as.eventalertbackend.persistence.entity.EventTag;
+import com.as.eventalertbackend.persistence.entity.EventType;
 import com.as.eventalertbackend.persistence.reopsitory.EventTagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,20 +27,20 @@ public class EventTagService {
         this.fileService = fileService;
     }
 
-    public List<EventTag> findAll() {
+    public List<EventType> findAll() {
         return tagRepository.findAll();
     }
 
-    public EventTag findById(Long id) {
+    public EventType findById(Long id) {
         return tagRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.TAG_NOT_FOUND));
     }
 
-    public EventTag save(EventTagRequest tagRequest) {
-        return tagRepository.save(createOrUpdate(new EventTag(), tagRequest));
+    public EventType save(EventTagRequest tagRequest) {
+        return tagRepository.save(createOrUpdate(new EventType(), tagRequest));
     }
 
-    public EventTag updateById(EventTagRequest tagRequest, Long id) {
+    public EventType updateById(EventTagRequest tagRequest, Long id) {
         return createOrUpdate(findById(id), tagRequest);
     }
 
@@ -52,7 +52,7 @@ public class EventTagService {
         }
     }
 
-    private EventTag createOrUpdate(EventTag tag, EventTagRequest tagRequest) {
+    private EventType createOrUpdate(EventType tag, EventTagRequest tagRequest) {
         if (!fileService.imageExists(tagRequest.getImagePath())) {
             throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
         }

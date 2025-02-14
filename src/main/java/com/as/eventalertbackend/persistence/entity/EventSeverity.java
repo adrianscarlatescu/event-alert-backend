@@ -1,5 +1,6 @@
 package com.as.eventalertbackend.persistence.entity;
 
+import com.as.eventalertbackend.enums.EventSeverityCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,10 +19,11 @@ public class EventSeverity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private EventSeverityCode code;
+
     private String name;
 
-    @Column(nullable = false)
     private Integer color;
 
     @OneToMany(mappedBy = "severity")

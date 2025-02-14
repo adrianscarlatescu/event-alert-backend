@@ -23,13 +23,10 @@ public class Event {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
     private Double latitude;
 
-    @Column(nullable = false)
     private Double longitude;
 
-    @Column(nullable = false)
     private String imagePath;
 
     private String description;
@@ -38,27 +35,18 @@ public class Event {
     private Set<EventComment> eventComments;
 
     @ManyToOne
-    @JoinColumn(name = "severity_id", nullable = false)
+    @JoinColumn(name = "severity_id")
     private EventSeverity severity;
 
     @ManyToOne
-    @JoinColumn(name = "tag_id", nullable = false)
-    private EventTag tag;
+    @JoinColumn(name = "type_id")
+    private EventType type;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Transient
-    private double distance;
-
-    @Override
-    public String toString() {
-        return "{id: " + id + ", created_at: " + createdAt.toString() +
-                ", latitude: " + latitude + ", longitude: " + longitude +
-                ", tag_id: " + tag.getId() + ", severity_id: " + severity.getId() + ", user_id: " + user.getId() +
-                ", image_path: " + imagePath + ", description: " + description +
-                ", distance: " + distance + "}";
-    }
+    private Double distance;
 
 }

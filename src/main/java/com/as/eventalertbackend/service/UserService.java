@@ -1,7 +1,7 @@
 package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.dto.request.UserRequest;
-import com.as.eventalertbackend.enums.Role;
+import com.as.eventalertbackend.enums.UserRoleCode;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
@@ -61,8 +61,8 @@ public class UserService implements UserDetailsService {
     }
 
     public User updateById(UserRequest userRequest, Long id) {
-        if (userRequest.getRoles().stream()
-                .noneMatch(role -> role == Role.BASIC)) {
+        if (userRequest.getUserRoleCodes().stream()
+                .noneMatch(role -> role == UserRoleCode.BASIC)) {
             throw new InvalidActionException(ApiErrorMessage.DEFAULT_ROLE_MANDATORY);
         }
 
@@ -76,9 +76,9 @@ public class UserService implements UserDetailsService {
         user.setDateOfBirth(userRequest.getDateOfBirth());
         user.setPhoneNumber(userRequest.getPhoneNumber());
         user.setImagePath(userRequest.getImagePath());
-        user.setGender(userRequest.getGender());
+        user.setGenderCode(userRequest.getGenderCode());
 
-        Set<UserRole> userRoles = userRoleService.findAllByName(userRequest.getRoles());
+        Set<UserRole> userRoles = userRoleService.findAllByCode(userRequest.getUserRoleCodes());
         user.setUserRoles(userRoles);
 
         return user;

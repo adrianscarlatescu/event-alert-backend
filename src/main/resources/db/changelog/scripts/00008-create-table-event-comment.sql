@@ -9,7 +9,7 @@ CREATE TABLE event_comment
 );
 
 ALTER TABLE event_comment
-    ADD CONSTRAINT fk_comment_on_event FOREIGN KEY (event_id) REFERENCES event (id);
+    ADD CONSTRAINT fk_event_comment_on_event FOREIGN KEY (event_id) REFERENCES event (id);
 
 ALTER TABLE event_comment
-    ADD CONSTRAINT fk_comment_on_user FOREIGN KEY (user_id) REFERENCES user (id);
+    ADD CONSTRAINT fk_event_comment_on_user FOREIGN KEY (user_id) REFERENCES user (id);
