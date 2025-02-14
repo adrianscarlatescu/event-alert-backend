@@ -1,6 +1,6 @@
 package com.as.eventalertbackend.persistence.reopsitory;
 
-import com.as.eventalertbackend.enums.UserRoleCode;
+import com.as.eventalertbackend.model.UserRoleCode;
 import com.as.eventalertbackend.persistence.entity.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 

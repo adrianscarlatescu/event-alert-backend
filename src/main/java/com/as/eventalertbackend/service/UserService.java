@@ -1,14 +1,11 @@
 package com.as.eventalertbackend.service;
 
-import com.as.eventalertbackend.dto.request.UserRequest;
-import com.as.eventalertbackend.enums.UserRoleCode;
+import com.as.eventalertbackend.dto.response.UserResponse;
 import com.as.eventalertbackend.error.ApiErrorMessage;
-import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
-import com.as.eventalertbackend.error.exception.ResourceNotFoundException;
 import com.as.eventalertbackend.persistence.entity.User;
-import com.as.eventalertbackend.persistence.entity.UserRole;
 import com.as.eventalertbackend.persistence.reopsitory.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,11 +14,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class UserService implements UserDetailsService {
+
+    private final ModelMapper mapper;
 
     private final UserRepository userRepository;
 
@@ -29,9 +28,11 @@ public class UserService implements UserDetailsService {
     private final FileService fileService;
 
     @Autowired
-    public UserService(UserRepository userRepository,
+    public UserService(ModelMapper mapper,
+                       UserRepository userRepository,
                        UserRoleService userRoleService,
                        FileService fileService) {
+        this.mapper = mapper;
         this.userRepository = userRepository;
         this.userRoleService = userRoleService;
         this.fileService = fileService;
@@ -43,24 +44,30 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException(username));
     }
 
-    public boolean existsByEmail(String email) {
-        return userRepository.existsByEmail(email);
-    }
-
-    public User save(User user) {
-        return userRepository.save(user);
-    }
-
-    public List<User> findAll() {
-        return userRepository.findAll();
-    }
-
-    public User findById(Long id) {
+    User findEntityById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.USER_NOT_FOUND));
     }
 
-    public User updateById(UserRequest userRequest, Long id) {
+    User saveEntity(User user) {
+        return userRepository.save(user);
+    }
+
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    public UserResponse findById(Long id) {
+        return mapper.map(findEntityById(id), UserResponse.class);
+    }
+
+    public List<UserResponse> findAll() {
+        return userRepository.findAll().stream()
+                .map(user -> mapper.map(user, UserResponse.class))
+                .collect(Collectors.toList());
+    }
+
+    /*public User updateById(UserRequest userRequest, Long id) {
         if (userRequest.getUserRoleCodes().stream()
                 .noneMatch(role -> role == UserRoleCode.BASIC)) {
             throw new InvalidActionException(ApiErrorMessage.DEFAULT_ROLE_MANDATORY);
@@ -70,7 +77,7 @@ public class UserService implements UserDetailsService {
             throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
         }
 
-        User user = findById(id);
+        User user = findEntityById(id);
         user.setFirstName(userRequest.getFirstName());
         user.setLastName(userRequest.getLastName());
         user.setDateOfBirth(userRequest.getDateOfBirth());
@@ -78,11 +85,11 @@ public class UserService implements UserDetailsService {
         user.setImagePath(userRequest.getImagePath());
         user.setGenderCode(userRequest.getGenderCode());
 
-        Set<UserRole> userRoles = userRoleService.findAllByCode(userRequest.getUserRoleCodes());
+        Set<UserRole> userRoles = userRoleService.findAllEntitiesByCode(userRequest.getUserRoleCodes());
         user.setUserRoles(userRoles);
 
         return user;
-    }
+    }*/
 
     public void deleteById(Long id) {
         if (userRepository.existsById(id)) {

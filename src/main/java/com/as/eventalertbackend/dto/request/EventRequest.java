@@ -30,8 +30,8 @@ public class EventRequest implements Serializable {
     @NotNull(message = "The severity is mandatory")
     private Long severityId;
 
-    @NotNull(message = "The tag is mandatory")
-    private Long tagId;
+    @NotNull(message = "The type is mandatory")
+    private Long typeId;
 
     @NotNull(message = "The user is mandatory")
     private Long userId;

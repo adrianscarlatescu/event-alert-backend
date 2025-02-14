@@ -1,6 +1,6 @@
 package com.as.eventalertbackend.persistence.entity;
 
-import com.as.eventalertbackend.enums.UserRoleCode;
+import com.as.eventalertbackend.model.UserRoleCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

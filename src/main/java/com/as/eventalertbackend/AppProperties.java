@@ -47,9 +47,9 @@ public class AppProperties {
         private String firebaseServiceAccountPath;
         private String eventIdKey;
         private String eventCreatedAt;
-        private String eventTagNameKey;
-        private String eventTagImagePathKey;
-        private String eventSeverityNameKey;
+        private String eventTypeLabelKey;
+        private String eventTypeImagePathKey;
+        private String eventSeverityLabelKey;
         private String eventSeverityColorKey;
         private String eventLatitudeKey;
         private String eventLongitudeKey;

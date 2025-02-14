@@ -46,7 +46,7 @@ public class SubscriptionService {
             throw new InvalidActionException(ApiErrorMessage.ALREADY_SUBSCRIBER);
         }
 
-        User user = userService.findById(subscriptionRequest.getUserId());
+        User user = userService.findEntityById(subscriptionRequest.getUserId());
 
         Subscription subscription = new Subscription();
         subscription.setUser(user);

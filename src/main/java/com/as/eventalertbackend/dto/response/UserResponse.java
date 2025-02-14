@@ -1,6 +1,6 @@
 package com.as.eventalertbackend.dto.response;
 
-import com.as.eventalertbackend.enums.GenderCode;
+import com.as.eventalertbackend.model.GenderCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,6 +25,6 @@ public class UserResponse implements Serializable {
     private String imagePath;
     private GenderCode genderCode;
     private Set<UserRoleResponse> userRoles;
-    private int reportsNumber;
+    private Integer reportsNumber;
 
 }

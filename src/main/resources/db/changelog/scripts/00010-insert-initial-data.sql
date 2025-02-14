@@ -2,7 +2,7 @@ insert into user_role
 (id, code, label, description)
 values
     (1, 'BASIC', 'Basic user', 'Access to the main features of the application'),
-    (2, 'ADMIN', 'Admin user', 'High privileged access to create/modify/delete resources');
+    (2, 'ADMIN', 'Admin user', 'High privileged access to create, modify or delete resources');
 
 insert into user
 (id, email, first_name, last_name, date_of_birth, gender_code, image_path, phone_number, joined_at)
@@ -50,7 +50,7 @@ values
     (15, 1, 'POLLUTION', 'Pollution', 'media/event-type/human-made/type_pollution.png'),
     (16, 1, 'POWER_OUTAGE', 'Power outage', 'media/event-type/human-made/type_power_outage.png'),
     (17, 1, 'PROTEST_RIOT', 'Protest/Riot', 'media/event-type/human-made/type_protest_riot.png'),
-    (18, 1, 'ROBERRY_BURGLARY', 'Robbery/Burglary', 'media/event-type/human-made/type_roberry_burglary.png'),
+    (18, 1, 'ROBBERY_BURGLARY', 'Robbery/Burglary', 'media/event-type/human-made/type_roberry_burglary.png'),
     (19, 1, 'TERRORIST_ATTACK', 'Terrorist attack', 'media/event-type/human-made/type_terrorist_attack.png'),
     (20, 1, 'TRAFFIC_ACCIDENT', 'Traffic accident', 'media/event-type/human-made/type_traffic_accident.png'),
     (21, 1, 'VANDALISM', 'Vandalism', 'media/event-type/human-made/type_vandalism.png'),

@@ -1,7 +1,6 @@
 package com.as.eventalertbackend.persistence.entity;
 
-import com.as.eventalertbackend.enums.EventTypeCategoryCode;
-import com.as.eventalertbackend.enums.EventTypeCode;
+import com.as.eventalertbackend.model.EventTypeCategoryCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

@@ -24,7 +24,7 @@ public enum ApiErrorMessage {
     ROLE_NOT_FOUND("Role not found"),
     USER_NOT_FOUND("User not found"),
     SEVERITY_NOT_FOUND("Severity not found"),
-    TAG_NOT_FOUND("Tag not found"),
+    TYPE_NOT_FOUND("Type not found"),
     COMMENT_NOT_FOUND("Comment not found"),
     EVENT_NOT_FOUND("Event not found"),
 

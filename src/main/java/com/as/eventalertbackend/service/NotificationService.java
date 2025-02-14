@@ -55,10 +55,10 @@ public class NotificationService {
 
         Map<String, String> messageMap = getMessageMap(event);
 
-        String severity = event.getSeverity().getName().toLowerCase();
-        String tag = event.getTag().getName().toLowerCase();
+        String severity = event.getSeverity().getLabel().toLowerCase();
+        String type = event.getType().getLabel().toLowerCase();
 
-        String title = "New " + severity + " " + tag + " reported!";
+        String title = "New " + severity + " " + type + " reported!";
         String body = "Click the notification for more details";
 
         Notification notification = Notification.builder()
@@ -98,9 +98,9 @@ public class NotificationService {
         Map<String, String> messageMap = new HashMap<>();
         messageMap.put(appProperties.getNotification().getEventIdKey(), String.valueOf(event.getId()));
         messageMap.put(appProperties.getNotification().getEventCreatedAt(), event.getCreatedAt().toString());
-        messageMap.put(appProperties.getNotification().getEventTagNameKey(), event.getTag().getName());
-        messageMap.put(appProperties.getNotification().getEventTagImagePathKey(), event.getTag().getImagePath());
-        messageMap.put(appProperties.getNotification().getEventSeverityNameKey(), event.getSeverity().getName());
+        messageMap.put(appProperties.getNotification().getEventTypeLabelKey(), event.getType().getLabel());
+        messageMap.put(appProperties.getNotification().getEventTypeImagePathKey(), event.getType().getImagePath());
+        messageMap.put(appProperties.getNotification().getEventSeverityLabelKey(), event.getSeverity().getLabel());
         messageMap.put(appProperties.getNotification().getEventSeverityColorKey(), String.valueOf(event.getSeverity().getColor()));
         messageMap.put(appProperties.getNotification().getEventLatitudeKey(), String.valueOf(event.getLatitude()));
         messageMap.put(appProperties.getNotification().getEventLongitudeKey(), String.valueOf(event.getLongitude()));

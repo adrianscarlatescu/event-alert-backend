@@ -36,10 +36,10 @@ public class EventFilterRequest implements Serializable {
     @PositiveOrZero(message = "The longitude must be greater or equal to 0")
     public Double longitude;
 
-    @NotEmpty(message = "At least one tag is required")
-    public Set<Long> tagsIds;
+    @NotEmpty(message = "At least one type is required")
+    public Set<Long> typeIds;
 
     @NotEmpty(message = "At least one severity is required")
-    public Set<Long> severitiesIds;
+    public Set<Long> severityIds;
 
 }

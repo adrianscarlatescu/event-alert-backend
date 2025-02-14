@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class EventSeverityResponse implements Serializable {
 
     private Long id;
-    private String name;
+    private String label;
     private Integer color;
 
 }

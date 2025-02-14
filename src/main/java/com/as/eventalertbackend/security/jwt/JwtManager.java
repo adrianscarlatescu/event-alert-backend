@@ -89,17 +89,14 @@ public class JwtManager {
         return false;
     }
 
-    public String parseJwt(HttpServletRequest request) {
-        String authHeader = request.getHeader(appProperties.getSecurity().getAuthHeader());
+    public String parseJwt(String authHeader) {
+        String tokenPrefix = appProperties.getSecurity().getTokenPrefix();
 
-        if (authHeader != null && authHeader.startsWith(appProperties.getSecurity().getTokenPrefix())) {
-            if (authHeader.contains("\"")) {
-                authHeader = authHeader.replaceAll("\"", "");
-            }
-            return authHeader.substring(appProperties.getSecurity().getTokenPrefix().length());
+        if (authHeader != null && authHeader.startsWith(tokenPrefix)) {
+            return authHeader.substring(tokenPrefix.length());
         }
 
-        return null;
+        throw new IllegalArgumentException("Invalid request header");
     }
 
 }

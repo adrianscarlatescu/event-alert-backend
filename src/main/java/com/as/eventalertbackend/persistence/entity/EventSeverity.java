@@ -1,6 +1,6 @@
 package com.as.eventalertbackend.persistence.entity;
 
-import com.as.eventalertbackend.enums.EventSeverityCode;
+import com.as.eventalertbackend.model.EventSeverityCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,7 +22,7 @@ public class EventSeverity {
     @Enumerated(EnumType.STRING)
     private EventSeverityCode code;
 
-    private String name;
+    private String label;
 
     private Integer color;
 

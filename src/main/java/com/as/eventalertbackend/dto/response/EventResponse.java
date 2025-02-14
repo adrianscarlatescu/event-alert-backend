@@ -21,8 +21,8 @@ public class EventResponse implements Serializable {
     private String description;
     private Set<EventCommentResponse> eventComments;
     private EventSeverityResponse severity;
-    private EventTagResponse tag;
+    private EventTypeResponse type;
     private UserBaseResponse user;
-    private double distance;
+    private Double distance;
 
 }

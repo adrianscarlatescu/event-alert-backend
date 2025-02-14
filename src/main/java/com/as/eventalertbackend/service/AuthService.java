@@ -4,13 +4,15 @@ import com.as.eventalertbackend.AppProperties;
 import com.as.eventalertbackend.dto.request.AuthLoginRequest;
 import com.as.eventalertbackend.dto.request.AuthRegisterRequest;
 import com.as.eventalertbackend.dto.response.AuthTokensResponse;
-import com.as.eventalertbackend.enums.UserRoleCode;
+import com.as.eventalertbackend.dto.response.UserResponse;
+import com.as.eventalertbackend.model.UserRoleCode;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.persistence.entity.User;
 import com.as.eventalertbackend.persistence.entity.UserRole;
 import com.as.eventalertbackend.security.jwt.JwtManager;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,6 +30,7 @@ import java.util.Collections;
 @Slf4j
 public class AuthService {
 
+    private final ModelMapper mapper;
     private final AppProperties appProperties;
 
     private final UserService userService;
@@ -38,12 +41,14 @@ public class AuthService {
     private final JwtManager jwtManager;
 
     @Autowired
-    public AuthService(AppProperties appProperties,
+    public AuthService(ModelMapper mapper,
+                       AppProperties appProperties,
                        UserService userService,
                        UserRoleService userRoleService,
                        PasswordEncoder passwordEncoder,
                        AuthenticationManager authenticationManager,
                        JwtManager jwtManager) {
+        this.mapper = mapper;
         this.appProperties = appProperties;
         this.userService = userService;
         this.userRoleService = userRoleService;
@@ -52,23 +57,27 @@ public class AuthService {
         this.jwtManager = jwtManager;
     }
 
-    public User register(AuthRegisterRequest registerRequest) {
-        boolean emailExists = userService.existsByEmail(registerRequest.getEmail());
+    public UserResponse register(AuthRegisterRequest registerRequest) {
+        String email = registerRequest.getEmail();
+        String password = registerRequest.getPassword();
+        String confirmPassword = registerRequest.getConfirmPassword();
+
+        boolean emailExists = userService.existsByEmail(email);
         if (emailExists) {
             throw new InvalidActionException(ApiErrorMessage.ACCOUNT_ALREADY_CREATED);
         }
 
-        if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
+        if (!password.equals(confirmPassword)) {
             throw new InvalidActionException(ApiErrorMessage.PASSWORDS_NOT_MATCH);
         }
 
-        UserRole userRole = userRoleService.findByCode(UserRoleCode.BASIC);
+        UserRole userRole = userRoleService.findEntityByCode(UserRoleCode.BASIC);
 
-        User user = new User(registerRequest.getEmail(),
-                passwordEncoder.encode(registerRequest.getPassword()),
+        User user = new User(email,
+                passwordEncoder.encode(confirmPassword),
                 Collections.singleton(userRole));
 
-        return userService.save(user);
+        return mapper.map(userService.saveEntity(user), UserResponse.class);
     }
 
     public AuthTokensResponse login(AuthLoginRequest loginRequest) {
@@ -90,7 +99,8 @@ public class AuthService {
     }
 
     public AuthTokensResponse refreshToken(HttpServletRequest httpRequest) {
-        String refreshToken = jwtManager.parseJwt(httpRequest);
+        String authHeader = httpRequest.getHeader(appProperties.getSecurity().getAuthHeader());
+        String refreshToken = jwtManager.parseJwt(authHeader);
 
         String email = jwtManager.getEmailFromJwtToken(refreshToken);
         String accessToken = jwtManager.generateAccessToken(email);

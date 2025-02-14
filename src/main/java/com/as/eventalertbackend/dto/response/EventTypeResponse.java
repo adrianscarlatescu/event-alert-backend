@@ -1,6 +1,6 @@
 package com.as.eventalertbackend.dto.response;
 
-import com.as.eventalertbackend.model.UserRoleCode;
+import com.as.eventalertbackend.model.EventTypeCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,12 +10,12 @@ import java.io.Serializable;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserRoleResponse implements Serializable {
+public class EventTypeResponse implements Serializable {
 
     private Long id;
-    private UserRoleCode code;
+    private EventTypeCode code;
     private String label;
-    private String description;
-
+    private String imagePath;
+    private EventTypeCategoryResponse category;
 
 }
