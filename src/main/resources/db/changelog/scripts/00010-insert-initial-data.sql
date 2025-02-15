@@ -1,11 +1,11 @@
-insert into user_role
-(id, code, label, description)
+insert into role
+    (id, code, label, description)
 values
     (1, 'BASIC', 'Basic user', 'Access to the main features of the application'),
     (2, 'ADMIN', 'Admin user', 'High privileged access to create, modify or delete resources');
 
 insert into user
-(id, email, first_name, last_name, date_of_birth, gender_code, image_path, phone_number, joined_at)
+    (id, email, first_name, last_name, date_of_birth, gender_code, image_path, phone_number, joined_at)
 values
     (1, 'user1@test.com' , 'Alan', 'Walter', '1984-05-23', 'MALE', 'img/user_1.jpg', '+03442777999', '2020-03-15 11:30:00'),
     (2, 'user2@test.com', 'John', 'Smith', '1987-10-16', 'MALE', 'img/user_2.jpg', '+44627779991', '2020-03-15 11:30:00'),
@@ -14,7 +14,7 @@ values
     (5, 'user5@test.com', 'Amy', 'Patterson', '1991-06-12', 'FEMALE', 'img/user_5.jpg', '+44226812555', '2020-03-15 11:30:00');
 
 insert into users_roles
-(user_id, role_id)
+    (user_id, role_id)
 values
     (1, 1),
     (1, 2),
@@ -23,15 +23,15 @@ values
     (4, 1),
     (5, 1);
 
-insert into event_type_category
-(id, code, label, image_path)
+insert into category
+    (id, code, label, image_path)
 values
     (1, 'HUMAN_MADE', 'Human-made', 'media/event-type-category/category_human_made.png'),
     (2, 'NATURAL', 'Natural', 'media/event-type-category/category_natural.png'),
     (3, 'OTHER', 'Other', 'media/event-type-category/category_other.png');
 
-insert into event_type
-(id, category_id, code, label, image_path)
+insert into type
+    (id, category_id, code, label, image_path)
 values
     (1, 1, 'BLOCKED_ROAD', 'Blocked road', 'media/event-type/human-made/type_blocked_road.png'),
     (2, 1, 'DRUG_ACTIVITY', 'Drug activity', 'media/event-type/human-made/type_drug_activity.png'),
@@ -75,8 +75,8 @@ values
 
     (39, 3, 'OTHER', 'Other', 'media/event-type/other/type_other.png');
 
-insert into event_severity
-(id, code, label, color)
+insert into severity
+    (id, code, label, color)
 values
     (1, 'EXTREME', 'Extreme', 16711680),
     (2, 'MAJOR', 'Major', 16745779),
@@ -84,7 +84,7 @@ values
     (4, 'TRIVIAL', 'Trivial', 11192420);
 
 insert into event
-(id, created_at, image_path, latitude, longitude, severity_id, type_id, user_id)
+    (id, created_at, image_path, latitude, longitude, severity_id, type_id, user_id)
 values
     (1, '2020-04-10 09:10:00', 'media/event/event_1.jpg', 44.3820459, 26.171588, 1, 26, 1),
     (2, '2020-04-10 13:11:16', 'media/event/event_2.jpg', 44.4073963, 26.1265611, 1, 6, 1),
@@ -129,8 +129,8 @@ values
     (41, '2020-05-04 15:22:18', 'media/event/event_41.jpg', 55.7373716, 37.5287146, 3, 21, 4),
     (42, '2020-05-04 16:00:28', 'media/event/event_42.jpg', 44.3196796, 23.8032826, 4, 21, 4);
 
-insert into event_comment
-(created_at, event_id, user_id, comment)
+insert into comment
+    (created_at, event_id, user_id, comment)
 values
     ('2020-04-10 17:15:11', 2, 2, 'Is everything fine out there?'),
     ('2020-04-10 18:44:02', 2, 3, 'I''ve seen that the fire passed and only one person got hurt. I will try to get in contact with someone out there.'),

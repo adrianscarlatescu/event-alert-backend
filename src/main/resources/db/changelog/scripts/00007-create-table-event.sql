@@ -13,10 +13,10 @@ CREATE TABLE event
 );
 
 ALTER TABLE event
-    ADD CONSTRAINT fk_event_on_event_severity FOREIGN KEY (severity_id) REFERENCES event_severity (id);
+    ADD CONSTRAINT fk_event_on_severity FOREIGN KEY (severity_id) REFERENCES severity (id);
 
 ALTER TABLE event
-    ADD CONSTRAINT fk_event_on_event_type FOREIGN KEY (type_id) REFERENCES event_type (id);
+    ADD CONSTRAINT fk_event_on_type FOREIGN KEY (type_id) REFERENCES type (id);
 
 ALTER TABLE event
     ADD CONSTRAINT fk_event_on_user FOREIGN KEY (user_id) REFERENCES user (id);

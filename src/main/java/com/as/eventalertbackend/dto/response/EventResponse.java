@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -19,9 +20,9 @@ public class EventResponse implements Serializable {
     private Double longitude;
     private String imagePath;
     private String description;
-    private Set<EventCommentResponse> eventComments;
-    private EventSeverityResponse severity;
-    private EventTypeResponse type;
+    private List<CommentResponse> comments;
+    private SeverityResponse severity;
+    private TypeResponse type;
     private UserBaseResponse user;
     private Double distance;
 

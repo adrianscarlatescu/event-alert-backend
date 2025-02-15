@@ -24,17 +24,17 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    private final UserRoleService userRoleService;
+    private final RoleService roleService;
     private final FileService fileService;
 
     @Autowired
     public UserService(ModelMapper mapper,
                        UserRepository userRepository,
-                       UserRoleService userRoleService,
+                       RoleService roleService,
                        FileService fileService) {
         this.mapper = mapper;
         this.userRepository = userRepository;
-        this.userRoleService = userRoleService;
+        this.roleService = roleService;
         this.fileService = fileService;
     }
 

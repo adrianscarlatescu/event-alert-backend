@@ -14,6 +14,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -49,32 +50,33 @@ public class User implements UserDetails {
     private GenderCode genderCode;
 
     @OneToMany(mappedBy = "user")
-    private Set<Event> events;
+    @OrderBy("createdAt desc")
+    private List<Event> events;
 
     @OneToMany(mappedBy = "user")
-    private Set<EventComment> eventComments;
+    private List<Comment> comments;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<UserRole> userRoles;
+    private List<Role> roles;
 
     @OneToMany(mappedBy = "user")
-    private Set<Subscription> subscriptions;
+    private List<Subscription> subscriptions;
 
     @Formula("(SELECT COUNT(e.id) FROM event e WHERE e.user_id = id)")
     private Integer reportsNumber;
 
-    public User(String email, String password, Set<UserRole> userRoles) {
+    public User(String email, String password, List<Role> roles) {
         this.email = email;
         this.password = password;
-        this.userRoles = userRoles;
+        this.roles = roles;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return userRoles.stream()
+        return roles.stream()
                 .map(role -> new SimpleGrantedAuthority(role.getCode().name()))
                 .collect(Collectors.toSet());
     }

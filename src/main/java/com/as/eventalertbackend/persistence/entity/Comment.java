@@ -7,15 +7,13 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 
 @Entity
-@Table(name = "event")
+@Table(name = "comment")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Event {
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,31 +22,14 @@ public class Event {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    private Double latitude;
-
-    private Double longitude;
-
-    private String imagePath;
-
-    private String description;
-
-    @OneToMany(mappedBy = "event")
-    @OrderBy("createdAt desc")
-    private List<Comment> comments;
+    private String comment;
 
     @ManyToOne
-    @JoinColumn(name = "severity_id")
-    private Severity severity;
-
-    @ManyToOne
-    @JoinColumn(name = "type_id")
-    private Type type;
+    @JoinColumn(name = "event_id")
+    private Event event;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
-    @Transient
-    private Double distance;
 
 }

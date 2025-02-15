@@ -2,7 +2,7 @@ package com.as.eventalertbackend.dto.request;
 
 import com.as.eventalertbackend.AppConstants;
 import com.as.eventalertbackend.model.GenderCode;
-import com.as.eventalertbackend.model.UserRoleCode;
+import com.as.eventalertbackend.model.RoleCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -36,6 +36,6 @@ public class UserRequest {
     private GenderCode genderCode;
 
     @NotEmpty(message = "At least one role is required")
-    private Set<UserRoleCode> userRoleCodes;
+    private Set<RoleCode> roleCodes;
 
 }

@@ -35,8 +35,8 @@ public class EventService {
 
     private final EventRepository eventRepository;
 
-    private final EventSeverityService severityService;
-    private final EventTypeService typeService;
+    private final SeverityService severityService;
+    private final TypeService typeService;
     private final UserService userService;
     private final FileService fileService;
     private final NotificationService notificationService;
@@ -44,8 +44,8 @@ public class EventService {
     @Autowired
     public EventService(ModelMapper mapper,
                         EventRepository eventRepository,
-                        EventSeverityService severityService,
-                        EventTypeService typeService,
+                        SeverityService severityService,
+                        TypeService typeService,
                         UserService userService,
                         FileService fileService,
                         NotificationService notificationService) {

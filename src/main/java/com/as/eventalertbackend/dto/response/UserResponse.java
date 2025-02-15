@@ -8,6 +8,7 @@ import lombok.Setter;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -24,7 +25,7 @@ public class UserResponse implements Serializable {
     private String phoneNumber;
     private String imagePath;
     private GenderCode genderCode;
-    private Set<UserRoleResponse> userRoles;
+    private List<RoleResponse> roles;
     private Integer reportsNumber;
 
 }
