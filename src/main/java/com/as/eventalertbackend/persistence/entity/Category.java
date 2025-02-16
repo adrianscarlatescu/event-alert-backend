@@ -7,6 +7,9 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.List;
 
+import static com.as.eventalertbackend.AppConstants.LENGTH_50;
+import static com.as.eventalertbackend.AppConstants.LENGTH_1000;
+
 @Entity
 @Table(name = "category")
 @Getter
@@ -18,10 +21,13 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true, length = LENGTH_50)
     private String code; // More flexibility instead of using an enum
 
+    @Column(nullable = false, length = LENGTH_50)
     private String label;
 
+    @Column(nullable = false, length = LENGTH_1000)
     private String imagePath;
 
     @OneToMany(mappedBy = "category")

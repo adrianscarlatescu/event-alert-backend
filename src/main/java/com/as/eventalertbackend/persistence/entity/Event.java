@@ -21,12 +21,16 @@ public class Event {
     private Long id;
 
     @CreationTimestamp
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
     private Double latitude;
 
+    @Column(nullable = false)
     private Double longitude;
 
+    @Column(nullable = false)
     private String imagePath;
 
     private String description;
@@ -36,15 +40,15 @@ public class Event {
     private List<Comment> comments;
 
     @ManyToOne
-    @JoinColumn(name = "severity_id")
+    @JoinColumn(name = "severity_id", nullable = false)
     private Severity severity;
 
     @ManyToOne
-    @JoinColumn(name = "type_id")
+    @JoinColumn(name = "type_id", nullable = false)
     private Type type;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Transient

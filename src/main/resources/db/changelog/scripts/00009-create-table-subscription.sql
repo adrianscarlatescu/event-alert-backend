@@ -5,8 +5,8 @@ CREATE TABLE subscription
     latitude       DOUBLE                NOT NULL,
     longitude      DOUBLE                NOT NULL,
     radius         INT                   NOT NULL,
-    device_id      VARCHAR(255)          NOT NULL,
-    firebase_token VARCHAR(255)          NOT NULL,
+    device_id      VARCHAR(1000)         NOT NULL,
+    firebase_token VARCHAR(1000)         NOT NULL,
     is_active      BIT(1)                NOT NULL,
     CONSTRAINT pk_subscription PRIMARY KEY (id)
 );

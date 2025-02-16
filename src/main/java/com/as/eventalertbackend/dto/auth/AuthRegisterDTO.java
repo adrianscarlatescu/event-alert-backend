@@ -18,12 +18,12 @@ public class AuthRegisterDTO implements Serializable {
 
     @NotBlank(message = "The email is mandatory")
     @Email(message = "Invalid email")
-    @Size(max = MAX_DEFAULT_LENGTH, message = "The email must not exceed " + MAX_DEFAULT_LENGTH + " characters")
+    @Size(max = LENGTH_50, message = "The email must not exceed " + LENGTH_50 + " characters")
     private String email;
 
     @NotBlank(message = "The password is mandatory")
-    @Size(min = MIN_PASSWORD_LENGTH, max = MAX_PASSWORD_LENGTH,
-            message = "The password must have between " + MIN_PASSWORD_LENGTH + " and " + MAX_PASSWORD_LENGTH + " characters")
+    @Size(min = LENGTH_8, max = LENGTH_100,
+            message = "The password must have between " + LENGTH_8 + " and " + LENGTH_100 + " characters")
     private String password;
 
     @NotBlank(message = "The confirmation password is mandatory")

@@ -17,6 +17,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.as.eventalertbackend.AppConstants.*;
+
 @Entity
 @Table(name = "user", indexes ={@Index(name = "idx_email", columnList = "email")})
 @Getter
@@ -29,27 +31,34 @@ public class User implements UserDetails {
     private Long id;
 
     @CreationTimestamp
+    @Column(nullable = false)
     private LocalDateTime joinedAt;
 
+    @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(length = LENGTH_100)
     private String password;
 
+    @Column(length = LENGTH_50)
     private String firstName;
 
+    @Column(length = LENGTH_50)
     private String lastName;
 
     private LocalDate dateOfBirth;
 
+    @Column(length = LENGTH_25)
     private String phoneNumber;
 
+    @Column(length = LENGTH_1000)
     private String imagePath;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = LENGTH_50)
     private GenderCode genderCode;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @OrderBy("createdAt desc")
     private List<Event> events;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

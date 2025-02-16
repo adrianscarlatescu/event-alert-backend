@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
-import static com.as.eventalertbackend.AppConstants.MAX_DEFAULT_LENGTH;
+import static com.as.eventalertbackend.AppConstants.LENGTH_50;
 
 @Getter
 @Setter
@@ -17,11 +17,11 @@ import static com.as.eventalertbackend.AppConstants.MAX_DEFAULT_LENGTH;
 public class SeverityCreateDTO implements Serializable {
 
     @NotBlank(message = "The code is mandatory")
-    @Size(max = MAX_DEFAULT_LENGTH, message = "The code must not exceed " + MAX_DEFAULT_LENGTH + " characters")
+    @Size(max = LENGTH_50, message = "The code must not exceed " + LENGTH_50 + " characters")
     private String code;
 
     @NotBlank(message = "The label is mandatory")
-    @Size(max = MAX_DEFAULT_LENGTH, message = "The label must not exceed " + MAX_DEFAULT_LENGTH + " characters")
+    @Size(max = LENGTH_50, message = "The label must not exceed " + LENGTH_50 + " characters")
     private String label;
 
     @NotNull(message = "The color is mandatory")

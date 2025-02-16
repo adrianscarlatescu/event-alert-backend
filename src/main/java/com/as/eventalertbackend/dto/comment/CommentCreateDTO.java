@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
-import static com.as.eventalertbackend.AppConstants.MAX_COMMENT_LENGTH;
+import static com.as.eventalertbackend.AppConstants.LENGTH_1000;
 
 @Getter
 @Setter
@@ -17,7 +17,7 @@ import static com.as.eventalertbackend.AppConstants.MAX_COMMENT_LENGTH;
 public class CommentCreateDTO implements Serializable {
 
     @NotBlank(message = "The comment is mandatory")
-    @Size(max = MAX_COMMENT_LENGTH, message = "The comment must not exceed " + MAX_COMMENT_LENGTH + " characters")
+    @Size(max = LENGTH_1000, message = "The comment must not exceed " + LENGTH_1000 + " characters")
     private String comment;
 
     @NotNull(message = "The event is mandatory")
