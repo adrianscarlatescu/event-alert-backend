@@ -24,9 +24,9 @@ public class SubscriptionCreateDTO implements Serializable {
     @PositiveOrZero(message = "The longitude must be greater or equal to 0")
     private Double longitude;
 
+    @NotNull(message = "The radius is mandatory")
     @Min(value = AppConstants.MIN_RADIUS, message = "The radius must be greater or equal to " + AppConstants.MIN_RADIUS + " km")
     @Max(value = AppConstants.MAX_RADIUS, message = "The radius must be less or equal to " + AppConstants.MAX_RADIUS + " km")
-    @NotNull(message = "The radius is mandatory")
     private Integer radius;
 
     @NotBlank(message = "The device identifier is mandatory")

@@ -47,36 +47,27 @@ public class SeverityService {
     }
 
     public SeverityDTO save(SeverityCreateDTO severityCreateDTO) {
-        Severity severity = new Severity();
-
-        if (severityRepository.existsByCode(severityCreateDTO.getCode())) {
-            throw new InvalidActionException(ApiErrorMessage.SEVERITY_EXISTS);
-        }
-
-        severity.setCode(severityCreateDTO.getCode());
-        severity.setLabel(severityCreateDTO.getLabel());
-        severity.setColor(severityCreateDTO.getColor());
-
+        Severity severity = createOrUpdate(severityCreateDTO, null);
         return mapper.map(severityRepository.save(severity), SeverityDTO.class);
     }
 
     public SeverityDTO updateById(SeverityUpdateDTO severityUpdateDTO, Long id) {
-        Severity severity = findEntityById(id);
-
-        if (severityUpdateDTO.getCode() != null) {
-            if (severityRepository.existsByCode(severityUpdateDTO.getCode())) {
-                throw new InvalidActionException(ApiErrorMessage.SEVERITY_EXISTS);
-            }
-            severity.setCode(severityUpdateDTO.getCode());
-        }
-        if (severityUpdateDTO.getLabel() != null) {
-            severity.setLabel(severityUpdateDTO.getLabel());
-        }
-        if (severityUpdateDTO.getColor() != null) {
-            severity.setColor(severityUpdateDTO.getColor());
-        }
-
+        Severity severity = createOrUpdate(severityUpdateDTO, id);
         return mapper.map(severity, SeverityDTO.class);
+    }
+
+    private <T extends SeverityCreateDTO> Severity createOrUpdate(T createOrUpdateDTO, Long severityId) {
+        Severity severity = severityId == null ? new Severity() : findEntityById(severityId);
+
+        if (severityRepository.existsByCode(createOrUpdateDTO.getCode())) {
+            throw new InvalidActionException(ApiErrorMessage.SEVERITY_CODE_EXISTS);
+        }
+
+        severity.setCode(createOrUpdateDTO.getCode());
+        severity.setLabel(createOrUpdateDTO.getLabel());
+        severity.setColor(createOrUpdateDTO.getColor());
+
+        return severity;
     }
 
     public void deleteById(Long id) {

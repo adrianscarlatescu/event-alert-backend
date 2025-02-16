@@ -52,43 +52,30 @@ public class TypeService {
     }
 
     public TypeDTO save(TypeCreateDTO typeCreateDTO) {
-        Type type = new Type();
-
-        if (typeRepository.existsByCode(typeCreateDTO.getCode())) {
-            throw new InvalidActionException(ApiErrorMessage.TYPE_EXISTS);
-        }
-
-        Category category = categoryService.findEntityById(typeCreateDTO.getCategoryId());
-
-        type.setCategory(category);
-        type.setCode(typeCreateDTO.getCode());
-        type.setLabel(typeCreateDTO.getLabel());
-        type.setImagePath(typeCreateDTO.getImagePath());
-
+        Type type = createOrUpdate(typeCreateDTO, null);
         return mapper.map(typeRepository.save(type), TypeDTO.class);
     }
 
     public TypeDTO updateById(TypeUpdateDTO typeUpdateDTO, Long id) {
-        Type type = findEntityById(id);
-
-        if (typeUpdateDTO.getCategoryId() != null) {
-            Category category = categoryService.findEntityById(typeUpdateDTO.getCategoryId());
-            type.setCategory(category);
-        }
-        if (type.getCode() != null) {
-            if (typeRepository.existsByCode(typeUpdateDTO.getCode())) {
-                throw new InvalidActionException(ApiErrorMessage.TYPE_EXISTS);
-            }
-            type.setCode(typeUpdateDTO.getCode());
-        }
-        if (typeUpdateDTO.getLabel() != null) {
-            type.setLabel(typeUpdateDTO.getLabel());
-        }
-        if (typeUpdateDTO.getImagePath() != null) {
-            type.setImagePath(typeUpdateDTO.getImagePath());
-        }
-
+        Type type = createOrUpdate(typeUpdateDTO, id);
         return mapper.map(type, TypeDTO.class);
+    }
+
+    private <T extends TypeCreateDTO> Type createOrUpdate(T createOrUpdateDTO, Long typeId) {
+        Type type = typeId == null ? new Type() : findEntityById(typeId);
+
+        if (typeRepository.existsByCode(createOrUpdateDTO.getCode())) {
+            throw new InvalidActionException(ApiErrorMessage.TYPE_CODE_EXISTS);
+        }
+
+        Category category = categoryService.findEntityById(createOrUpdateDTO.getCategoryId());
+
+        type.setCategory(category);
+        type.setCode(createOrUpdateDTO.getCode());
+        type.setLabel(createOrUpdateDTO.getLabel());
+        type.setImagePath(createOrUpdateDTO.getImagePath());
+
+        return type;
     }
 
     public void deleteById(Long id) {

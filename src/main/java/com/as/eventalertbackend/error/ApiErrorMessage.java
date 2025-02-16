@@ -28,22 +28,21 @@ public enum ApiErrorMessage {
     COMMENT_NOT_FOUND("Comment not found"),
     EVENT_NOT_FOUND("Event not found"),
 
-    SEVERITY_EXISTS("A severity with this code already exists"),
-    CATEGORY_EXISTS("A category with this code already exists"),
-    TYPE_EXISTS("A type with this code already exists"),
+    SEVERITY_CODE_EXISTS("A severity with this code already exists"),
+    CATEGORY_CODE_EXISTS("A category with this code already exists"),
+    TYPE_CODE_EXISTS("A type with this code already exists"),
 
     SEVERITY_REFERENCED("The severity is still referenced by one or more events"),
     CATEGORY_REFERENCED("The category is still referenced by one or more types"),
     TYPE_REFERENCED("The type is still referenced by one or more events"),
 
-    DEFAULT_ROLE_MANDATORY("The default role is mandatory"),
+    DEFAULT_ROLE_REQUIRED("The default role is required"),
 
     FILTER_MAX_PAGE_SIZE("The page size must be less or equal to " + AppConstants.MAX_PAGE_SIZE),
     FILTER_END_DATE_AFTER_START_DATE("The end date must be after the start date"),
     FILTER_MAX_YEARS_INTERVAL("The time interval must not exceed " + AppConstants.MAX_YEARS_INTERVAL + " years"),
 
-    PROFILE_FIRST_NAME_MANDATORY("The profile first name is mandatory"),
-    PROFILE_LAST_NAME_MANDATORY("The profile last name is mandatory");
+    PROFILE_NAME_REQUIRED("The profile first name and last name are required");
 
     private final String value;
 

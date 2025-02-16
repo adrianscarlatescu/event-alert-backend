@@ -158,74 +158,40 @@ public class EventService {
     }
 
     public EventDTO save(EventCreateDTO eventCreateDTO) {
-        Event event = new Event();
-
-        User user = userService.findEntityById(eventCreateDTO.getUserId());
-        Type type = typeService.findEntityById(eventCreateDTO.getTypeId());
-        Severity severity = severityService.findEntityById(eventCreateDTO.getSeverityId());
-
-        if (user.getFirstName() == null) {
-            throw new InvalidActionException(ApiErrorMessage.PROFILE_FIRST_NAME_MANDATORY);
-        }
-        if (user.getLastName() == null) {
-            throw new InvalidActionException(ApiErrorMessage.PROFILE_LAST_NAME_MANDATORY);
-        }
-
-        if (!fileService.imageExists(eventCreateDTO.getImagePath())) {
-            throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
-        }
-
-        event.setLatitude(eventCreateDTO.getLatitude());
-        event.setLongitude(eventCreateDTO.getLongitude());
-        event.setImagePath(eventCreateDTO.getImagePath());
-        event.setDescription(eventCreateDTO.getDescription());
-        event.setSeverity(severity);
-        event.setType(type);
-        event.setUser(user);
-
+        Event event = createOrUpdate(eventCreateDTO, null);
         notificationService.send(event);
-
         return mapper.map(event, EventDTO.class);
     }
 
     public EventDTO updateById(EventUpdateDTO eventUpdateDTO, Long id) {
-        Event event = findEntityById(id);
-
-        if (eventUpdateDTO.getUserId() != null) {
-            User user = userService.findEntityById(eventUpdateDTO.getUserId());
-            if (user.getFirstName() == null) {
-                throw new InvalidActionException(ApiErrorMessage.PROFILE_FIRST_NAME_MANDATORY);
-            }
-            if (user.getLastName() == null) {
-                throw new InvalidActionException(ApiErrorMessage.PROFILE_LAST_NAME_MANDATORY);
-            }
-            event.setUser(user);
-        }
-        if (eventUpdateDTO.getTypeId() != null) {
-            Type type = typeService.findEntityById(eventUpdateDTO.getTypeId());
-            event.setType(type);
-        }
-        if (eventUpdateDTO.getSeverityId() != null) {
-            Severity severity = severityService.findEntityById(eventUpdateDTO.getSeverityId());
-            event.setSeverity(severity);
-        }
-        if (eventUpdateDTO.getImagePath() != null) {
-            if (!fileService.imageExists(eventUpdateDTO.getImagePath())) {
-                throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
-            }
-            event.setImagePath(eventUpdateDTO.getImagePath());
-        }
-        if (eventUpdateDTO.getLatitude() != null) {
-            event.setLatitude(eventUpdateDTO.getLatitude());
-        }
-        if (eventUpdateDTO.getLongitude() != null) {
-            event.setLongitude(eventUpdateDTO.getLongitude());
-        }
-        if (eventUpdateDTO.getDescription() != null) {
-            event.setDescription(eventUpdateDTO.getDescription());
-        }
-
+        Event event = createOrUpdate(eventUpdateDTO, id);
         return mapper.map(event, EventDTO.class);
+    }
+
+    private <T extends EventCreateDTO> Event createOrUpdate(T createOrUpdateDTO, Long eventId) {
+        Event event = eventId == null ? new Event() : findEntityById(eventId);
+
+        User user = userService.findEntityById(createOrUpdateDTO.getUserId());
+        Type type = typeService.findEntityById(createOrUpdateDTO.getTypeId());
+        Severity severity = severityService.findEntityById(createOrUpdateDTO.getSeverityId());
+
+        if (user.getFirstName() == null || user.getLastName() == null) {
+            throw new InvalidActionException(ApiErrorMessage.PROFILE_NAME_REQUIRED);
+        }
+
+        if (!fileService.imageExists(createOrUpdateDTO.getImagePath())) {
+            throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
+        }
+
+        event.setLatitude(createOrUpdateDTO.getLatitude());
+        event.setLongitude(createOrUpdateDTO.getLongitude());
+        event.setImagePath(createOrUpdateDTO.getImagePath());
+        event.setDescription(createOrUpdateDTO.getDescription());
+        event.setSeverity(severity);
+        event.setType(type);
+        event.setUser(user);
+
+        return event;
     }
 
     public void deleteById(Long id) {

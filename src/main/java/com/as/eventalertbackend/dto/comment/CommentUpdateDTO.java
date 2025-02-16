@@ -15,8 +15,8 @@ import static com.as.eventalertbackend.AppConstants.MAX_COMMENT_LENGTH;
 @NoArgsConstructor
 public class CommentUpdateDTO implements Serializable {
 
-    @Size(max = MAX_COMMENT_LENGTH, message = "The comment must not exceed " + MAX_COMMENT_LENGTH + " characters")
     @NotBlank(message = "The comment is mandatory")
+    @Size(max = MAX_COMMENT_LENGTH, message = "The comment must not exceed " + MAX_COMMENT_LENGTH + " characters")
     private String comment;
 
 }

@@ -16,7 +16,7 @@ import static com.as.eventalertbackend.AppConstants.MAX_DEFAULT_LENGTH;
 @NoArgsConstructor
 public class SeverityCreateDTO implements Serializable {
 
-    @NotNull(message = "The code is mandatory")
+    @NotBlank(message = "The code is mandatory")
     @Size(max = MAX_DEFAULT_LENGTH, message = "The code must not exceed " + MAX_DEFAULT_LENGTH + " characters")
     private String code;
 

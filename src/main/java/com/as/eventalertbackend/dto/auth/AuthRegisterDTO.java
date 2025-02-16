@@ -16,8 +16,8 @@ import static com.as.eventalertbackend.AppConstants.*;
 @NoArgsConstructor
 public class AuthRegisterDTO implements Serializable {
 
-    @Email(message = "Invalid email")
     @NotBlank(message = "The email is mandatory")
+    @Email(message = "Invalid email")
     @Size(max = MAX_DEFAULT_LENGTH, message = "The email must not exceed " + MAX_DEFAULT_LENGTH + " characters")
     private String email;
 

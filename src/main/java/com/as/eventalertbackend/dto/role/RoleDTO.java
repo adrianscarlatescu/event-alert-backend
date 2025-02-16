@@ -17,5 +17,4 @@ public class RoleDTO implements Serializable {
     private String label;
     private String description;
 
-
 }

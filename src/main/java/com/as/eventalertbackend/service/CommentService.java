@@ -4,6 +4,7 @@ import com.as.eventalertbackend.dto.comment.CommentCreateDTO;
 import com.as.eventalertbackend.dto.comment.CommentDTO;
 import com.as.eventalertbackend.dto.comment.CommentUpdateDTO;
 import com.as.eventalertbackend.error.ApiErrorMessage;
+import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
 import com.as.eventalertbackend.persistence.entity.Comment;
 import com.as.eventalertbackend.persistence.entity.Event;
@@ -56,6 +57,10 @@ public class CommentService {
         Event event = eventService.findEntityById(commentCreateDTO.getEventId());
         User user = userService.findEntityById(commentCreateDTO.getUserId());
 
+        if (user.getFirstName() == null || user.getLastName() == null) {
+            throw new InvalidActionException(ApiErrorMessage.PROFILE_NAME_REQUIRED);
+        }
+
         comment.setEvent(event);
         comment.setUser(user);
         comment.setComment(commentCreateDTO.getComment());
@@ -65,9 +70,7 @@ public class CommentService {
 
     public CommentDTO updateById(CommentUpdateDTO commentUpdateDTO, Long id) {
         Comment comment = findEntityById(id);
-
         comment.setComment(commentUpdateDTO.getComment());
-
         return mapper.map(comment, CommentDTO.class);
     }
 

@@ -56,6 +56,7 @@ public class SubscriptionService {
         User user = userService.findEntityById(subscriptionCreateDTO.getUserId());
 
         Subscription subscription = new Subscription();
+
         subscription.setUser(user);
         subscription.setDeviceId(subscriptionCreateDTO.getDeviceId());
         subscription.setFirebaseToken(subscriptionCreateDTO.getFirebaseToken());
@@ -70,18 +71,10 @@ public class SubscriptionService {
     public SubscriptionDTO update(SubscriptionUpdateDTO subscriptionUpdateDTO, Long userId, String deviceId) {
         Subscription subscription = findEntity(userId, deviceId);
 
-        if (subscriptionUpdateDTO.getFirebaseToken() != null) {
-            subscription.setFirebaseToken(subscriptionUpdateDTO.getFirebaseToken());
-        }
-        if (subscriptionUpdateDTO.getLatitude() != null) {
-            subscription.setLatitude(subscriptionUpdateDTO.getLatitude());
-        }
-        if (subscriptionUpdateDTO.getLongitude() != null) {
-            subscription.setLongitude(subscriptionUpdateDTO.getLongitude());
-        }
-        if (subscriptionUpdateDTO.getRadius() != null) {
-            subscription.setRadius(subscriptionUpdateDTO.getRadius());
-        }
+        subscription.setFirebaseToken(subscriptionUpdateDTO.getFirebaseToken());
+        subscription.setLatitude(subscriptionUpdateDTO.getLatitude());
+        subscription.setLongitude(subscriptionUpdateDTO.getLongitude());
+        subscription.setRadius(subscriptionUpdateDTO.getRadius());
 
         return mapper.map(subscription, SubscriptionDTO.class);
     }

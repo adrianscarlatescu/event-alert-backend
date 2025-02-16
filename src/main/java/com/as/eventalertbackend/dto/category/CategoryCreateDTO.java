@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
@@ -16,7 +15,7 @@ import static com.as.eventalertbackend.AppConstants.MAX_DEFAULT_LENGTH;
 @NoArgsConstructor
 public class CategoryCreateDTO implements Serializable {
 
-    @NotNull(message = "The code is mandatory")
+    @NotBlank(message = "The code is mandatory")
     @Size(max = MAX_DEFAULT_LENGTH, message = "The code must not exceed " + MAX_DEFAULT_LENGTH + " characters")
     private String code;
 

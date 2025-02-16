@@ -73,16 +73,19 @@ public class UserService implements UserDetailsService {
     }
 
     public UserDTO updateById(UserUpdateDTO userUpdateDTO, Long id) {
-        if (userUpdateDTO.getRoleCodes().stream()
-                .noneMatch(role -> role == RoleCode.ROLE_BASIC)) {
-            throw new InvalidActionException(ApiErrorMessage.DEFAULT_ROLE_MANDATORY);
-        }
+        User user = findEntityById(id);
 
+        if ((userRepository.existsEventByUserId(id) || userRepository.existsCommentByUserId(id)) &&
+                (userUpdateDTO.getFirstName() == null || userUpdateDTO.getLastName() == null)) {
+            throw new InvalidActionException(ApiErrorMessage.PROFILE_NAME_REQUIRED);
+        }
+        if (userUpdateDTO.getRoleCodes().stream().noneMatch(role -> role == RoleCode.ROLE_BASIC)) {
+            throw new InvalidActionException(ApiErrorMessage.DEFAULT_ROLE_REQUIRED);
+        }
         if (userUpdateDTO.getImagePath() != null && !fileService.imageExists(userUpdateDTO.getImagePath())) {
             throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
         }
 
-        User user = findEntityById(id);
         user.setFirstName(userUpdateDTO.getFirstName());
         user.setLastName(userUpdateDTO.getLastName());
         user.setDateOfBirth(userUpdateDTO.getDateOfBirth());

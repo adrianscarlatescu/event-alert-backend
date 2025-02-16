@@ -48,36 +48,27 @@ public class CategoryService {
     }
 
     public CategoryBaseDTO save(CategoryCreateDTO categoryCreateDTO) {
-        Category category = new Category();
-
-        if (categoryRepository.existsByCode(categoryCreateDTO.getCode())) {
-            throw new InvalidActionException(ApiErrorMessage.CATEGORY_EXISTS);
-        }
-
-        category.setCode(categoryCreateDTO.getCode());
-        category.setLabel(categoryCreateDTO.getLabel());
-        category.setImagePath(categoryCreateDTO.getImagePath());
-
+        Category category = createOrUpdate(categoryCreateDTO, null);
         return mapper.map(categoryRepository.save(category), CategoryBaseDTO.class);
     }
 
     public CategoryBaseDTO updateById(CategoryUpdateDTO categoryUpdateDTO, Long id) {
-        Category category = findEntityById(id);
-
-        if (categoryUpdateDTO.getCode() != null) {
-            if (categoryRepository.existsByCode(categoryUpdateDTO.getCode())) {
-                throw new InvalidActionException(ApiErrorMessage.CATEGORY_EXISTS);
-            }
-            category.setCode(categoryUpdateDTO.getCode());
-        }
-        if (categoryUpdateDTO.getLabel() != null) {
-            category.setLabel(categoryUpdateDTO.getLabel());
-        }
-        if (categoryUpdateDTO.getImagePath() != null) {
-            category.setImagePath(categoryUpdateDTO.getImagePath());
-        }
-
+        Category category = createOrUpdate(categoryUpdateDTO, id);
         return mapper.map(category, CategoryBaseDTO.class);
+    }
+
+    private <T extends CategoryCreateDTO> Category createOrUpdate(T createOrUpdateDTO, Long categoryId) {
+        Category category = categoryId == null ? new Category() : findEntityById(categoryId);
+
+        if (categoryRepository.existsByCode(createOrUpdateDTO.getCode())) {
+            throw new InvalidActionException(ApiErrorMessage.CATEGORY_CODE_EXISTS);
+        }
+
+        category.setCode(createOrUpdateDTO.getCode());
+        category.setLabel(createOrUpdateDTO.getLabel());
+        category.setImagePath(createOrUpdateDTO.getImagePath());
+
+        return category;
     }
 
     public void deleteById(Long id) {
