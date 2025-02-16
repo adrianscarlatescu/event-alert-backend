@@ -1,11 +1,7 @@
 package com.as.eventalertbackend.controller;
 
-import com.as.eventalertbackend.dto.request.SubscriptionRequest;
-import com.as.eventalertbackend.dto.request.SubscriptionStatusRequest;
-import com.as.eventalertbackend.dto.request.SubscriptionTokenRequest;
-import com.as.eventalertbackend.dto.response.SubscriptionResponse;
+import com.as.eventalertbackend.dto.subscription.*;
 import com.as.eventalertbackend.service.SubscriptionService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,13 +12,10 @@ import javax.validation.Valid;
 @RequestMapping("/subscriptions")
 public class SubscriptionController {
 
-    private final ModelMapper mapper;
     private final SubscriptionService subscriptionService;
 
     @Autowired
-    public SubscriptionController(ModelMapper mapper,
-                                  SubscriptionService subscriptionService) {
-        this.mapper = mapper;
+    public SubscriptionController(SubscriptionService subscriptionService) {
         this.subscriptionService = subscriptionService;
     }
 
@@ -35,32 +28,34 @@ public class SubscriptionController {
     }
 
     @GetMapping("/{userId}/{deviceId}")
-    public ResponseEntity<SubscriptionResponse> find(@PathVariable("userId") Long userId,
-                                                     @PathVariable("deviceId") String deviceId) {
-        return ResponseEntity.ok(mapper.map(subscriptionService.find(userId, deviceId), SubscriptionResponse.class));
+    public ResponseEntity<SubscriptionDTO> find(@PathVariable("userId") Long userId,
+                                                @PathVariable("deviceId") String deviceId) {
+        return ResponseEntity.ok(subscriptionService.find(userId, deviceId));
     }
 
     @PostMapping
-    public ResponseEntity<SubscriptionResponse> subscribe(@Valid @RequestBody SubscriptionRequest subscriptionRequest) {
-        return ResponseEntity.ok(mapper.map(subscriptionService.subscribe(subscriptionRequest), SubscriptionResponse.class));
+    public ResponseEntity<SubscriptionDTO> subscribe(@Valid @RequestBody SubscriptionCreateDTO subscriptionCreateDTO) {
+        return ResponseEntity.ok(subscriptionService.subscribe(subscriptionCreateDTO));
     }
 
-    @PutMapping
-    public ResponseEntity<SubscriptionResponse> update(@Valid @RequestBody SubscriptionRequest subscriptionRequest) {
-        return ResponseEntity.ok(mapper.map(subscriptionService.update(subscriptionRequest), SubscriptionResponse.class));
+    @PutMapping(path = "/{userId}/{deviceId}")
+    public ResponseEntity<SubscriptionDTO> update(@PathVariable("userId") Long userId,
+                                                  @PathVariable("deviceId") String deviceId,
+                                                  @Valid @RequestBody SubscriptionUpdateDTO subscriptionUpdateDTO) {
+        return ResponseEntity.ok(subscriptionService.update(subscriptionUpdateDTO, userId, deviceId));
     }
 
     @PatchMapping(path = "/{userId}/{deviceId}/status")
-    public ResponseEntity<SubscriptionResponse> updateStatus(@PathVariable("userId") Long userId,
-                                                             @PathVariable("deviceId") String deviceId,
-                                                             @Valid @RequestBody SubscriptionStatusRequest subscriptionStatusRequest) {
-        return ResponseEntity.ok(mapper.map(subscriptionService.updateStatus(userId, deviceId, subscriptionStatusRequest), SubscriptionResponse.class));
+    public ResponseEntity<SubscriptionDTO> updateStatus(@PathVariable("userId") Long userId,
+                                                        @PathVariable("deviceId") String deviceId,
+                                                        @Valid @RequestBody SubscriptionStatusDTO subscriptionStatusDTO) {
+        return ResponseEntity.ok(subscriptionService.updateStatus(userId, deviceId, subscriptionStatusDTO));
     }
 
     @PatchMapping(path = "/{deviceId}/token")
     public ResponseEntity<Void> updateToken(@PathVariable("deviceId") String deviceId,
-                                            @Valid @RequestBody SubscriptionTokenRequest subscriptionTokenRequest) {
-        subscriptionService.updateToken(deviceId, subscriptionTokenRequest);
+                                            @Valid @RequestBody SubscriptionTokenDTO subscriptionTokenDTO) {
+        subscriptionService.updateToken(deviceId, subscriptionTokenDTO);
         return ResponseEntity.ok().build();
     }
 

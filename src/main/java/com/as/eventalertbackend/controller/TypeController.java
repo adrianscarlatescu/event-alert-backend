@@ -1,12 +1,16 @@
 package com.as.eventalertbackend.controller;
 
-import com.as.eventalertbackend.dto.response.TypeResponse;
+import com.as.eventalertbackend.dto.type.TypeCreateDTO;
+import com.as.eventalertbackend.dto.type.TypeDTO;
+import com.as.eventalertbackend.dto.type.TypeUpdateDTO;
 import com.as.eventalertbackend.service.TypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -21,31 +25,31 @@ public class TypeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TypeResponse>> getAll() {
+    public ResponseEntity<List<TypeDTO>> getAll() {
         return ResponseEntity.ok(typeService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TypeResponse> getById(@PathVariable Long id) {
+    public ResponseEntity<TypeDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(typeService.findById(id));
     }
 
-    /*@Secured({"ADMIN"})
+    @Secured({"ROLE_ADMIN"})
     @PostMapping
-    public ResponseEntity<EventTypeResponse> save(@Valid @RequestBody EventTypeUpdateRequest typeUpdateRequest) {
+    public ResponseEntity<TypeDTO> save(@Valid @RequestBody TypeCreateDTO typeCreateDTO) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(mapper.map(typeService.save(typeUpdateRequest), EventTypeResponse.class));
+                .body(typeService.save(typeCreateDTO));
     }
 
-    @Secured({"ADMIN"})
+    @Secured({"ROLE_ADMIN"})
     @PutMapping("/{id}")
-    public ResponseEntity<EventTypeResponse> updateById(@Valid @RequestBody EventTypeUpdateRequest tagRequest,
-                                                        @PathVariable("id") Long id) {
-        return ResponseEntity.ok(mapper.map(typeService.updateById(tagRequest, id), EventTypeResponse.class));
-    }*/
+    public ResponseEntity<TypeDTO> updateById(@Valid @RequestBody TypeUpdateDTO typeUpdateDTO,
+                                              @PathVariable("id") Long id) {
+        return ResponseEntity.ok(typeService.updateById(typeUpdateDTO, id));
+    }
 
-    @Secured({"ADMIN"})
+    @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
         typeService.deleteById(id);

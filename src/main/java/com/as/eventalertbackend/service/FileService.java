@@ -18,7 +18,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 
 @Service
 @Slf4j
@@ -32,27 +31,19 @@ public class FileService {
     }
 
     public boolean imageExists(String imagePath) {
-        String imagesPath = appProperties.getImagesDirectoryPath();
-        ClassPathResource imagesResource = new ClassPathResource(imagesPath);
+        String mediaPath = appProperties.getMediaDirectoryPath();
+        ClassPathResource mediaResource = new ClassPathResource(mediaPath);
 
-        File imagesDirectory;
+        File mediaDirectory;
         try {
-            imagesDirectory = imagesResource.getFile();
+            mediaDirectory = mediaResource.getFile();
         } catch (IOException e) {
             throw new StorageFailException(ApiErrorMessage.FILE_LIST_FAIL);
         }
 
-        String[] filesNames = imagesDirectory.list();
-        if (filesNames == null) {
-            throw new StorageFailException(ApiErrorMessage.FILE_LIST_FAIL);
-        }
-
-        if (!imagePath.startsWith(imagesPath)) {
-            throw new StorageFailException(ApiErrorMessage.INVALID_IMAGE_NAME);
-        }
-
-        String imageName = imagePath.substring(imagesPath.length());
-        return Arrays.asList(filesNames).contains(imageName);
+        String filePath = mediaDirectory.getAbsolutePath().replace(mediaPath, "").concat(imagePath);
+        File file = new File(filePath);
+        return file.exists() && !file.isDirectory();
     }
 
     public Resource readImage(String imagePath) {
@@ -65,13 +56,13 @@ public class FileService {
     }
 
     public String writeImage(MultipartFile file) {
-        String imagesPath = appProperties.getImagesDirectoryPath();
+        String mediaPath = appProperties.getMediaDirectoryPath();
 
         LocalDateTime dateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
         String imageName = file.getOriginalFilename() + dateTime.format(formatter) + ".jpg";
 
-        ClassPathResource imagesResource = new ClassPathResource(imagesPath);
+        ClassPathResource imagesResource = new ClassPathResource(mediaPath);
         log.info("Begin image write request");
 
         try {
@@ -83,7 +74,7 @@ public class FileService {
             throw new StorageFailException(ApiErrorMessage.IMAGE_STORE_FAIL);
         }
 
-        return imagesPath + imageName;
+        return mediaPath + imageName;
     }
 
 }

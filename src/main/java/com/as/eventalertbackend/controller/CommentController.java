@@ -1,12 +1,15 @@
 package com.as.eventalertbackend.controller;
 
-import com.as.eventalertbackend.dto.response.CommentResponse;
+import com.as.eventalertbackend.dto.comment.CommentCreateDTO;
+import com.as.eventalertbackend.dto.comment.CommentDTO;
+import com.as.eventalertbackend.dto.comment.CommentUpdateDTO;
 import com.as.eventalertbackend.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -22,25 +25,23 @@ public class CommentController {
     }
 
     @GetMapping("/{eventId}")
-    public ResponseEntity<List<CommentResponse>> getAllByEventId(@PathVariable("eventId") Long id) {
+    public ResponseEntity<List<CommentDTO>> getAllByEventId(@PathVariable("eventId") Long id) {
         return ResponseEntity.ok(commentService.findAllByEventId(id));
     }
 
-    /*@PostMapping
-    public ResponseEntity<EventCommentResponse> save(@Valid @RequestBody EventCommentRequest commentRequest) {
+    @PostMapping
+    public ResponseEntity<CommentDTO> save(@Valid @RequestBody CommentCreateDTO commentCreateDTO) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(mapper.map(commentService.save(commentRequest), EventCommentResponse.class));
+                .body(commentService.save(commentCreateDTO));
     }
 
-    @Secured({"ADMIN"})
     @PutMapping("/{id}")
-    public ResponseEntity<EventCommentResponse> updateById(@Valid @RequestBody EventCommentRequest commentRequest,
-                                                           @PathVariable("id") Long id) {
-        return ResponseEntity.ok(mapper.map(commentService.updateById(commentRequest, id), EventCommentResponse.class));
-    }*/
+    public ResponseEntity<CommentDTO> updateById(@Valid @RequestBody CommentUpdateDTO commentUpdateDTO,
+                                                 @PathVariable("id") Long id) {
+        return ResponseEntity.ok(commentService.updateById(commentUpdateDTO, id));
+    }
 
-    @Secured({"ADMIN"})
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
         commentService.deleteById(id);

@@ -22,6 +22,15 @@ import java.util.stream.Collectors;
 @Slf4j
 public class NotificationService {
 
+    private static final String KEY_EVENT_ID = "eventId";
+    private static final String KEY_EVENT_CREATED_AT = "eventCreatedAt";
+    private static final String KEY_TYPE_LABEL = "typeLabel";
+    private static final String KEY_TYPE_IMAGE_PATH = "typeImagePath";
+    private static final String KEY_SEVERITY_LABEL = "severityLabel";
+    private static final String KEY_SEVERITY_COLOR = "severityColor";
+    private static final String KEY_EVENT_LATITUDE = "eventLatitude";
+    private static final String KEY_EVENT_LONGITUDE = "eventLongitude";
+
     private final AppProperties appProperties;
 
     private final SubscriptionRepository subscriptionRepository;
@@ -96,14 +105,14 @@ public class NotificationService {
 
     private Map<String, String> getMessageMap(Event event) {
         Map<String, String> messageMap = new HashMap<>();
-        messageMap.put(appProperties.getNotification().getEventIdKey(), String.valueOf(event.getId()));
-        messageMap.put(appProperties.getNotification().getEventCreatedAt(), event.getCreatedAt().toString());
-        messageMap.put(appProperties.getNotification().getEventTypeLabelKey(), event.getType().getLabel());
-        messageMap.put(appProperties.getNotification().getEventTypeImagePathKey(), event.getType().getImagePath());
-        messageMap.put(appProperties.getNotification().getEventSeverityLabelKey(), event.getSeverity().getLabel());
-        messageMap.put(appProperties.getNotification().getEventSeverityColorKey(), String.valueOf(event.getSeverity().getColor()));
-        messageMap.put(appProperties.getNotification().getEventLatitudeKey(), String.valueOf(event.getLatitude()));
-        messageMap.put(appProperties.getNotification().getEventLongitudeKey(), String.valueOf(event.getLongitude()));
+        messageMap.put(KEY_EVENT_ID, String.valueOf(event.getId()));
+        messageMap.put(KEY_EVENT_CREATED_AT, event.getCreatedAt().toString());
+        messageMap.put(KEY_TYPE_LABEL, event.getType().getLabel());
+        messageMap.put(KEY_TYPE_IMAGE_PATH, event.getType().getImagePath());
+        messageMap.put(KEY_SEVERITY_LABEL, event.getSeverity().getLabel());
+        messageMap.put(KEY_SEVERITY_COLOR, String.valueOf(event.getSeverity().getColor()));
+        messageMap.put(KEY_EVENT_LATITUDE, String.valueOf(event.getLatitude()));
+        messageMap.put(KEY_EVENT_LONGITUDE, String.valueOf(event.getLongitude()));
         return messageMap;
     }
 

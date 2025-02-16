@@ -1,8 +1,13 @@
 package com.as.eventalertbackend.service;
 
-import com.as.eventalertbackend.dto.response.UserResponse;
+import com.as.eventalertbackend.dto.user.UserDTO;
+import com.as.eventalertbackend.dto.user.UserUpdateDTO;
 import com.as.eventalertbackend.error.ApiErrorMessage;
+import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
+import com.as.eventalertbackend.error.exception.ResourceNotFoundException;
+import com.as.eventalertbackend.model.RoleCode;
+import com.as.eventalertbackend.persistence.entity.Role;
 import com.as.eventalertbackend.persistence.entity.User;
 import com.as.eventalertbackend.persistence.reopsitory.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -57,39 +62,39 @@ public class UserService implements UserDetailsService {
         return userRepository.existsByEmail(email);
     }
 
-    public UserResponse findById(Long id) {
-        return mapper.map(findEntityById(id), UserResponse.class);
+    public UserDTO findById(Long id) {
+        return mapper.map(findEntityById(id), UserDTO.class);
     }
 
-    public List<UserResponse> findAll() {
+    public List<UserDTO> findAll() {
         return userRepository.findAll().stream()
-                .map(user -> mapper.map(user, UserResponse.class))
+                .map(user -> mapper.map(user, UserDTO.class))
                 .collect(Collectors.toList());
     }
 
-    /*public User updateById(UserRequest userRequest, Long id) {
-        if (userRequest.getUserRoleCodes().stream()
-                .noneMatch(role -> role == UserRoleCode.BASIC)) {
+    public UserDTO updateById(UserUpdateDTO userUpdateDTO, Long id) {
+        if (userUpdateDTO.getRoleCodes().stream()
+                .noneMatch(role -> role == RoleCode.ROLE_BASIC)) {
             throw new InvalidActionException(ApiErrorMessage.DEFAULT_ROLE_MANDATORY);
         }
 
-        if (userRequest.getImagePath() != null && !fileService.imageExists(userRequest.getImagePath())) {
+        if (userUpdateDTO.getImagePath() != null && !fileService.imageExists(userUpdateDTO.getImagePath())) {
             throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
         }
 
         User user = findEntityById(id);
-        user.setFirstName(userRequest.getFirstName());
-        user.setLastName(userRequest.getLastName());
-        user.setDateOfBirth(userRequest.getDateOfBirth());
-        user.setPhoneNumber(userRequest.getPhoneNumber());
-        user.setImagePath(userRequest.getImagePath());
-        user.setGenderCode(userRequest.getGenderCode());
+        user.setFirstName(userUpdateDTO.getFirstName());
+        user.setLastName(userUpdateDTO.getLastName());
+        user.setDateOfBirth(userUpdateDTO.getDateOfBirth());
+        user.setPhoneNumber(userUpdateDTO.getPhoneNumber());
+        user.setImagePath(userUpdateDTO.getImagePath());
+        user.setGenderCode(userUpdateDTO.getGenderCode());
 
-        Set<UserRole> userRoles = userRoleService.findAllEntitiesByCode(userRequest.getUserRoleCodes());
-        user.setUserRoles(userRoles);
+        List<Role> roles = roleService.findAllEntitiesByCode(userUpdateDTO.getRoleCodes());
+        user.setRoles(roles);
 
-        return user;
-    }*/
+        return mapper.map(user, UserDTO.class);
+    }
 
     public void deleteById(Long id) {
         if (userRepository.existsById(id)) {

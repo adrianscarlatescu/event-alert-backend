@@ -16,7 +16,7 @@ import java.util.Set;
 public class AppProperties {
 
     private String name;
-    private String imagesDirectoryPath;
+    private String mediaDirectoryPath;
     private Set<String> mockedUsersEmails;
 
     private Security security;
@@ -45,14 +45,6 @@ public class AppProperties {
     public static class Notification {
         private Boolean enabled;
         private String firebaseServiceAccountPath;
-        private String eventIdKey;
-        private String eventCreatedAt;
-        private String eventTypeLabelKey;
-        private String eventTypeImagePathKey;
-        private String eventSeverityLabelKey;
-        private String eventSeverityColorKey;
-        private String eventLatitudeKey;
-        private String eventLongitudeKey;
     }
 
 }

@@ -1,8 +1,6 @@
 package com.as.eventalertbackend.service;
 
-import com.as.eventalertbackend.dto.request.SubscriptionRequest;
-import com.as.eventalertbackend.dto.request.SubscriptionStatusRequest;
-import com.as.eventalertbackend.dto.request.SubscriptionTokenRequest;
+import com.as.eventalertbackend.dto.subscription.*;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
@@ -10,6 +8,7 @@ import com.as.eventalertbackend.persistence.entity.Subscription;
 import com.as.eventalertbackend.persistence.entity.User;
 import com.as.eventalertbackend.persistence.reopsitory.SubscriptionRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,67 +20,85 @@ import java.util.List;
 @Slf4j
 public class SubscriptionService {
 
+    private final ModelMapper mapper;
+
     private final SubscriptionRepository subscriptionRepository;
 
     private final UserService userService;
 
     @Autowired
-    public SubscriptionService(SubscriptionRepository subscriptionRepository,
+    public SubscriptionService(ModelMapper mapper,
+                               SubscriptionRepository subscriptionRepository,
                                UserService userService) {
+        this.mapper = mapper;
         this.subscriptionRepository = subscriptionRepository;
         this.userService = userService;
     }
 
-    public Subscription find(Long userId, String deviceId) {
+    Subscription findEntity(Long userId, String deviceId) {
         return subscriptionRepository.findByUserIdAndDeviceId(userId, deviceId)
                 .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.SUBSCRIPTION_NOT_FOUND));
+    }
+
+    public SubscriptionDTO find(Long userId, String deviceId) {
+        return mapper.map(findEntity(userId, deviceId), SubscriptionDTO.class);
     }
 
     public Boolean subscriptionExists(Long userId, String deviceId) {
         return subscriptionRepository.existsByUserIdAndDeviceId(userId, deviceId);
     }
 
-    public Subscription subscribe(SubscriptionRequest subscriptionRequest) {
-        if (subscriptionExists(subscriptionRequest.getUserId(), subscriptionRequest.getDeviceId())) {
+    public SubscriptionDTO subscribe(SubscriptionCreateDTO subscriptionCreateDTO) {
+        if (subscriptionExists(subscriptionCreateDTO.getUserId(), subscriptionCreateDTO.getDeviceId())) {
             throw new InvalidActionException(ApiErrorMessage.ALREADY_SUBSCRIBER);
         }
 
-        User user = userService.findEntityById(subscriptionRequest.getUserId());
+        User user = userService.findEntityById(subscriptionCreateDTO.getUserId());
 
         Subscription subscription = new Subscription();
         subscription.setUser(user);
-        subscription.setDeviceId(subscriptionRequest.getDeviceId());
-        subscription.setFirebaseToken(subscriptionRequest.getFirebaseToken());
-        subscription.setLatitude(subscriptionRequest.getLatitude());
-        subscription.setLongitude(subscriptionRequest.getLongitude());
-        subscription.setRadius(subscriptionRequest.getRadius());
+        subscription.setDeviceId(subscriptionCreateDTO.getDeviceId());
+        subscription.setFirebaseToken(subscriptionCreateDTO.getFirebaseToken());
+        subscription.setLatitude(subscriptionCreateDTO.getLatitude());
+        subscription.setLongitude(subscriptionCreateDTO.getLongitude());
+        subscription.setRadius(subscriptionCreateDTO.getRadius());
         subscription.setIsActive(true);
 
-        return subscriptionRepository.save(subscription);
+        return mapper.map(subscriptionRepository.save(subscription), SubscriptionDTO.class);
     }
 
-    public Subscription update(SubscriptionRequest subscriptionRequest) {
-        Subscription subscription = find(subscriptionRequest.getUserId(), subscriptionRequest.getDeviceId());
-        subscription.setFirebaseToken(subscriptionRequest.getFirebaseToken());
-        subscription.setLatitude(subscriptionRequest.getLatitude());
-        subscription.setLongitude(subscriptionRequest.getLongitude());
-        subscription.setRadius(subscriptionRequest.getRadius());
-        return subscription;
+    public SubscriptionDTO update(SubscriptionUpdateDTO subscriptionUpdateDTO, Long userId, String deviceId) {
+        Subscription subscription = findEntity(userId, deviceId);
+
+        if (subscriptionUpdateDTO.getFirebaseToken() != null) {
+            subscription.setFirebaseToken(subscriptionUpdateDTO.getFirebaseToken());
+        }
+        if (subscriptionUpdateDTO.getLatitude() != null) {
+            subscription.setLatitude(subscriptionUpdateDTO.getLatitude());
+        }
+        if (subscriptionUpdateDTO.getLongitude() != null) {
+            subscription.setLongitude(subscriptionUpdateDTO.getLongitude());
+        }
+        if (subscriptionUpdateDTO.getRadius() != null) {
+            subscription.setRadius(subscriptionUpdateDTO.getRadius());
+        }
+
+        return mapper.map(subscription, SubscriptionDTO.class);
     }
 
-    public Subscription updateStatus(Long userId, String deviceToken, SubscriptionStatusRequest subscriptionStatusRequest) {
-        Subscription subscription = find(userId, deviceToken);
-        subscription.setIsActive(subscriptionStatusRequest.getIsActive());
-        return subscription;
+    public SubscriptionDTO updateStatus(Long userId, String deviceToken, SubscriptionStatusDTO subscriptionStatusDTO) {
+        Subscription subscription = findEntity(userId, deviceToken);
+        subscription.setIsActive(subscriptionStatusDTO.getIsActive());
+        return mapper.map(subscription, SubscriptionDTO.class);
     }
 
 
-    public void updateToken(String deviceId, SubscriptionTokenRequest subscriptionTokenRequest) {
+    public void updateToken(String deviceId, SubscriptionTokenDTO subscriptionTokenDTO) {
         log.info("Updating token for device");
         List<Subscription> subscriptions = subscriptionRepository.findAllByDeviceId(deviceId);
 
         if (!subscriptions.isEmpty()) {
-            subscriptions.forEach(subscription -> subscription.setFirebaseToken(subscriptionTokenRequest.getFirebaseToken()));
+            subscriptions.forEach(subscription -> subscription.setFirebaseToken(subscriptionTokenDTO.getFirebaseToken()));
             log.info("Tokens successfully updated");
         } else {
             log.info("No subscriptions eligible, skip update");

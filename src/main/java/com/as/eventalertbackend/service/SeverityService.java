@@ -1,7 +1,10 @@
 package com.as.eventalertbackend.service;
 
-import com.as.eventalertbackend.dto.response.SeverityResponse;
+import com.as.eventalertbackend.dto.severity.SeverityCreateDTO;
+import com.as.eventalertbackend.dto.severity.SeverityDTO;
+import com.as.eventalertbackend.dto.severity.SeverityUpdateDTO;
 import com.as.eventalertbackend.error.ApiErrorMessage;
+import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
 import com.as.eventalertbackend.persistence.entity.Severity;
 import com.as.eventalertbackend.persistence.reopsitory.SeverityRepository;
@@ -33,37 +36,57 @@ public class SeverityService {
                 .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.SEVERITY_NOT_FOUND));
     }
 
-    public List<SeverityResponse> findAll() {
+    public List<SeverityDTO> findAll() {
         return severityRepository.findAll().stream()
-                .map(severity -> mapper.map(severity, SeverityResponse.class))
+                .map(severity -> mapper.map(severity, SeverityDTO.class))
                 .collect(Collectors.toList());
     }
 
-    public SeverityResponse findById(Long id) {
-        return mapper.map(findEntityById(id), SeverityResponse.class);
+    public SeverityDTO findById(Long id) {
+        return mapper.map(findEntityById(id), SeverityDTO.class);
     }
 
-    /*public EventSeverity save(EventSeverityUpdateRequest severityRequest) {
-        return severityRepository.save(createOrUpdate(new EventSeverity(), severityRequest));
+    public SeverityDTO save(SeverityCreateDTO severityCreateDTO) {
+        Severity severity = new Severity();
+
+        if (severityRepository.existsByCode(severityCreateDTO.getCode())) {
+            throw new InvalidActionException(ApiErrorMessage.SEVERITY_EXISTS);
+        }
+
+        severity.setCode(severityCreateDTO.getCode());
+        severity.setLabel(severityCreateDTO.getLabel());
+        severity.setColor(severityCreateDTO.getColor());
+
+        return mapper.map(severityRepository.save(severity), SeverityDTO.class);
     }
 
-    public EventSeverity updateById(EventSeverityUpdateRequest severityRequest, Long id) {
-        return createOrUpdate(findEntityById(id), severityRequest);
-    }*/
+    public SeverityDTO updateById(SeverityUpdateDTO severityUpdateDTO, Long id) {
+        Severity severity = findEntityById(id);
+
+        if (severityUpdateDTO.getCode() != null) {
+            if (severityRepository.existsByCode(severityUpdateDTO.getCode())) {
+                throw new InvalidActionException(ApiErrorMessage.SEVERITY_EXISTS);
+            }
+            severity.setCode(severityUpdateDTO.getCode());
+        }
+        if (severityUpdateDTO.getLabel() != null) {
+            severity.setLabel(severityUpdateDTO.getLabel());
+        }
+        if (severityUpdateDTO.getColor() != null) {
+            severity.setColor(severityUpdateDTO.getColor());
+        }
+
+        return mapper.map(severity, SeverityDTO.class);
+    }
 
     public void deleteById(Long id) {
-        if (severityRepository.existsById(id)) {
-            severityRepository.deleteById(id);
-        } else {
+        if (!severityRepository.existsById(id)) {
             throw new RecordNotFoundException(ApiErrorMessage.SEVERITY_NOT_FOUND);
         }
+        if (severityRepository.existsEventBySeverityId(id)) {
+            throw new InvalidActionException(ApiErrorMessage.SEVERITY_REFERENCED);
+        }
+        severityRepository.deleteById(id);
     }
-
-    /*private EventSeverity createOrUpdate(EventSeverity severity, EventSeverityUpdateRequest severityRequest) {
-        severity.setName(severityRequest.getName());
-        severity.setColor(severityRequest.getColor());
-
-        return severity;
-    }*/
 
 }

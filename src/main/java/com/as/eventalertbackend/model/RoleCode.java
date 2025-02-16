@@ -2,7 +2,7 @@ package com.as.eventalertbackend.model;
 
 public enum RoleCode {
 
-    BASIC,
-    ADMIN,
+    ROLE_BASIC,
+    ROLE_ADMIN,
 
 }

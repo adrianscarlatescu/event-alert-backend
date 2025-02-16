@@ -1,12 +1,17 @@
 package com.as.eventalertbackend.controller;
 
-import com.as.eventalertbackend.dto.response.CategoryResponse;
+import com.as.eventalertbackend.dto.category.CategoryBaseDTO;
+import com.as.eventalertbackend.dto.category.CategoryCreateDTO;
+import com.as.eventalertbackend.dto.category.CategoryDTO;
+import com.as.eventalertbackend.dto.category.CategoryUpdateDTO;
 import com.as.eventalertbackend.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -21,31 +26,31 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryResponse>> getAll() {
+    public ResponseEntity<List<CategoryDTO>> getAll() {
         return ResponseEntity.ok(categoryService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryResponse> getById(@PathVariable Long id) {
+    public ResponseEntity<CategoryDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(categoryService.findById(id));
     }
 
-    /*@Secured({"ADMIN"})
+    @Secured({"ROLE_ADMIN"})
     @PostMapping
-    public ResponseEntity<EventSeverityResponse> save(@Valid @RequestBody EventSeverityUpdateRequest severityRequest) {
+    public ResponseEntity<CategoryBaseDTO> save(@Valid @RequestBody CategoryCreateDTO categoryCreateDTO) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(mapper.map(severityService.save(severityRequest), EventSeverityResponse.class));
+                .body(categoryService.save(categoryCreateDTO));
     }
 
-    @Secured({"ADMIN"})
+    @Secured({"ROLE_ADMIN"})
     @PutMapping("/{id}")
-    public ResponseEntity<EventSeverityResponse> updateById(@Valid @RequestBody EventSeverityUpdateRequest severityRequest,
-                                                            @PathVariable("id") Long id) {
-        return ResponseEntity.ok(mapper.map(severityService.updateById(severityRequest, id), EventSeverityResponse.class));
-    }*/
+    public ResponseEntity<CategoryBaseDTO> updateById(@Valid @RequestBody CategoryUpdateDTO categoryUpdateDTO,
+                                                      @PathVariable("id") Long id) {
+        return ResponseEntity.ok(categoryService.updateById(categoryUpdateDTO, id));
+    }
 
-    @Secured({"ADMIN"})
+    @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
         categoryService.deleteById(id);

@@ -15,7 +15,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
@@ -49,11 +48,11 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private GenderCode genderCode;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @OrderBy("createdAt desc")
     private List<Event> events;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> comments;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -62,7 +61,7 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Subscription> subscriptions;
 
     @Formula("(SELECT COUNT(e.id) FROM event e WHERE e.user_id = id)")
@@ -78,7 +77,7 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
                 .map(role -> new SimpleGrantedAuthority(role.getCode().name()))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
     @Override

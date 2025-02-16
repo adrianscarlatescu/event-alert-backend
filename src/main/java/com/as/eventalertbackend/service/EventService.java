@@ -1,14 +1,20 @@
 package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.AppConstants;
-import com.as.eventalertbackend.dto.request.EventFilterRequest;
-import com.as.eventalertbackend.dto.response.EventResponse;
-import com.as.eventalertbackend.dto.response.PagedResponse;
-import com.as.eventalertbackend.model.OrderCode;
+import com.as.eventalertbackend.dto.event.EventCreateDTO;
+import com.as.eventalertbackend.dto.event.EventDTO;
+import com.as.eventalertbackend.dto.event.EventFilterDTO;
+import com.as.eventalertbackend.dto.event.EventUpdateDTO;
+import com.as.eventalertbackend.dto.page.PageDTO;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
+import com.as.eventalertbackend.error.exception.ResourceNotFoundException;
+import com.as.eventalertbackend.model.OrderCode;
 import com.as.eventalertbackend.persistence.entity.Event;
+import com.as.eventalertbackend.persistence.entity.Severity;
+import com.as.eventalertbackend.persistence.entity.Type;
+import com.as.eventalertbackend.persistence.entity.User;
 import com.as.eventalertbackend.persistence.projection.EventProjection;
 import com.as.eventalertbackend.persistence.reopsitory.EventRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -63,18 +69,18 @@ public class EventService {
                 .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.EVENT_NOT_FOUND));
     }
 
-    public EventResponse findById(Long id) {
-        return mapper.map(findEntityById(id), EventResponse.class);
+    public EventDTO findById(Long id) {
+        return mapper.map(findEntityById(id), EventDTO.class);
     }
 
-    public List<EventResponse> findAllByUserId(Long userId) {
+    public List<EventDTO> findAllByUserId(Long userId) {
         return eventRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
-                .map(event -> mapper.map(event, EventResponse.class))
+                .map(event -> mapper.map(event, EventDTO.class))
                 .collect(Collectors.toList());
     }
 
-    public PagedResponse<EventResponse> findByFilter(EventFilterRequest filterRequest, int pageSize, int pageNumber, OrderCode orderCode) {
-        if (pageSize > AppConstants.MAX_PAGES) {
+    public PageDTO<EventDTO> findByFilter(EventFilterDTO filterRequest, int pageSize, int pageNumber, OrderCode orderCode) {
+        if (pageSize > AppConstants.MAX_PAGE_SIZE) {
             throw new InvalidActionException(ApiErrorMessage.FILTER_MAX_PAGE_SIZE);
         }
 
@@ -142,24 +148,85 @@ public class EventService {
                         .ifPresent(eventProjection -> event.setDistance(eventProjection.getDistance()))
         );
 
-        return new PagedResponse<>(
+        return new PageDTO<>(
                 eventsPage.getTotalPages(),
                 eventsPage.getTotalElements(),
                 eventsPage.getContent().stream()
-                        .map(event -> mapper.map(event, EventResponse.class))
+                        .map(event -> mapper.map(event, EventDTO.class))
                         .collect(Collectors.toList())
         );
     }
 
-    /*public Event save(EventRequest eventRequest) {
-        Event event = eventRepository.save(createOrUpdate(new Event(), eventRequest));
+    public EventDTO save(EventCreateDTO eventCreateDTO) {
+        Event event = new Event();
+
+        User user = userService.findEntityById(eventCreateDTO.getUserId());
+        Type type = typeService.findEntityById(eventCreateDTO.getTypeId());
+        Severity severity = severityService.findEntityById(eventCreateDTO.getSeverityId());
+
+        if (user.getFirstName() == null) {
+            throw new InvalidActionException(ApiErrorMessage.PROFILE_FIRST_NAME_MANDATORY);
+        }
+        if (user.getLastName() == null) {
+            throw new InvalidActionException(ApiErrorMessage.PROFILE_LAST_NAME_MANDATORY);
+        }
+
+        if (!fileService.imageExists(eventCreateDTO.getImagePath())) {
+            throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
+        }
+
+        event.setLatitude(eventCreateDTO.getLatitude());
+        event.setLongitude(eventCreateDTO.getLongitude());
+        event.setImagePath(eventCreateDTO.getImagePath());
+        event.setDescription(eventCreateDTO.getDescription());
+        event.setSeverity(severity);
+        event.setType(type);
+        event.setUser(user);
+
         notificationService.send(event);
-        return event;
+
+        return mapper.map(event, EventDTO.class);
     }
 
-    public Event updateById(EventRequest eventRequest, Long id) {
-        return createOrUpdate(findEntityById(id), eventRequest);
-    }*/
+    public EventDTO updateById(EventUpdateDTO eventUpdateDTO, Long id) {
+        Event event = findEntityById(id);
+
+        if (eventUpdateDTO.getUserId() != null) {
+            User user = userService.findEntityById(eventUpdateDTO.getUserId());
+            if (user.getFirstName() == null) {
+                throw new InvalidActionException(ApiErrorMessage.PROFILE_FIRST_NAME_MANDATORY);
+            }
+            if (user.getLastName() == null) {
+                throw new InvalidActionException(ApiErrorMessage.PROFILE_LAST_NAME_MANDATORY);
+            }
+            event.setUser(user);
+        }
+        if (eventUpdateDTO.getTypeId() != null) {
+            Type type = typeService.findEntityById(eventUpdateDTO.getTypeId());
+            event.setType(type);
+        }
+        if (eventUpdateDTO.getSeverityId() != null) {
+            Severity severity = severityService.findEntityById(eventUpdateDTO.getSeverityId());
+            event.setSeverity(severity);
+        }
+        if (eventUpdateDTO.getImagePath() != null) {
+            if (!fileService.imageExists(eventUpdateDTO.getImagePath())) {
+                throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
+            }
+            event.setImagePath(eventUpdateDTO.getImagePath());
+        }
+        if (eventUpdateDTO.getLatitude() != null) {
+            event.setLatitude(eventUpdateDTO.getLatitude());
+        }
+        if (eventUpdateDTO.getLongitude() != null) {
+            event.setLongitude(eventUpdateDTO.getLongitude());
+        }
+        if (eventUpdateDTO.getDescription() != null) {
+            event.setDescription(eventUpdateDTO.getDescription());
+        }
+
+        return mapper.map(event, EventDTO.class);
+    }
 
     public void deleteById(Long id) {
         if (eventRepository.existsById(id)) {
@@ -168,38 +235,5 @@ public class EventService {
             throw new RecordNotFoundException(ApiErrorMessage.EVENT_NOT_FOUND);
         }
     }
-
-    /*private Event createOrUpdate(Event event, EventRequest eventRequest) {
-        User user = userService.findEntityById(eventRequest.getUserId());
-        EventType type = tagService.findEntityById(eventRequest.getTypeId());
-        EventSeverity severity = severityService.findEntityById(eventRequest.getSeverityId());
-
-        if (user.getFirstName() == null || user.getFirstName().isEmpty()) {
-            throw new InvalidActionException(ApiErrorMessage.PROFILE_FIRST_NAME_MANDATORY);
-        }
-        if (user.getLastName() == null || user.getLastName().isEmpty()) {
-            throw new InvalidActionException(ApiErrorMessage.PROFILE_LAST_NAME_MANDATORY);
-        }
-        if (user.getPhoneNumber() == null || user.getPhoneNumber().isEmpty()) {
-            throw new InvalidActionException(ApiErrorMessage.PROFILE_PHONE_NUMBER_MANDATORY);
-        }
-
-        if (!fileService.imageExists(eventRequest.getImagePath())) {
-            throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
-        }
-
-        String description = eventRequest.getDescription() == null ?
-                null : eventRequest.getDescription().replaceAll("\n", " ");
-
-        event.setLatitude(eventRequest.getLatitude());
-        event.setLongitude(eventRequest.getLongitude());
-        event.setImagePath(eventRequest.getImagePath());
-        event.setDescription(description);
-        event.setSeverity(severity);
-        event.setType(type);
-        event.setUser(user);
-
-        return event;
-    }*/
 
 }

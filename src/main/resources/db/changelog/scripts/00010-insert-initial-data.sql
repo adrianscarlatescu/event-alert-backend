@@ -1,17 +1,17 @@
 insert into role
     (id, code, label, description)
 values
-    (1, 'BASIC', 'Basic user', 'Access to the main features of the application'),
-    (2, 'ADMIN', 'Admin user', 'High privileged access to create, modify or delete resources');
+    (1, 'ROLE_BASIC', 'Basic user', 'Access to the main features of the application'),
+    (2, 'ROLE_ADMIN', 'Admin user', 'High privileged access to create, modify or delete resources');
 
 insert into user
     (id, email, first_name, last_name, date_of_birth, gender_code, image_path, phone_number, joined_at)
 values
-    (1, 'user1@test.com' , 'Alan', 'Walter', '1984-05-23', 'MALE', 'img/user_1.jpg', '+03442777999', '2020-03-15 11:30:00'),
-    (2, 'user2@test.com', 'John', 'Smith', '1987-10-16', 'MALE', 'img/user_2.jpg', '+44627779991', '2020-03-15 11:30:00'),
-    (3, 'user3@test.com', 'Cindy', 'Milner', '1990-09-27', 'FEMALE', 'img/user_3.jpg', '+44848992441', '2020-03-15 11:30:00'),
-    (4, 'user4@test.com', 'Andrew', 'Carter', '1992-02-14', 'MALE', 'img/user_4.jpg', '+44226812612', '2020-03-15 11:30:00'),
-    (5, 'user5@test.com', 'Amy', 'Patterson', '1991-06-12', 'FEMALE', 'img/user_5.jpg', '+44226812555', '2020-03-15 11:30:00');
+    (1, 'user1@test.com' , 'Alan', 'Walter', '1984-05-23', 'MALE', 'media/user/user_1.jpg', '+03442777999', '2020-03-15 11:30:00'),
+    (2, 'user2@test.com', 'John', 'Smith', '1987-10-16', 'MALE', 'media/user/user_2.jpg', '+44627779991', '2020-03-15 11:30:00'),
+    (3, 'user3@test.com', 'Cindy', 'Milner', '1990-09-27', 'FEMALE', 'media/user/user_3.jpg', '+44848992441', '2020-03-15 11:30:00'),
+    (4, 'user4@test.com', 'Andrew', 'Carter', '1992-02-14', 'MALE', 'media/user/user/user_4.jpg', '+44226812612', '2020-03-15 11:30:00'),
+    (5, 'user5@test.com', 'Amy', 'Patterson', '1991-06-12', 'FEMALE', 'media/user/user_5.jpg', '+44226812555', '2020-03-15 11:30:00');
 
 insert into users_roles
     (user_id, role_id)
@@ -26,54 +26,54 @@ values
 insert into category
     (id, code, label, image_path)
 values
-    (1, 'HUMAN_MADE', 'Human-made', 'media/event-type-category/category_human_made.png'),
-    (2, 'NATURAL', 'Natural', 'media/event-type-category/category_natural.png'),
-    (3, 'OTHER', 'Other', 'media/event-type-category/category_other.png');
+    (1, 'HUMAN_MADE', 'Human-made', 'media/category/category_human_made.png'),
+    (2, 'NATURAL', 'Natural', 'media/category/category_natural.png'),
+    (3, 'OTHER', 'Other', 'media/category/category_other.png');
 
 insert into type
     (id, category_id, code, label, image_path)
 values
-    (1, 1, 'BLOCKED_ROAD', 'Blocked road', 'media/event-type/human-made/type_blocked_road.png'),
-    (2, 1, 'DRUG_ACTIVITY', 'Drug activity', 'media/event-type/human-made/type_drug_activity.png'),
-    (3, 1, 'ELECTRICAL_SHOCK', 'Electrical shock', 'media/event-type/human-made/type_electrical_shock.png'),
-    (4, 1, 'EXPLOSION', 'Explosion', 'media/event-type/human-made/type_explosion.png'),
-    (5, 1, 'FIGHT_ASSAULT', 'Fight/Assault', 'media/event-type/human-made/type_fight_assault.png'),
-    (6, 1, 'FIRE', 'Fire', 'media/event-type/human-made/type_fire.png'),
-    (7, 1, 'GAS_LEAK', 'Gas leak', 'media/event-type/human-made/type_gas_leak.png'),
-    (8, 1, 'GUNFIRE', 'Gunfire', 'media/event-type/human-made/type_gunfire.png'),
-    (9, 1, 'INDUSTRIAL_ACCIDENT', 'Industrial accident', 'media/event-type/human-made/type_industrial_accident.png'),
-    (10, 1, 'INFRASTRUCTURE_DAMAGE', 'Infrastructure damage', 'media/event-type/human-made/type_infrastructure_damage.png'),
-    (11, 1, 'KIDNAPPING', 'Kidnapping', 'media/event-type/human-made/type_kidnapping.png'),
-    (12, 1, 'MISSING_PERSON', 'Missing person', 'media/event-type/human-made/type_missing_person.png'),
-    (13, 1, 'MURDER_CRIME', 'Murder/Crime', 'media/event-type/human-made/type_murder_crime.png'),
-    (14, 1, 'NUCLEAR_RADIATION', 'Nuclear radiation', 'media/event-type/human-made/type_nuclear_radiation.png'),
-    (15, 1, 'POLLUTION', 'Pollution', 'media/event-type/human-made/type_pollution.png'),
-    (16, 1, 'POWER_OUTAGE', 'Power outage', 'media/event-type/human-made/type_power_outage.png'),
-    (17, 1, 'PROTEST_RIOT', 'Protest/Riot', 'media/event-type/human-made/type_protest_riot.png'),
-    (18, 1, 'ROBBERY_BURGLARY', 'Robbery/Burglary', 'media/event-type/human-made/type_roberry_burglary.png'),
-    (19, 1, 'TERRORIST_ATTACK', 'Terrorist attack', 'media/event-type/human-made/type_terrorist_attack.png'),
-    (20, 1, 'TRAFFIC_ACCIDENT', 'Traffic accident', 'media/event-type/human-made/type_traffic_accident.png'),
-    (21, 1, 'VANDALISM', 'Vandalism', 'media/event-type/human-made/type_vandalism.png'),
+    (1, 1, 'BLOCKED_ROAD', 'Blocked road', 'media/type/human-made/type_blocked_road.png'),
+    (2, 1, 'DRUG_ACTIVITY', 'Drug activity', 'media/type/human-made/type_drug_activity.png'),
+    (3, 1, 'ELECTRICAL_SHOCK', 'Electrical shock', 'media/type/human-made/type_electrical_shock.png'),
+    (4, 1, 'EXPLOSION', 'Explosion', 'media/type/human-made/type_explosion.png'),
+    (5, 1, 'FIGHT_ASSAULT', 'Fight/Assault', 'media/type/human-made/type_fight_assault.png'),
+    (6, 1, 'FIRE', 'Fire', 'media/type/human-made/type_fire.png'),
+    (7, 1, 'GAS_LEAK', 'Gas leak', 'media/type/human-made/type_gas_leak.png'),
+    (8, 1, 'GUNFIRE', 'Gunfire', 'media/type/human-made/type_gunfire.png'),
+    (9, 1, 'INDUSTRIAL_ACCIDENT', 'Industrial accident', 'media/type/human-made/type_industrial_accident.png'),
+    (10, 1, 'INFRASTRUCTURE_DAMAGE', 'Infrastructure damage', 'media/type/human-made/type_infrastructure_damage.png'),
+    (11, 1, 'KIDNAPPING', 'Kidnapping', 'media/type/human-made/type_kidnapping.png'),
+    (12, 1, 'MISSING_PERSON', 'Missing person', 'media/type/human-made/type_missing_person.png'),
+    (13, 1, 'MURDER_CRIME', 'Murder/Crime', 'media/type/human-made/type_murder_crime.png'),
+    (14, 1, 'NUCLEAR_RADIATION', 'Nuclear radiation', 'media/type/human-made/type_nuclear_radiation.png'),
+    (15, 1, 'POLLUTION', 'Pollution', 'media/type/human-made/type_pollution.png'),
+    (16, 1, 'POWER_OUTAGE', 'Power outage', 'media/type/human-made/type_power_outage.png'),
+    (17, 1, 'PROTEST_RIOT', 'Protest/Riot', 'media/type/human-made/type_protest_riot.png'),
+    (18, 1, 'ROBBERY_BURGLARY', 'Robbery/Burglary', 'media/type/human-made/type_robbery_burglary.png'),
+    (19, 1, 'TERRORIST_ATTACK', 'Terrorist attack', 'media/type/human-made/type_terrorist_attack.png'),
+    (20, 1, 'TRAFFIC_ACCIDENT', 'Traffic accident', 'media/type/human-made/type_traffic_accident.png'),
+    (21, 1, 'VANDALISM', 'Vandalism', 'media/type/human-made/type_vandalism.png'),
 
-    (22, 2, 'AVALANCHE', 'Avalanche', 'media/event-type/natural/type_avalanche.png'),
-    (23, 2, 'DANGEROUS_ANIMAL', 'Dangerous animal', 'media/event-type/natural/type_dangerous_animal.png'),
-    (24, 2, 'DROUGHT', 'Drought', 'media/event-type/natural/type_drought.png'),
-    (25, 2, 'EARTHQUAKE', 'Earthquake', 'media/event-type/natural/type_earthquake.png'),
-    (26, 2, 'FLOOD', 'Flood', 'media/event-type/natural/type_flood.png'),
-    (27, 2, 'FOG', 'Fog', 'media/event-type/natural/type_fog.png'),
-    (28, 2, 'HIGH_TEMPERATURE', 'High temperature', 'media/event-type/natural/type_high_temperature.png'),
-    (29, 2, 'HURRICANE', 'Hurricane', 'media/event-type/natural/type_hurricane.png'),
-    (30, 2, 'LANDSLIDE', 'Landslide', 'media/event-type/natural/type_landslide.png'),
-    (31, 2, 'LOW_TEMPERATURE', 'Low temperature', 'media/event-type/natural/type_low_temperature.png'),
-    (32, 2, 'RAIN', 'Rain', 'media/event-type/natural/type_rain.png'),
-    (33, 2, 'SINKHOLE', 'Sinkhole', 'media/event-type/natural/type_sinkhole.png'),
-    (34, 2, 'SNOW', 'Snow', 'media/event-type/natural/type_snow.png'),
-    (35, 2, 'STORM', 'Storm', 'media/event-type/natural/type_storm.png'),
-    (36, 2, 'TSUNAMI', 'Tsunami', 'media/event-type/natural/type_tsunami.png'),
-    (37, 2, 'VOLCANIC_ERUPTION', 'Volcanic eruption', 'media/event-type/natural/type_volcanic_eruption.png'),
-    (38, 2, 'WILDFIRE', 'Wildfire', 'media/event-type/natural/type_wildfire.png'),
+    (22, 2, 'AVALANCHE', 'Avalanche', 'media/type/natural/type_avalanche.png'),
+    (23, 2, 'DANGEROUS_ANIMAL', 'Dangerous animal', 'media/type/natural/type_dangerous_animal.png'),
+    (24, 2, 'DROUGHT', 'Drought', 'media/type/natural/type_drought.png'),
+    (25, 2, 'EARTHQUAKE', 'Earthquake', 'media/type/natural/type_earthquake.png'),
+    (26, 2, 'FLOOD', 'Flood', 'media/type/natural/type_flood.png'),
+    (27, 2, 'FOG', 'Fog', 'media/type/natural/type_fog.png'),
+    (28, 2, 'HIGH_TEMPERATURE', 'High temperature', 'media/type/natural/type_high_temperature.png'),
+    (29, 2, 'HURRICANE', 'Hurricane', 'media/type/natural/type_hurricane.png'),
+    (30, 2, 'LANDSLIDE', 'Landslide', 'media/type/natural/type_landslide.png'),
+    (31, 2, 'LOW_TEMPERATURE', 'Low temperature', 'media/type/natural/type_low_temperature.png'),
+    (32, 2, 'RAIN', 'Rain', 'media/type/natural/type_rain.png'),
+    (33, 2, 'SINKHOLE', 'Sinkhole', 'media/type/natural/type_sinkhole.png'),
+    (34, 2, 'SNOW', 'Snow', 'media/type/natural/type_snow.png'),
+    (35, 2, 'STORM', 'Storm', 'media/type/natural/type_storm.png'),
+    (36, 2, 'TSUNAMI', 'Tsunami', 'media/type/natural/type_tsunami.png'),
+    (37, 2, 'VOLCANIC_ERUPTION', 'Volcanic eruption', 'media/type/natural/type_volcanic_eruption.png'),
+    (38, 2, 'WILDFIRE', 'Wildfire', 'media/type/natural/type_wildfire.png'),
 
-    (39, 3, 'OTHER', 'Other', 'media/event-type/other/type_other.png');
+    (39, 3, 'OTHER', 'Other', 'media/type/other/type_other.png');
 
 insert into severity
     (id, code, label, color)
