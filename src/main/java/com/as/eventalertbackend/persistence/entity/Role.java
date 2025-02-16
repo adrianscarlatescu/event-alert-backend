@@ -1,6 +1,6 @@
 package com.as.eventalertbackend.persistence.entity;
 
-import com.as.eventalertbackend.model.RoleCode;
+import com.as.eventalertbackend.enums.RoleCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,7 +8,8 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.List;
 
-import static com.as.eventalertbackend.AppConstants.*;
+import static com.as.eventalertbackend.AppConstants.LENGTH_1000;
+import static com.as.eventalertbackend.AppConstants.LENGTH_50;
 
 @Entity
 @Table(name = "role")

@@ -1,4 +1,4 @@
-package com.as.eventalertbackend.model;
+package com.as.eventalertbackend.enums;
 
 public enum RoleCode {
 

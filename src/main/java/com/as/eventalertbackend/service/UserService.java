@@ -6,7 +6,7 @@ import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
 import com.as.eventalertbackend.error.exception.ResourceNotFoundException;
-import com.as.eventalertbackend.model.RoleCode;
+import com.as.eventalertbackend.enums.RoleCode;
 import com.as.eventalertbackend.persistence.entity.Role;
 import com.as.eventalertbackend.persistence.entity.User;
 import com.as.eventalertbackend.persistence.reopsitory.UserRepository;

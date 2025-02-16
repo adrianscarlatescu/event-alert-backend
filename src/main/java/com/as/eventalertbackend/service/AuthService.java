@@ -7,7 +7,7 @@ import com.as.eventalertbackend.dto.auth.AuthTokensDTO;
 import com.as.eventalertbackend.dto.user.UserDTO;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
-import com.as.eventalertbackend.model.RoleCode;
+import com.as.eventalertbackend.enums.RoleCode;
 import com.as.eventalertbackend.persistence.entity.Role;
 import com.as.eventalertbackend.persistence.entity.User;
 import com.as.eventalertbackend.security.jwt.JwtManager;

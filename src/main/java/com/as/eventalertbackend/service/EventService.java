@@ -10,7 +10,7 @@ import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
 import com.as.eventalertbackend.error.exception.ResourceNotFoundException;
-import com.as.eventalertbackend.model.OrderCode;
+import com.as.eventalertbackend.enums.OrderCode;
 import com.as.eventalertbackend.persistence.entity.Event;
 import com.as.eventalertbackend.persistence.entity.Severity;
 import com.as.eventalertbackend.persistence.entity.Type;

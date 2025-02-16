@@ -5,7 +5,6 @@ public abstract class AppConstants {
     public static final int LENGTH_8 = 8;
     public static final int LENGTH_25 = 25;
     public static final int LENGTH_50 = 50;
-    public static final int LENGTH_100 = 100;
     public static final int LENGTH_1000 = 1000;
 
     public static final String PHONE_NUMBER_PATTERN = "^[- +()0-9]{10,25}$";

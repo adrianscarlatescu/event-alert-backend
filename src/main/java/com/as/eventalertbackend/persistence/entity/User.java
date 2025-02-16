@@ -1,6 +1,6 @@
 package com.as.eventalertbackend.persistence.entity;
 
-import com.as.eventalertbackend.model.GenderCode;
+import com.as.eventalertbackend.enums.GenderCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -37,7 +37,7 @@ public class User implements UserDetails {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(length = LENGTH_100)
+    @Column(length = LENGTH_1000)
     private String password;
 
     @Column(length = LENGTH_50)

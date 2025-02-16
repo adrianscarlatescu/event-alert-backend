@@ -1,6 +1,6 @@
 package com.as.eventalertbackend.dto.role;
 
-import com.as.eventalertbackend.model.RoleCode;
+import com.as.eventalertbackend.enums.RoleCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

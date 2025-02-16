@@ -9,6 +9,8 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.as.eventalertbackend.AppConstants.LENGTH_1000;
+
 @Entity
 @Table(name = "event")
 @Getter
@@ -30,12 +32,13 @@ public class Event {
     @Column(nullable = false)
     private Double longitude;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = LENGTH_1000)
     private String imagePath;
 
+    @Column(length = LENGTH_1000)
     private String description;
 
-    @OneToMany(mappedBy = "event")
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
     @OrderBy("createdAt desc")
     private List<Comment> comments;
 

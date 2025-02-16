@@ -1,7 +1,7 @@
 package com.as.eventalertbackend.dto.user;
 
-import com.as.eventalertbackend.model.GenderCode;
-import com.as.eventalertbackend.model.RoleCode;
+import com.as.eventalertbackend.enums.GenderCode;
+import com.as.eventalertbackend.enums.RoleCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

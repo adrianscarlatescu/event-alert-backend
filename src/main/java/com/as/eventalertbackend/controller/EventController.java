@@ -5,7 +5,7 @@ import com.as.eventalertbackend.dto.event.EventDTO;
 import com.as.eventalertbackend.dto.event.EventFilterDTO;
 import com.as.eventalertbackend.dto.event.EventUpdateDTO;
 import com.as.eventalertbackend.dto.page.PageDTO;
-import com.as.eventalertbackend.model.OrderCode;
+import com.as.eventalertbackend.enums.OrderCode;
 import com.as.eventalertbackend.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
