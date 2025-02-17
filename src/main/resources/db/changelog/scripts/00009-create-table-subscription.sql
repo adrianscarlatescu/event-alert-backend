@@ -1,6 +1,8 @@
 CREATE TABLE subscription
 (
     id             BIGINT AUTO_INCREMENT NOT NULL,
+    created_at     DATETIME              NOT NULL,
+    modified_at    DATETIME              NULL,
     user_id        BIGINT                NOT NULL,
     latitude       DOUBLE                NOT NULL,
     longitude      DOUBLE                NOT NULL,

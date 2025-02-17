@@ -18,6 +18,7 @@ public class UserDTO implements Serializable {
 
     private Long id;
     private LocalDateTime joinedAt;
+    private LocalDateTime modifiedAt;
     private String email;
     private String firstName;
     private String lastName;

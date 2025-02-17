@@ -15,6 +15,7 @@ public class CommentDTO implements Serializable {
 
     private Long id;
     private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
     private String comment;
     private UserBaseDTO user;
 

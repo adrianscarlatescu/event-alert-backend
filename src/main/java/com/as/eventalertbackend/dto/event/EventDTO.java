@@ -19,6 +19,7 @@ public class EventDTO implements Serializable {
 
     private Long id;
     private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
     private Double latitude;
     private Double longitude;
     private String imagePath;

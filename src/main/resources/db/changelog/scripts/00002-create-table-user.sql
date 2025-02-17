@@ -2,6 +2,7 @@ CREATE TABLE user
 (
     id              BIGINT AUTO_INCREMENT NOT NULL,
     joined_at       DATETIME              NOT NULL,
+    modified_at     DATETIME              NULL,
     email           VARCHAR(50)           NOT NULL UNIQUE,
     password        VARCHAR(1000)         NULL,
     first_name      VARCHAR(50)           NULL,

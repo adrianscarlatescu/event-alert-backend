@@ -2,6 +2,7 @@ CREATE TABLE event
 (
     id          BIGINT AUTO_INCREMENT NOT NULL,
     created_at  DATETIME              NOT NULL,
+    modified_at DATETIME              NULL,
     latitude    DOUBLE                NOT NULL,
     longitude   DOUBLE                NOT NULL,
     image_path  VARCHAR(1000)         NOT NULL,

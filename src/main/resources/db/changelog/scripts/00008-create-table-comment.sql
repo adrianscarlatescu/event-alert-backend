@@ -2,6 +2,7 @@ CREATE TABLE comment
 (
     id          BIGINT AUTO_INCREMENT NOT NULL,
     created_at  DATETIME              NOT NULL,
+    modified_at DATETIME              NULL,
     comment     VARCHAR(1000)         NOT NULL,
     event_id    BIGINT                NOT NULL,
     user_id     BIGINT                NOT NULL,

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -13,6 +14,8 @@ import java.io.Serializable;
 public class SubscriptionDTO implements Serializable {
 
     private Long id;
+    private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
     private UserBaseDTO user;
     private Double latitude;
     private Double longitude;
