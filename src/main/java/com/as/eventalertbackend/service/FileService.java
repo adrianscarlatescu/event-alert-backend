@@ -1,6 +1,7 @@
 package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.AppProperties;
+import com.as.eventalertbackend.enums.ImageTypeCode;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.StorageFailException;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +17,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Service
 @Slf4j
@@ -55,21 +54,35 @@ public class FileService {
         }
     }
 
-    public String writeImage(MultipartFile file) {
+    public String writeImage(ImageTypeCode imageTypeCode, String suffix, MultipartFile file) {
         String mediaPath = appProperties.getMediaDirectoryPath();
 
-        LocalDateTime dateTime = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
-        String imageName = file.getOriginalFilename() + dateTime.format(formatter) + ".jpg";
+        String imagePath =  switch (imageTypeCode) {
+            case USER -> mediaPath + "/user";
+            case EVENT -> mediaPath + "/event";
+            case CATEGORY -> mediaPath + "/category";
+            case TYPE_HUMAN_MADE -> mediaPath + "/type/human-made";
+            case TYPE_NATURAL -> mediaPath + "/type/natural";
+            case TYPE_OTHER -> mediaPath + "/type/other";
+        };
 
-        ClassPathResource imagesResource = new ClassPathResource(mediaPath);
+        String imageName = switch (imageTypeCode) {
+            case USER -> "user_" + suffix;
+            case EVENT -> "event_" + suffix;
+            case CATEGORY -> "category_" + suffix;
+            case TYPE_HUMAN_MADE, TYPE_NATURAL, TYPE_OTHER -> "type_" + suffix;
+        };
+
+        String imageNameWithExtension = imageName + ".jpg";
+
+        ClassPathResource imageResource = new ClassPathResource(imagePath);
         log.info("Begin image write request");
 
         try {
             byte[] bytes = file.getBytes();
-            Path path = Paths.get(imagesResource.getFile().getPath(), imageName);
+            Path path = Paths.get(imageResource.getFile().getPath(), imageNameWithExtension);
             Files.write(path, bytes);
-            log.info("Image successfully stored: {}", imageName);
+            log.info("Image successfully stored: {}", imageNameWithExtension);
         } catch (IOException e) {
             throw new StorageFailException(ApiErrorMessage.IMAGE_STORE_FAIL);
         }
