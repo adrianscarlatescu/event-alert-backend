@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 @Slf4j
@@ -37,14 +39,14 @@ public class FileService {
         }
 
         ClassPathResource mediaResource = new ClassPathResource(imagePath);
-        File mediaFile;
+        File imageFile;
         try {
-            mediaFile = mediaResource.getFile();
+            imageFile = mediaResource.getFile();
         } catch (IOException e) {
             throw new StorageFailException(ApiErrorMessage.IMAGE_RETRIEVE_FAIL);
         }
 
-        return mediaFile.exists() && !mediaFile.isDirectory();
+        return imageFile.exists() && !imageFile.isDirectory();
     }
 
     public Resource readImage(String imagePath) {
@@ -62,54 +64,35 @@ public class FileService {
         if (file.getSize() == 0) {
             throw new InvalidActionException(ApiErrorMessage.IMAGE_MANDATORY);
         }
-        if (file.getOriginalFilename() == null) {
+
+        String fileOriginalName = file.getOriginalFilename();
+        if (fileOriginalName == null) {
             throw new InvalidActionException(ApiErrorMessage.IMAGE_NAME_MANDATORY);
         }
 
-        switch (imageTypeCode) {
-            case USER, EVENT -> {
-                if (!file.getOriginalFilename().endsWith(".jpg")) {
-                    throw new InvalidActionException(ApiErrorMessage.INVALID_IMAGE_EXTENSION);
-                }
-            }
-            case CATEGORY, TYPE_HUMAN_MADE, TYPE_NATURAL, TYPE_OTHER -> {
-                if (!file.getOriginalFilename().endsWith(".png")) {
-                    throw new InvalidActionException(ApiErrorMessage.INVALID_IMAGE_EXTENSION);
-                }
-            }
-        }
+        int extensionStartIndex = fileOriginalName.lastIndexOf(".") + 1;
+        String extension = fileOriginalName.substring(extensionStartIndex);
+        String imageTypeName = imageTypeCode.name().toLowerCase();
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
 
-        String imageDirectoryPath = switch (imageTypeCode) {
-            case USER -> mediaPath + "user/";
-            case EVENT -> mediaPath + "event/";
-            case CATEGORY -> mediaPath + "category/";
-            case TYPE_HUMAN_MADE -> mediaPath + "type/human-made/";
-            case TYPE_NATURAL -> mediaPath + "type/natural/";
-            case TYPE_OTHER -> mediaPath + "type/other/";
-        };
+        String imageDirectoryPath = mediaPath + imageTypeName;
+        String imageName = imageTypeName + "_" + suffix + "_" + timestamp + "." + extension;
 
-        String imageFileName = switch (imageTypeCode) {
-            case USER -> "user_" + suffix + ".jpg";
-            case EVENT -> "event_" + suffix + ".jpg";
-            case CATEGORY -> "category_" + suffix + ".png";
-            case TYPE_HUMAN_MADE, TYPE_NATURAL, TYPE_OTHER -> "type_" + suffix + ".png";
-        };
+        String imagePath = imageDirectoryPath + "/" + imageName;
 
-        String imageFilePath = imageDirectoryPath + imageFileName;
-
-        ClassPathResource imageResource = new ClassPathResource(imageFilePath);
+        ClassPathResource imageResource = new ClassPathResource(imageDirectoryPath);
         log.info("Begin image write request");
 
         try {
             byte[] bytes = file.getBytes();
-            Path path = Paths.get(imageResource.getFile().getPath());
+            Path path = Paths.get(imageResource.getFile().getPath(), imageName);
             Files.write(path, bytes);
-            log.info("Image successfully stored: {}", imageFilePath);
+            log.info("Image successfully stored: {}", imagePath);
         } catch (IOException e) {
             throw new StorageFailException(ApiErrorMessage.IMAGE_STORE_FAIL);
         }
 
-        return imageFilePath;
+        return imagePath;
     }
 
 }

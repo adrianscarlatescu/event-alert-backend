@@ -3,12 +3,8 @@ package com.as.eventalertbackend.enums;
 public enum ImageTypeCode {
 
     USER,
-
     EVENT,
-
     CATEGORY,
+    TYPE,
 
-    TYPE_HUMAN_MADE,
-    TYPE_NATURAL,
-    TYPE_OTHER,
 }

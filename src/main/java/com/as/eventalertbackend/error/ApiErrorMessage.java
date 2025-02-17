@@ -20,7 +20,6 @@ public enum ApiErrorMessage {
     IMAGE_STORE_FAIL("Could not store the image"),
     IMAGE_MANDATORY("The image is mandatory"),
     IMAGE_NAME_MANDATORY("The image name is mandatory"),
-    INVALID_IMAGE_EXTENSION("Invalid image extension"),
     INVALID_IMAGE_PATH("Invalid image path"),
 
     ROLE_NOT_FOUND("Role not found"),
