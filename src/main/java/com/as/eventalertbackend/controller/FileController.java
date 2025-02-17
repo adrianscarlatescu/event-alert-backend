@@ -20,8 +20,8 @@ public class FileController {
         this.fileService = fileService;
     }
 
-    @GetMapping("/image")
-    public ResponseEntity<Resource> singleImageDownload(@RequestParam("path") String imagePath) {
+    @GetMapping("/images")
+    public ResponseEntity<Resource> downloadImage(@RequestParam("path") String imagePath) {
         Resource resource = fileService.readImage(imagePath);
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("application/octet-stream"))
@@ -29,8 +29,8 @@ public class FileController {
                 .body(resource);
     }
 
-    @PostMapping("/image")
-    public ResponseEntity<String> singleImageUpload(@RequestParam("imageTypeCode") ImageTypeCode imageTypeCode,
+    @PostMapping("/images")
+    public ResponseEntity<String> uploadImage(@RequestParam("imageTypeCode") ImageTypeCode imageTypeCode,
                                                     @RequestParam("suffix") String suffix,
                                                     @RequestPart("image") MultipartFile image) {
         return ResponseEntity.ok("\"" + fileService.writeImage(imageTypeCode, suffix, image) + "\"");
