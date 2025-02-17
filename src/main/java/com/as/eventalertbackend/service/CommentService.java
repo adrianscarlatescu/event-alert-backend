@@ -58,14 +58,14 @@ public class CommentService {
         User user = userService.findEntityById(commentCreateDTO.getUserId());
 
         if (user.getFirstName() == null || user.getLastName() == null) {
-            throw new InvalidActionException(ApiErrorMessage.PROFILE_NAME_REQUIRED);
+            throw new InvalidActionException(ApiErrorMessage.PROFILE_FULL_NAME_REQUIRED);
         }
 
         comment.setEvent(event);
         comment.setUser(user);
         comment.setComment(commentCreateDTO.getComment());
 
-        return mapper.map(comment, CommentDTO.class);
+        return mapper.map(commentRepository.save(comment), CommentDTO.class);
     }
 
     public CommentDTO updateById(CommentUpdateDTO commentUpdateDTO, Long id) {

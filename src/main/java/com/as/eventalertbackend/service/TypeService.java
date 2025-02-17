@@ -6,6 +6,7 @@ import com.as.eventalertbackend.dto.type.TypeUpdateDTO;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
+import com.as.eventalertbackend.error.exception.ResourceNotFoundException;
 import com.as.eventalertbackend.persistence.entity.Category;
 import com.as.eventalertbackend.persistence.entity.Type;
 import com.as.eventalertbackend.persistence.reopsitory.TypeRepository;
@@ -25,14 +26,17 @@ public class TypeService {
 
     private final TypeRepository typeRepository;
 
+    private final FileService fileService;
     private final CategoryService categoryService;
 
     @Autowired
     public TypeService(ModelMapper mapper,
                        TypeRepository typeRepository,
+                       FileService fileService,
                        CategoryService categoryService) {
         this.mapper = mapper;
         this.typeRepository = typeRepository;
+        this.fileService = fileService;
         this.categoryService = categoryService;
     }
 
@@ -52,30 +56,39 @@ public class TypeService {
     }
 
     public TypeDTO save(TypeCreateDTO typeCreateDTO) {
-        Type type = createOrUpdate(typeCreateDTO, null);
+        Type type = new Type();
+
+        if (typeRepository.existsByCode(typeCreateDTO.getCode())) {
+            throw new InvalidActionException(ApiErrorMessage.TYPE_CODE_EXISTS);
+        }
+        if (!fileService.imageExists(typeCreateDTO.getImagePath())) {
+            throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
+        }
+
+        Category category = categoryService.findEntityById(typeCreateDTO.getCategoryId());
+
+        type.setCategory(category);
+        type.setCode(typeCreateDTO.getCode());
+        type.setLabel(typeCreateDTO.getLabel());
+        type.setImagePath(typeCreateDTO.getImagePath());
+
         return mapper.map(typeRepository.save(type), TypeDTO.class);
     }
 
     public TypeDTO updateById(TypeUpdateDTO typeUpdateDTO, Long id) {
-        Type type = createOrUpdate(typeUpdateDTO, id);
-        return mapper.map(type, TypeDTO.class);
-    }
+        Type type = findEntityById(id);
 
-    private <T extends TypeCreateDTO> Type createOrUpdate(T createOrUpdateDTO, Long typeId) {
-        Type type = typeId == null ? new Type() : findEntityById(typeId);
-
-        if (typeRepository.existsByCode(createOrUpdateDTO.getCode())) {
-            throw new InvalidActionException(ApiErrorMessage.TYPE_CODE_EXISTS);
+        if (!fileService.imageExists(typeUpdateDTO.getImagePath())) {
+            throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
         }
 
-        Category category = categoryService.findEntityById(createOrUpdateDTO.getCategoryId());
+        Category category = categoryService.findEntityById(typeUpdateDTO.getCategoryId());
 
         type.setCategory(category);
-        type.setCode(createOrUpdateDTO.getCode());
-        type.setLabel(createOrUpdateDTO.getLabel());
-        type.setImagePath(createOrUpdateDTO.getImagePath());
+        type.setLabel(typeUpdateDTO.getLabel());
+        type.setImagePath(typeUpdateDTO.getImagePath());
 
-        return type;
+        return mapper.map(type, TypeDTO.class);
     }
 
     public void deleteById(Long id) {

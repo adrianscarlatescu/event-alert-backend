@@ -77,7 +77,7 @@ public class UserService implements UserDetailsService {
 
         if ((userRepository.existsEventByUserId(id) || userRepository.existsCommentByUserId(id)) &&
                 (userUpdateDTO.getFirstName() == null || userUpdateDTO.getLastName() == null)) {
-            throw new InvalidActionException(ApiErrorMessage.PROFILE_NAME_REQUIRED);
+            throw new InvalidActionException(ApiErrorMessage.PROFILE_FULL_NAME_REQUIRED);
         }
         if (userUpdateDTO.getRoleCodes().stream().noneMatch(role -> role == RoleCode.ROLE_BASIC)) {
             throw new InvalidActionException(ApiErrorMessage.DEFAULT_ROLE_REQUIRED);

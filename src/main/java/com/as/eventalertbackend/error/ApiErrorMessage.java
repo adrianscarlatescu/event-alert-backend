@@ -42,7 +42,7 @@ public enum ApiErrorMessage {
     FILTER_END_DATE_AFTER_START_DATE("The end date must be after the start date"),
     FILTER_MAX_YEARS_INTERVAL("The time interval must not exceed " + AppConstants.MAX_YEARS_INTERVAL + " years"),
 
-    PROFILE_NAME_REQUIRED("The profile first name and last name are required");
+    PROFILE_FULL_NAME_REQUIRED("The profile first name and last name are required");
 
     private final String value;
 

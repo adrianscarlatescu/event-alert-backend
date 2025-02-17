@@ -6,11 +6,11 @@ import com.as.eventalertbackend.dto.event.EventDTO;
 import com.as.eventalertbackend.dto.event.EventFilterDTO;
 import com.as.eventalertbackend.dto.event.EventUpdateDTO;
 import com.as.eventalertbackend.dto.page.PageDTO;
+import com.as.eventalertbackend.enums.OrderCode;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
 import com.as.eventalertbackend.error.exception.ResourceNotFoundException;
-import com.as.eventalertbackend.enums.OrderCode;
 import com.as.eventalertbackend.persistence.entity.Event;
 import com.as.eventalertbackend.persistence.entity.Severity;
 import com.as.eventalertbackend.persistence.entity.Type;
@@ -158,40 +158,51 @@ public class EventService {
     }
 
     public EventDTO save(EventCreateDTO eventCreateDTO) {
-        Event event = createOrUpdate(eventCreateDTO, null);
+        Event newEvent = new Event();
+
+        User user = userService.findEntityById(eventCreateDTO.getUserId());
+        Type type = typeService.findEntityById(eventCreateDTO.getTypeId());
+        Severity severity = severityService.findEntityById(eventCreateDTO.getSeverityId());
+
+        if (user.getFirstName() == null || user.getLastName() == null) {
+            throw new InvalidActionException(ApiErrorMessage.PROFILE_FULL_NAME_REQUIRED);
+        }
+
+        if (!fileService.imageExists(eventCreateDTO.getImagePath())) {
+            throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
+        }
+
+        newEvent.setLatitude(eventCreateDTO.getLatitude());
+        newEvent.setLongitude(eventCreateDTO.getLongitude());
+        newEvent.setImagePath(eventCreateDTO.getImagePath());
+        newEvent.setDescription(eventCreateDTO.getDescription());
+        newEvent.setSeverity(severity);
+        newEvent.setType(type);
+        newEvent.setUser(user);
+
+        Event event = eventRepository.save(newEvent);
+
         notificationService.send(event);
+
         return mapper.map(event, EventDTO.class);
     }
 
     public EventDTO updateById(EventUpdateDTO eventUpdateDTO, Long id) {
-        Event event = createOrUpdate(eventUpdateDTO, id);
-        return mapper.map(event, EventDTO.class);
-    }
+        Event event = findEntityById(id);
 
-    private <T extends EventCreateDTO> Event createOrUpdate(T createOrUpdateDTO, Long eventId) {
-        Event event = eventId == null ? new Event() : findEntityById(eventId);
+        Type type = typeService.findEntityById(eventUpdateDTO.getTypeId());
+        Severity severity = severityService.findEntityById(eventUpdateDTO.getSeverityId());
 
-        User user = userService.findEntityById(createOrUpdateDTO.getUserId());
-        Type type = typeService.findEntityById(createOrUpdateDTO.getTypeId());
-        Severity severity = severityService.findEntityById(createOrUpdateDTO.getSeverityId());
-
-        if (user.getFirstName() == null || user.getLastName() == null) {
-            throw new InvalidActionException(ApiErrorMessage.PROFILE_NAME_REQUIRED);
-        }
-
-        if (!fileService.imageExists(createOrUpdateDTO.getImagePath())) {
+        if (!fileService.imageExists(eventUpdateDTO.getImagePath())) {
             throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
         }
 
-        event.setLatitude(createOrUpdateDTO.getLatitude());
-        event.setLongitude(createOrUpdateDTO.getLongitude());
-        event.setImagePath(createOrUpdateDTO.getImagePath());
-        event.setDescription(createOrUpdateDTO.getDescription());
+        event.setImagePath(eventUpdateDTO.getImagePath());
+        event.setDescription(eventUpdateDTO.getDescription());
         event.setSeverity(severity);
         event.setType(type);
-        event.setUser(user);
 
-        return event;
+        return mapper.map(event, EventDTO.class);
     }
 
     public void deleteById(Long id) {

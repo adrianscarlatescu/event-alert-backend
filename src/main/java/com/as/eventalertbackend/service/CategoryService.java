@@ -7,6 +7,7 @@ import com.as.eventalertbackend.dto.category.CategoryUpdateDTO;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
+import com.as.eventalertbackend.error.exception.ResourceNotFoundException;
 import com.as.eventalertbackend.persistence.entity.Category;
 import com.as.eventalertbackend.persistence.reopsitory.CategoryRepository;
 import org.modelmapper.ModelMapper;
@@ -25,11 +26,15 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
+    private final FileService fileService;
+
     @Autowired
     public CategoryService(ModelMapper mapper,
-                           CategoryRepository categoryRepository) {
+                           CategoryRepository categoryRepository,
+                           FileService fileService) {
         this.mapper = mapper;
         this.categoryRepository = categoryRepository;
+        this.fileService = fileService;
     }
 
     Category findEntityById(Long id) {
@@ -48,27 +53,33 @@ public class CategoryService {
     }
 
     public CategoryBaseDTO save(CategoryCreateDTO categoryCreateDTO) {
-        Category category = createOrUpdate(categoryCreateDTO, null);
+        Category category = new Category();
+
+        if (categoryRepository.existsByCode(categoryCreateDTO.getCode())) {
+            throw new InvalidActionException(ApiErrorMessage.CATEGORY_CODE_EXISTS);
+        }
+        if (!fileService.imageExists(categoryCreateDTO.getImagePath())) {
+            throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
+        }
+
+        category.setCode(categoryCreateDTO.getCode());
+        category.setLabel(categoryCreateDTO.getLabel());
+        category.setImagePath(categoryCreateDTO.getImagePath());
+
         return mapper.map(categoryRepository.save(category), CategoryBaseDTO.class);
     }
 
     public CategoryBaseDTO updateById(CategoryUpdateDTO categoryUpdateDTO, Long id) {
-        Category category = createOrUpdate(categoryUpdateDTO, id);
-        return mapper.map(category, CategoryBaseDTO.class);
-    }
+        Category category = findEntityById(id);
 
-    private <T extends CategoryCreateDTO> Category createOrUpdate(T createOrUpdateDTO, Long categoryId) {
-        Category category = categoryId == null ? new Category() : findEntityById(categoryId);
-
-        if (categoryRepository.existsByCode(createOrUpdateDTO.getCode())) {
-            throw new InvalidActionException(ApiErrorMessage.CATEGORY_CODE_EXISTS);
+        if (!fileService.imageExists(categoryUpdateDTO.getImagePath())) {
+            throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
         }
 
-        category.setCode(createOrUpdateDTO.getCode());
-        category.setLabel(createOrUpdateDTO.getLabel());
-        category.setImagePath(createOrUpdateDTO.getImagePath());
+        category.setLabel(categoryUpdateDTO.getLabel());
+        category.setImagePath(categoryUpdateDTO.getImagePath());
 
-        return category;
+        return mapper.map(category, CategoryBaseDTO.class);
     }
 
     public void deleteById(Long id) {

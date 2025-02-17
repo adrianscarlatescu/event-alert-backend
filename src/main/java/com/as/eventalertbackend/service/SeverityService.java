@@ -47,27 +47,26 @@ public class SeverityService {
     }
 
     public SeverityDTO save(SeverityCreateDTO severityCreateDTO) {
-        Severity severity = createOrUpdate(severityCreateDTO, null);
+        Severity severity = new Severity();
+
+        if (severityRepository.existsByCode(severityCreateDTO.getCode())) {
+            throw new InvalidActionException(ApiErrorMessage.SEVERITY_CODE_EXISTS);
+        }
+
+        severity.setCode(severityCreateDTO.getCode());
+        severity.setLabel(severityCreateDTO.getLabel());
+        severity.setColor(severityCreateDTO.getColor());
+
         return mapper.map(severityRepository.save(severity), SeverityDTO.class);
     }
 
     public SeverityDTO updateById(SeverityUpdateDTO severityUpdateDTO, Long id) {
-        Severity severity = createOrUpdate(severityUpdateDTO, id);
+        Severity severity = findEntityById(id);
+
+        severity.setLabel(severityUpdateDTO.getLabel());
+        severity.setColor(severityUpdateDTO.getColor());
+
         return mapper.map(severity, SeverityDTO.class);
-    }
-
-    private <T extends SeverityCreateDTO> Severity createOrUpdate(T createOrUpdateDTO, Long severityId) {
-        Severity severity = severityId == null ? new Severity() : findEntityById(severityId);
-
-        if (severityRepository.existsByCode(createOrUpdateDTO.getCode())) {
-            throw new InvalidActionException(ApiErrorMessage.SEVERITY_CODE_EXISTS);
-        }
-
-        severity.setCode(createOrUpdateDTO.getCode());
-        severity.setLabel(createOrUpdateDTO.getLabel());
-        severity.setColor(createOrUpdateDTO.getColor());
-
-        return severity;
     }
 
     public void deleteById(Long id) {
