@@ -58,7 +58,7 @@ public class CommentService {
         User user = userService.findEntityById(commentCreateDTO.getUserId());
 
         if (user.getFirstName() == null || user.getLastName() == null) {
-            throw new InvalidActionException(ApiErrorMessage.PROFILE_FULL_NAME_REQUIRED);
+            throw new InvalidActionException(ApiErrorMessage.PROFILE_FULL_NAME_MANDATORY);
         }
 
         comment.setEvent(event);

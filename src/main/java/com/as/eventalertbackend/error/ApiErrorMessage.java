@@ -16,9 +16,12 @@ public enum ApiErrorMessage {
     ALREADY_SUBSCRIBER("Already subscriber"),
 
     IMAGE_NOT_FOUND("Image not found"),
-    FILE_LIST_FAIL("Could not list server files"),
     IMAGE_RETRIEVE_FAIL("Could not retrieve the image"),
     IMAGE_STORE_FAIL("Could not store the image"),
+    IMAGE_MANDATORY("The image is mandatory"),
+    IMAGE_NAME_MANDATORY("The image name is mandatory"),
+    INVALID_IMAGE_EXTENSION("Invalid image extension"),
+    INVALID_IMAGE_PATH("Invalid image path"),
 
     ROLE_NOT_FOUND("Role not found"),
     USER_NOT_FOUND("User not found"),
@@ -36,13 +39,13 @@ public enum ApiErrorMessage {
     CATEGORY_REFERENCED("The category is still referenced by one or more types"),
     TYPE_REFERENCED("The type is still referenced by one or more events"),
 
-    DEFAULT_ROLE_REQUIRED("The default role is required"),
+    DEFAULT_ROLE_MANDATORY("The default role is mandatory"),
 
     FILTER_MAX_PAGE_SIZE("The page size must be less or equal to " + AppConstants.MAX_PAGE_SIZE),
     FILTER_END_DATE_AFTER_START_DATE("The end date must be after the start date"),
     FILTER_MAX_YEARS_INTERVAL("The time interval must not exceed " + AppConstants.MAX_YEARS_INTERVAL + " years"),
 
-    PROFILE_FULL_NAME_REQUIRED("The profile first name and last name are required");
+    PROFILE_FULL_NAME_MANDATORY("The profile first name and last name must be set");
 
     private final String value;
 

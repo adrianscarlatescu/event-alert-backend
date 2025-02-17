@@ -3,6 +3,7 @@ package com.as.eventalertbackend.service;
 import com.as.eventalertbackend.AppProperties;
 import com.as.eventalertbackend.enums.ImageTypeCode;
 import com.as.eventalertbackend.error.ApiErrorMessage;
+import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.StorageFailException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,19 +31,19 @@ public class FileService {
     }
 
     public boolean imageExists(String imagePath) {
-        String mediaPath = appProperties.getMediaDirectoryPath();
-        ClassPathResource mediaResource = new ClassPathResource(mediaPath);
-
-        File mediaDirectory;
-        try {
-            mediaDirectory = mediaResource.getFile();
-        } catch (IOException e) {
-            throw new StorageFailException(ApiErrorMessage.FILE_LIST_FAIL);
+        if (!imagePath.startsWith(appProperties.getMediaDirectoryPath())) {
+            throw new StorageFailException(ApiErrorMessage.INVALID_IMAGE_PATH);
         }
 
-        String filePath = mediaDirectory.getAbsolutePath().replace(mediaPath, "").concat(imagePath);
-        File file = new File(filePath);
-        return file.exists() && !file.isDirectory();
+        ClassPathResource mediaResource = new ClassPathResource(imagePath);
+        File mediaFile;
+        try {
+            mediaFile = mediaResource.getFile();
+        } catch (IOException e) {
+            throw new StorageFailException(ApiErrorMessage.IMAGE_RETRIEVE_FAIL);
+        }
+
+        return mediaFile.exists() && !mediaFile.isDirectory();
     }
 
     public Resource readImage(String imagePath) {
@@ -57,37 +58,57 @@ public class FileService {
     public String writeImage(ImageTypeCode imageTypeCode, String suffix, MultipartFile file) {
         String mediaPath = appProperties.getMediaDirectoryPath();
 
-        String imagePath =  switch (imageTypeCode) {
-            case USER -> mediaPath + "/user";
-            case EVENT -> mediaPath + "/event";
-            case CATEGORY -> mediaPath + "/category";
-            case TYPE_HUMAN_MADE -> mediaPath + "/type/human-made";
-            case TYPE_NATURAL -> mediaPath + "/type/natural";
-            case TYPE_OTHER -> mediaPath + "/type/other";
+        if (file.getSize() == 0) {
+            throw new InvalidActionException(ApiErrorMessage.IMAGE_MANDATORY);
+        }
+        if (file.getOriginalFilename() == null) {
+            throw new InvalidActionException(ApiErrorMessage.IMAGE_NAME_MANDATORY);
+        }
+
+        switch (imageTypeCode) {
+            case USER, EVENT -> {
+                if (!file.getOriginalFilename().endsWith(".jpg")) {
+                    throw new InvalidActionException(ApiErrorMessage.INVALID_IMAGE_EXTENSION);
+                }
+            }
+            case CATEGORY, TYPE_HUMAN_MADE, TYPE_NATURAL, TYPE_OTHER -> {
+                if (!file.getOriginalFilename().endsWith(".png")) {
+                    throw new InvalidActionException(ApiErrorMessage.INVALID_IMAGE_EXTENSION);
+                }
+            }
+        }
+
+        String imageDirectoryPath = switch (imageTypeCode) {
+            case USER -> mediaPath + "user/";
+            case EVENT -> mediaPath + "event/";
+            case CATEGORY -> mediaPath + "category/";
+            case TYPE_HUMAN_MADE -> mediaPath + "type/human-made/";
+            case TYPE_NATURAL -> mediaPath + "type/natural/";
+            case TYPE_OTHER -> mediaPath + "type/other/";
         };
 
-        String imageName = switch (imageTypeCode) {
-            case USER -> "user_" + suffix;
-            case EVENT -> "event_" + suffix;
-            case CATEGORY -> "category_" + suffix;
-            case TYPE_HUMAN_MADE, TYPE_NATURAL, TYPE_OTHER -> "type_" + suffix;
+        String imageFileName = switch (imageTypeCode) {
+            case USER -> "user_" + suffix + ".jpg";
+            case EVENT -> "event_" + suffix + ".jpg";
+            case CATEGORY -> "category_" + suffix + ".png";
+            case TYPE_HUMAN_MADE, TYPE_NATURAL, TYPE_OTHER -> "type_" + suffix + ".png";
         };
 
-        String imageNameWithExtension = imageName + ".jpg";
+        String imageFilePath = imageDirectoryPath + imageFileName;
 
-        ClassPathResource imageResource = new ClassPathResource(imagePath);
+        ClassPathResource imageResource = new ClassPathResource(imageFilePath);
         log.info("Begin image write request");
 
         try {
             byte[] bytes = file.getBytes();
-            Path path = Paths.get(imageResource.getFile().getPath(), imageNameWithExtension);
+            Path path = Paths.get(imageResource.getFile().getPath());
             Files.write(path, bytes);
-            log.info("Image successfully stored: {}", imageNameWithExtension);
+            log.info("Image successfully stored: {}", imageFilePath);
         } catch (IOException e) {
             throw new StorageFailException(ApiErrorMessage.IMAGE_STORE_FAIL);
         }
 
-        return mediaPath + imageName;
+        return imageFilePath;
     }
 
 }

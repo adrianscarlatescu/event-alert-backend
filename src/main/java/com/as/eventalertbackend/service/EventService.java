@@ -165,7 +165,7 @@ public class EventService {
         Severity severity = severityService.findEntityById(eventCreateDTO.getSeverityId());
 
         if (user.getFirstName() == null || user.getLastName() == null) {
-            throw new InvalidActionException(ApiErrorMessage.PROFILE_FULL_NAME_REQUIRED);
+            throw new InvalidActionException(ApiErrorMessage.PROFILE_FULL_NAME_MANDATORY);
         }
 
         if (!fileService.imageExists(eventCreateDTO.getImagePath())) {

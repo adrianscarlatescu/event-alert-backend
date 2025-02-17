@@ -27,7 +27,7 @@ spring:
 
 app:
   name: "Event Alert"
-  media-directory-path: "media"
+  media-directory-path: "media/"
   security:
     secret: "SecretKeyToGenerateJWTs"
     access-token-expiration-time: 3600000 # 1 hour
