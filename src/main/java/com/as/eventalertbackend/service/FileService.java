@@ -31,7 +31,8 @@ public class FileService {
     }
 
     public boolean imageExists(String imagePath) {
-        if (!imagePath.startsWith(appProperties.getMediaDirectoryPath())) {
+        String mediaPath = appProperties.getMediaDirectoryPath();
+        if (!imagePath.startsWith(mediaPath)) {
             throw new StorageFailException(ApiErrorMessage.INVALID_IMAGE_PATH);
         }
 
