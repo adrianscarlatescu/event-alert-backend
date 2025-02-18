@@ -8,7 +8,7 @@ CREATE TABLE user
     first_name      VARCHAR(50)           NULL,
     last_name       VARCHAR(50)           NULL,
     date_of_birth   DATE                  NULL,
-    phone_number    VARCHAR(25)           NULL,
+    phone_number    VARCHAR(15)           NULL,
     image_path      VARCHAR(1000)         NULL,
     gender_code     VARCHAR(50)           NULL,
     reports_number  INT                   NOT NULL,

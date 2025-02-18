@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.as.eventalertbackend.AppConstants.LENGTH_1000;
+import static com.as.eventalertbackend.AppConstants.MAX_LENGTH_1000;
 
 @Entity
 @Table(name = "event")
@@ -36,10 +36,10 @@ public class Event {
     @Column(nullable = false)
     private Double longitude;
 
-    @Column(nullable = false, length = LENGTH_1000)
+    @Column(nullable = false, length = MAX_LENGTH_1000)
     private String imagePath;
 
-    @Column(length = LENGTH_1000)
+    @Column(length = MAX_LENGTH_1000)
     private String description;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)

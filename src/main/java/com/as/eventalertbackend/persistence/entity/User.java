@@ -41,25 +41,25 @@ public class User implements UserDetails {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(length = LENGTH_1000)
+    @Column(length = MAX_LENGTH_1000)
     private String password;
 
-    @Column(length = LENGTH_50)
+    @Column(length = MAX_LENGTH_50)
     private String firstName;
 
-    @Column(length = LENGTH_50)
+    @Column(length = MAX_LENGTH_50)
     private String lastName;
 
     private LocalDate dateOfBirth;
 
-    @Column(length = LENGTH_25)
+    @Column(length = MAX_LENGTH_15)
     private String phoneNumber;
 
-    @Column(length = LENGTH_1000)
+    @Column(length = MAX_LENGTH_1000)
     private String imagePath;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = LENGTH_50)
+    @Column(length = MAX_LENGTH_50)
     private GenderCode genderCode;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

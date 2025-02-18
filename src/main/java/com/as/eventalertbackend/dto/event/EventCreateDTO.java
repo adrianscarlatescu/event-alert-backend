@@ -10,7 +10,7 @@ import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
-import static com.as.eventalertbackend.AppConstants.LENGTH_1000;
+import static com.as.eventalertbackend.AppConstants.MAX_LENGTH_1000;
 
 @Getter
 @Setter
@@ -37,7 +37,7 @@ public class EventCreateDTO implements Serializable {
     @NotNull(message = "The user is mandatory")
     private Long userId;
 
-    @Size(max = LENGTH_1000, message = "The description must not exceed " + LENGTH_1000 + " characters")
+    @Size(max = MAX_LENGTH_1000, message = "The description must not exceed " + MAX_LENGTH_1000 + " characters")
     private String description;
 
 }
