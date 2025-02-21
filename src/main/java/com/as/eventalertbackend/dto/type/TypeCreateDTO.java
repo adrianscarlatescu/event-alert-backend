@@ -20,9 +20,9 @@ public class TypeCreateDTO implements Serializable {
     @NotNull(message = "The category is mandatory")
     private String categoryId;
 
-    @NotNull(message = "The code is mandatory")
-    @Size(max = MAX_LENGTH_50, message = "The code must not exceed " + MAX_LENGTH_50 + " characters")
-    private String code;
+    @NotNull(message = "The id is mandatory")
+    @Size(max = MAX_LENGTH_50, message = "The id must not exceed " + MAX_LENGTH_50 + " characters")
+    private String id;
 
     @NotBlank(message = "The label is mandatory")
     @Size(max = MAX_LENGTH_50, message = "The label must not exceed " + MAX_LENGTH_50 + " characters")

@@ -1,7 +1,5 @@
 package com.as.eventalertbackend.persistence.entity;
 
-import com.as.eventalertbackend.persistence.entity.lookup.Gender;
-import com.as.eventalertbackend.persistence.entity.lookup.Role;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

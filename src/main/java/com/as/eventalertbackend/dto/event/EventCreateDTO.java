@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import static com.as.eventalertbackend.AppConstants.*;
-import static com.as.eventalertbackend.AppConstants.MAX_RADIUS;
 
 @Getter
 @Setter

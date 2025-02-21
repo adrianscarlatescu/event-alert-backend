@@ -1,6 +1,5 @@
-package com.as.eventalertbackend.persistence.entity.lookup;
+package com.as.eventalertbackend.persistence.entity;
 
-import com.as.eventalertbackend.persistence.entity.Event;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,11 +11,11 @@ import static com.as.eventalertbackend.AppConstants.MAX_LENGTH_1000;
 import static com.as.eventalertbackend.AppConstants.MAX_LENGTH_50;
 
 @Entity
-@Table(name = "type")
+@Table(name = "category") // Lookup table
 @Getter
 @Setter
 @NoArgsConstructor
-public class Type {
+public class Category {
 
     @Id
     @Column(length = MAX_LENGTH_50)
@@ -31,11 +30,8 @@ public class Type {
     @Column(nullable = false, unique = true)
     private Integer position;
 
-    @OneToMany(mappedBy = "type")
-    private List<Event> events;
-
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @OneToMany(mappedBy = "category")
+    @OrderBy("position asc")
+    private List<Type> types;
 
 }

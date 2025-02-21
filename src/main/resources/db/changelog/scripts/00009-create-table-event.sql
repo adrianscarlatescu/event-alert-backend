@@ -5,7 +5,7 @@ CREATE TABLE event
     modified_at   datetime              NULL,
     latitude      DOUBLE                NOT NULL,
     longitude     DOUBLE                NOT NULL,
-    impact_radius DECIMAL(7, 2)         NULL,
+    impact_radius DECIMAL(6, 2)         NULL,
     image_path    VARCHAR(1000)         NOT NULL,
     description   VARCHAR(1000)         NULL,
     severity_id   VARCHAR(50)           NOT NULL,
@@ -19,7 +19,7 @@ ALTER TABLE event
     ADD CONSTRAINT ck_event_min_radius CHECK (impact_radius >= 0.00);
 
 ALTER TABLE event
-    ADD CONSTRAINT ck_event_max_radius CHECK (impact_radius <= 10000.00);
+    ADD CONSTRAINT ck_event_max_radius CHECK (impact_radius <= 1000.00);
 
 ALTER TABLE event
     ADD CONSTRAINT fk_event_on_user FOREIGN KEY (user_id) REFERENCES user (id);

@@ -1,17 +1,17 @@
 insert into role
-(id, label, description, position)
+    (id, label, description, position)
 values
     ('ROLE_BASIC', 'Basic', 'Access to the main features of the application', 1),
     ('ROLE_ADMIN', 'Admin', 'High privileged access to create, modify or delete resources', 2);
 
 insert into gender
-(id, label, position)
+    (id, label, position)
 values
     ('MALE', 'Male', 1),
     ('FEMALE', 'Female', 2);
 
 insert into user
-(id, email, first_name, last_name, gender_id, date_of_birth, phone_number, image_path, joined_at)
+    (id, email, first_name, last_name, gender_id, date_of_birth, phone_number, image_path, joined_at)
 values
     (1, 'user1@test.com' , 'Alan', 'Walter', 'MALE', '1984-05-23', '+03442777999', 'media/user/user_1.jpg', '2020-03-15 11:30:00'),
     (2, 'user2@test.com', 'John', 'Smith', 'MALE', '1987-10-16', '+44627779991', 'media/user/user_2.jpg', '2020-03-15 11:30:00'),
@@ -30,14 +30,14 @@ values
     (5, 'ROLE_BASIC');
 
 insert into category
-(id, label, image_path, position)
+    (id, label, image_path, position)
 values
     ('HUMAN_MADE', 'Human-made', 'media/category/category_human_made.png', 1),
     ('NATURAL', 'Natural', 'media/category/category_natural.png', 2),
     ('OTHER', 'Other', 'media/category/category_other.png', 3);
 
 insert into type
-(id, label, image_path, category_id, position)
+    (id, label, image_path, category_id, position)
 values
     ('BLOCKED_ROAD', 'Blocked road', 'media/type/type_blocked_road.png', 'HUMAN_MADE', 1),
     ('DRUG_ACTIVITY', 'Drug activity', 'media/type/type_drug_activity.png', 'HUMAN_MADE', 2),
@@ -82,26 +82,26 @@ values
     ('OTHER', 'Other', 'media/type/type_other.png', 'OTHER', 39);
 
 insert into severity
-(id, label, color, position)
+    (id, label, color, position)
 values
-    ('EXTREME', 'Extreme', 16711680, 1),
-    ('MAJOR', 'Major', 16745779, 2),
-    ('MINOR', 'Minor', 16762980, 3),
-    ('TRIVIAL', 'Trivial', 11192420, 4);
+    ('EXTREME', 'Extreme', '#FF0000', 1),
+    ('MAJOR', 'Major', '#FF8533', 2),
+    ('MINOR', 'Minor', '#FFC864', 3),
+    ('TRIVIAL', 'Trivial', '#AAC864', 4);
 
 insert into status
-(id, label, color, description, position)
+    (id, label, color, description, position)
 values
-    ('PENDING', 'Pending', 16745779, 'The event has not yet occurred', 1),
-    ('ACTIVE_ONGOING', 'Active/Ongoing', 16745779, 'The event is currently occurring', 2),
-    ('CONTAINED', 'Contained', 16745779, 'The situation is under control, but risks remain', 3),
-    ('RESOLVED', 'Resolved', 16745779, 'Immediate danger has passed', 4),
-    ('RECOVERY', 'Recovery', 16745779, 'Efforts are ongoing to recover the effects', 5),
-    ('CLOSED', 'Closed', 16745779, 'The event is concluded or no more relevant', 6),
-    ('CANCELED', 'Canceled', 16745779, 'The event was a false alarm or did not escalate', 7);
+    ('PENDING', 'Pending', '#E3EE00', 'The event has not yet occurred', 1),
+    ('ACTIVE_ONGOING', 'Active/Ongoing', '#07E300', 'The event is currently occurring', 2),
+    ('CONTAINED', 'Contained', '#00E3B9', 'The situation is under control, but risks remain', 3),
+    ('RESOLVED', 'Resolved', '#00D1EE', 'Immediate danger has passed', 4),
+    ('RECOVERY', 'Recovery', '#AD00EE', 'Efforts are ongoing to recover the effects', 5),
+    ('CLOSED', 'Closed', '#909090', 'The event is concluded or no longer relevant', 6),
+    ('CANCELED', 'Canceled', '#EE3600', 'The event was a false alarm or did not escalate', 7);
 
 insert into event
-(id, created_at, image_path, latitude, longitude, impact_radius, severity_id, type_id, status_id, user_id)
+    (id, created_at, image_path, latitude, longitude, impact_radius, severity_id, type_id, status_id, user_id)
 values
     (1, '2020-04-10 09:10:00', 'media/event/event_1.jpg', 44.3820459, 26.171588, 10, 'EXTREME', 'FLOOD', 'ACTIVE_ONGOING', 1),
     (2, '2020-04-10 13:11:16', 'media/event/event_2.jpg', 44.4073963, 26.1265611, 1, 'EXTREME', 'FIRE', 'RESOLVED', 1),
@@ -133,7 +133,7 @@ values
     (28, '2020-05-02 14:32:11', 'media/event/event_28.jpg', 50.0596496, 19.925144, null, 'MINOR', 'RAIN', 'CLOSED', 3),
     (29, '2020-05-02 15:26:47', 'media/event/event_29.jpg', 52.0487892, 29.2550429, null, 'MINOR', 'SNOW', 'ACTIVE_ONGOING', 3),
     (30, '2020-05-02 16:10:10', 'media/event/event_30.jpg', 56.946783, 23.6172156, 75, 'EXTREME', 'STORM', 'PENDING', 3),
-    (31, '2020-05-02 18:52:09', 'media/event/event_31.jpg', 25.2640939, 63.4767481, 750, 'EXTREME', 'TSUNAMI', 'ACTIVE_ONGOING', 3),
+    (31, '2020-05-02 18:52:09', 'media/event/event_31.jpg', 25.2640939, 63.4767481, 500, 'EXTREME', 'TSUNAMI', 'ACTIVE_ONGOING', 3),
     (32, '2020-05-03 08:22:09', 'media/event/event_32.jpg', 46.0611305, 8.4043662, 5, 'TRIVIAL', 'AVALANCHE', 'RECOVERY', 3),
     (33, '2020-05-03 10:13:55', 'media/event/event_33.jpg', 51.5148142, -0.0651437, 0, 'EXTREME', 'MURDER_CRIME', 'RESOLVED', 3),
     (34, '2020-05-03 14:02:13', 'media/event/event_34.jpg', 46.6053988, 27.7682106, 0, 'EXTREME', 'MURDER_CRIME', 'RESOLVED', 3),
@@ -141,13 +141,13 @@ values
     (36, '2020-05-03 16:21:08', 'media/event/event_36.jpg', 50.1123254, 8.6719538, 250, 'MAJOR', 'POLLUTION', 'ACTIVE_ONGOING', 4),
     (37, '2020-05-03 17:12:04', 'media/event/event_37.jpg', 44.7803392, 20.4701967, null, 'MINOR', 'INDUSTRIAL_ACCIDENT', 'ACTIVE_ONGOING', 4),
     (38, '2020-05-04 09:25:54', 'media/event/event_38.jpg', 48.8529932, 2.3499773, null, 'TRIVIAL', 'INFRASTRUCTURE_DAMAGE', 'PENDING', 4),
-    (39, '2020-05-04 11:34:15', 'media/event/event_39.jpg', 41.6451143, -0.8764002, 1500, 'TRIVIAL', 'NUCLEAR_RADIATION', 'ACTIVE_ONGOING', 4),
+    (39, '2020-05-04 11:34:15', 'media/event/event_39.jpg', 41.6451143, -0.8764002, 1000, 'TRIVIAL', 'NUCLEAR_RADIATION', 'ACTIVE_ONGOING', 4),
     (40, '2020-05-04 14:01:00', 'media/event/event_40.jpg', 42.6883485, 23.3344281, 250, 'MAJOR', 'POLLUTION', 'ACTIVE_ONGOING', 4),
     (41, '2020-05-04 15:22:18', 'media/event/event_41.jpg', 55.7373716, 37.5287146, 0, 'MINOR', 'VANDALISM', 'RECOVERY', 4),
     (42, '2020-05-04 16:00:28', 'media/event/event_42.jpg', 44.3196796, 23.8032826, 0, 'TRIVIAL', 'VANDALISM', 'RECOVERY', 4);
 
 insert into comment
-(id, created_at, event_id, user_id, comment)
+    (id, created_at, event_id, user_id, comment)
 values
     (1, '2020-04-10 17:15:11', 2, 2, 'Is everything fine out there?'),
     (2, '2020-04-10 18:44:02', 2, 3, 'I''ve seen that the fire passed and only one person got hurt. I will try to get in contact with someone out there.'),

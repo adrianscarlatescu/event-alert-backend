@@ -7,8 +7,8 @@ import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
 import com.as.eventalertbackend.error.exception.ResourceNotFoundException;
-import com.as.eventalertbackend.persistence.entity.lookup.Category;
-import com.as.eventalertbackend.persistence.entity.lookup.Type;
+import com.as.eventalertbackend.persistence.entity.Category;
+import com.as.eventalertbackend.persistence.entity.Type;
 import com.as.eventalertbackend.persistence.reopsitory.TypeRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +58,7 @@ public class TypeService {
     public TypeDTO save(TypeCreateDTO typeCreateDTO) {
         Type type = new Type();
 
-        if (typeRepository.existsById(typeCreateDTO.getCode())) {
+        if (typeRepository.existsById(typeCreateDTO.getId())) {
             throw new InvalidActionException(ApiErrorMessage.TYPE_ID_EXISTS);
         }
         if (typeRepository.existsByPosition(typeCreateDTO.getPosition())) {
@@ -68,7 +68,7 @@ public class TypeService {
             throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
         }
 
-        type.setId(typeCreateDTO.getCode());
+        type.setId(typeCreateDTO.getId());
         type.setLabel(typeCreateDTO.getLabel());
         type.setImagePath(typeCreateDTO.getImagePath());
         type.setPosition(typeCreateDTO.getPosition());
@@ -82,7 +82,7 @@ public class TypeService {
     public TypeDTO updateById(TypeUpdateDTO typeUpdateDTO, String id) {
         Type type = findEntityById(id);
 
-        if (typeRepository.existsByPosition(typeUpdateDTO.getPosition())) {
+        if (typeRepository.existsByPositionAndIdIsNot(typeUpdateDTO.getPosition(), id)) {
             throw new InvalidActionException(ApiErrorMessage.TYPE_POSITION_EXISTS);
         }
         if (!fileService.imageExists(typeUpdateDTO.getImagePath())) {

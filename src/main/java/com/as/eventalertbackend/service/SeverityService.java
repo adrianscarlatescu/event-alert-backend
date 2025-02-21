@@ -6,7 +6,7 @@ import com.as.eventalertbackend.dto.severity.SeverityUpdateDTO;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
-import com.as.eventalertbackend.persistence.entity.lookup.Severity;
+import com.as.eventalertbackend.persistence.entity.Severity;
 import com.as.eventalertbackend.persistence.reopsitory.SeverityRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +67,7 @@ public class SeverityService {
     public SeverityDTO updateById(SeverityUpdateDTO severityUpdateDTO, String id) {
         Severity severity = findEntityById(id);
 
-        if (severityRepository.existsByPosition(severityUpdateDTO.getPosition())) {
+        if (severityRepository.existsByPositionAndIdIsNot(severityUpdateDTO.getPosition(), id)) {
             throw new InvalidActionException(ApiErrorMessage.SEVERITY_POSITION_EXISTS);
         }
 

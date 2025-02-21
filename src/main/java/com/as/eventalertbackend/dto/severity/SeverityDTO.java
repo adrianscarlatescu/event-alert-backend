@@ -13,7 +13,7 @@ public class SeverityDTO implements Serializable {
 
     private String id;
     private String label;
-    private Integer color;
+    private String color;
     private Integer position;
 
 }

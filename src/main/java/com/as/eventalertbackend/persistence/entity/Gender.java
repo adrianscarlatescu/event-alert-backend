@@ -1,4 +1,4 @@
-package com.as.eventalertbackend.persistence.entity.lookup;
+package com.as.eventalertbackend.persistence.entity;
 
 import com.as.eventalertbackend.enums.id.GenderId;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import javax.persistence.*;
 import static com.as.eventalertbackend.AppConstants.MAX_LENGTH_50;
 
 @Entity
-@Table(name = "gender")
+@Table(name = "gender") // Lookup table
 @Getter
 @Setter
 @NoArgsConstructor

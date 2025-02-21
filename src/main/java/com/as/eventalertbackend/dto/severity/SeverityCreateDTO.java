@@ -10,6 +10,7 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
+import static com.as.eventalertbackend.AppConstants.FIXED_COLOR_LENGTH;
 import static com.as.eventalertbackend.AppConstants.MAX_LENGTH_50;
 
 @Getter
@@ -18,7 +19,7 @@ import static com.as.eventalertbackend.AppConstants.MAX_LENGTH_50;
 public class SeverityCreateDTO implements Serializable {
 
     @NotBlank(message = "The id is mandatory")
-    @Size(max = MAX_LENGTH_50, message = "The code must not exceed " + MAX_LENGTH_50 + " characters")
+    @Size(max = MAX_LENGTH_50, message = "The id must not exceed " + MAX_LENGTH_50 + " characters")
     private String id;
 
     @NotBlank(message = "The label is mandatory")
@@ -26,7 +27,8 @@ public class SeverityCreateDTO implements Serializable {
     private String label;
 
     @NotNull(message = "The color is mandatory")
-    private Integer color;
+    @Size(min = FIXED_COLOR_LENGTH, max = FIXED_COLOR_LENGTH, message = "The color must have exactly " + FIXED_COLOR_LENGTH + " characters")
+    private String color;
 
     @NotNull(message = "The position is mandatory")
     @Positive(message = "The position must be greater than 0")

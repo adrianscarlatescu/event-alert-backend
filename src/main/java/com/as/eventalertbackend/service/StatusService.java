@@ -6,7 +6,7 @@ import com.as.eventalertbackend.dto.status.StatusUpdateDTO;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
-import com.as.eventalertbackend.persistence.entity.lookup.Status;
+import com.as.eventalertbackend.persistence.entity.Status;
 import com.as.eventalertbackend.persistence.reopsitory.StatusRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +52,7 @@ public class StatusService {
         if (statusRepository.existsById(statusCreateDTO.getId())) {
             throw new InvalidActionException(ApiErrorMessage.STATUS_ID_EXISTS);
         }
-        if (statusRepository.existsByPositionAndIdNot(statusCreateDTO.getPosition(), statusCreateDTO.getId())) {
+        if (statusRepository.existsByPosition(statusCreateDTO.getPosition())) {
             throw new InvalidActionException(ApiErrorMessage.STATUS_POSITION_EXISTS);
         }
 
@@ -68,7 +68,7 @@ public class StatusService {
     public StatusDTO updateById(StatusUpdateDTO statusUpdateDTO, String id) {
         Status status = findEntityById(id);
 
-        if (statusRepository.existsByPositionAndIdNot(statusUpdateDTO.getPosition(), id)) {
+        if (statusRepository.existsByPositionAndIdIsNot(statusUpdateDTO.getPosition(), id)) {
             throw new InvalidActionException(ApiErrorMessage.STATUS_POSITION_EXISTS);
         }
 

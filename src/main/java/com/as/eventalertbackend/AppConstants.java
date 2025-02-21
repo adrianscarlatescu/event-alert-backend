@@ -13,7 +13,7 @@ public abstract class AppConstants {
     public static final String MIN_IMPACT_RADIUS = "0.00";
     public static final String MAX_IMPACT_RADIUS = "10000.00";
 
-    public static final int MIN_POSITION = 0;
+    public static final int FIXED_COLOR_LENGTH = 7;
 
     public static final int MIN_RADIUS = 1;
     public static final int MAX_RADIUS = 10_000;

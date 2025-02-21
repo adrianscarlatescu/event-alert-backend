@@ -13,7 +13,7 @@ public class StatusDTO implements Serializable {
 
     private String id;
     private String label;
-    private Integer color;
+    private String color;
     private String description;
     private Integer position;
 

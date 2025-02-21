@@ -3,7 +3,7 @@ package com.as.eventalertbackend.service;
 import com.as.eventalertbackend.enums.id.RoleId;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
-import com.as.eventalertbackend.persistence.entity.lookup.Role;
+import com.as.eventalertbackend.persistence.entity.Role;
 import com.as.eventalertbackend.persistence.reopsitory.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

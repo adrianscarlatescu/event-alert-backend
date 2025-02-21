@@ -8,7 +8,7 @@ import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
 import com.as.eventalertbackend.error.exception.ResourceNotFoundException;
-import com.as.eventalertbackend.persistence.entity.lookup.Category;
+import com.as.eventalertbackend.persistence.entity.Category;
 import com.as.eventalertbackend.persistence.reopsitory.CategoryRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +37,8 @@ public class CategoryService {
         this.fileService = fileService;
     }
 
-    Category findEntityById(String code) {
-        return categoryRepository.findById(code)
+    Category findEntityById(String id) {
+        return categoryRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.CATEGORY_NOT_FOUND));
     }
 
@@ -48,8 +48,8 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
-    public CategoryDTO findById(String code) {
-        return mapper.map(findEntityById(code), CategoryDTO.class);
+    public CategoryDTO findById(String id) {
+        return mapper.map(findEntityById(id), CategoryDTO.class);
     }
 
     public CategoryBaseDTO save(CategoryCreateDTO categoryCreateDTO) {
@@ -73,10 +73,10 @@ public class CategoryService {
         return mapper.map(categoryRepository.save(category), CategoryBaseDTO.class);
     }
 
-    public CategoryBaseDTO updateById(CategoryUpdateDTO categoryUpdateDTO, String code) {
-        Category category = findEntityById(code);
+    public CategoryBaseDTO updateById(CategoryUpdateDTO categoryUpdateDTO, String id) {
+        Category category = findEntityById(id);
 
-        if (categoryRepository.existsByPosition(categoryUpdateDTO.getPosition())) {
+        if (categoryRepository.existsByPositionAndIdIsNot(categoryUpdateDTO.getPosition(), id)) {
             throw new InvalidActionException(ApiErrorMessage.CATEGORY_POSITION_EXISTS);
         }
         if (!fileService.imageExists(categoryUpdateDTO.getImagePath())) {

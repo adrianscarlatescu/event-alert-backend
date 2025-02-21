@@ -1,6 +1,7 @@
-package com.as.eventalertbackend.persistence.entity.lookup;
+package com.as.eventalertbackend.persistence.entity;
 
-import com.as.eventalertbackend.persistence.entity.Event;
+import com.as.eventalertbackend.enums.id.RoleId;
+import com.as.eventalertbackend.persistence.entity.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,21 +13,19 @@ import static com.as.eventalertbackend.AppConstants.MAX_LENGTH_1000;
 import static com.as.eventalertbackend.AppConstants.MAX_LENGTH_50;
 
 @Entity
-@Table(name = "status")
+@Table(name = "role") // Lookup table
 @Getter
 @Setter
 @NoArgsConstructor
-public class Status {
+public class Role {
 
     @Id
     @Column(length = MAX_LENGTH_50)
-    private String id;
+    @Enumerated(EnumType.STRING)
+    private RoleId id;
 
     @Column(nullable = false, length = MAX_LENGTH_50)
     private String label;
-
-    @Column(nullable = false)
-    private Integer color;
 
     @Column(nullable = false, length = MAX_LENGTH_1000)
     private String description;
@@ -34,7 +33,7 @@ public class Status {
     @Column(nullable = false, unique = true)
     private Integer position;
 
-    @OneToMany(mappedBy = "status")
-    private List<Event> events;
+    @ManyToMany(mappedBy = "roles")
+    private List<User> users;
 
 }

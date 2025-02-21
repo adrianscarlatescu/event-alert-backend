@@ -1,8 +1,5 @@
 package com.as.eventalertbackend.persistence.entity;
 
-import com.as.eventalertbackend.persistence.entity.lookup.Severity;
-import com.as.eventalertbackend.persistence.entity.lookup.Status;
-import com.as.eventalertbackend.persistence.entity.lookup.Type;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -40,7 +37,7 @@ public class Event {
     @Column(nullable = false)
     private Double longitude;
 
-    @Column(precision = 7, scale = 2)
+    @Column(precision = 6, scale = 2)
     private BigDecimal impactRadius;
 
     @ManyToOne

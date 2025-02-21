@@ -1,7 +1,5 @@
-package com.as.eventalertbackend.persistence.entity.lookup;
+package com.as.eventalertbackend.persistence.entity;
 
-import com.as.eventalertbackend.enums.id.RoleId;
-import com.as.eventalertbackend.persistence.entity.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,27 +11,30 @@ import static com.as.eventalertbackend.AppConstants.MAX_LENGTH_1000;
 import static com.as.eventalertbackend.AppConstants.MAX_LENGTH_50;
 
 @Entity
-@Table(name = "role")
+@Table(name = "type") // Lookup table
 @Getter
 @Setter
 @NoArgsConstructor
-public class Role {
+public class Type {
 
     @Id
     @Column(length = MAX_LENGTH_50)
-    @Enumerated(EnumType.STRING)
-    private RoleId id;
+    private String id;
 
     @Column(nullable = false, length = MAX_LENGTH_50)
     private String label;
 
     @Column(nullable = false, length = MAX_LENGTH_1000)
-    private String description;
+    private String imagePath;
 
     @Column(nullable = false, unique = true)
     private Integer position;
 
-    @ManyToMany(mappedBy = "roles")
-    private List<User> users;
+    @OneToMany(mappedBy = "type")
+    private List<Event> events;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
 }
