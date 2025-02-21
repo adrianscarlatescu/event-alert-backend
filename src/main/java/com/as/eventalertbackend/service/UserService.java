@@ -2,12 +2,13 @@ package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.dto.user.UserDTO;
 import com.as.eventalertbackend.dto.user.UserUpdateDTO;
+import com.as.eventalertbackend.enums.id.RoleId;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
 import com.as.eventalertbackend.error.exception.ResourceNotFoundException;
-import com.as.eventalertbackend.enums.RoleCode;
-import com.as.eventalertbackend.persistence.entity.Role;
+import com.as.eventalertbackend.persistence.entity.lookup.Gender;
+import com.as.eventalertbackend.persistence.entity.lookup.Role;
 import com.as.eventalertbackend.persistence.entity.User;
 import com.as.eventalertbackend.persistence.reopsitory.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -30,16 +31,19 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
 
     private final RoleService roleService;
+    private final GenderService genderService;
     private final FileService fileService;
 
     @Autowired
     public UserService(ModelMapper mapper,
                        UserRepository userRepository,
                        RoleService roleService,
+                       GenderService genderService,
                        FileService fileService) {
         this.mapper = mapper;
         this.userRepository = userRepository;
         this.roleService = roleService;
+        this.genderService = genderService;
         this.fileService = fileService;
     }
 
@@ -79,11 +83,18 @@ public class UserService implements UserDetailsService {
                 (userUpdateDTO.getFirstName() == null || userUpdateDTO.getLastName() == null)) {
             throw new InvalidActionException(ApiErrorMessage.PROFILE_FULL_NAME_MANDATORY);
         }
-        if (userUpdateDTO.getRoleCodes().stream().noneMatch(role -> role == RoleCode.ROLE_BASIC)) {
+        if (userUpdateDTO.getRoleIds().stream().noneMatch(role -> role == RoleId.ROLE_BASIC)) {
             throw new InvalidActionException(ApiErrorMessage.DEFAULT_ROLE_MANDATORY);
         }
         if (userUpdateDTO.getImagePath() != null && !fileService.imageExists(userUpdateDTO.getImagePath())) {
             throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
+        }
+
+        if (userUpdateDTO.getGenderId() != null) {
+            Gender gender = genderService.findEntityByCode(userUpdateDTO.getGenderId());
+            user.setGender(gender);
+        } else {
+            user.setGender(null);
         }
 
         user.setFirstName(userUpdateDTO.getFirstName());
@@ -91,9 +102,8 @@ public class UserService implements UserDetailsService {
         user.setDateOfBirth(userUpdateDTO.getDateOfBirth());
         user.setPhoneNumber(userUpdateDTO.getPhoneNumber());
         user.setImagePath(userUpdateDTO.getImagePath());
-        user.setGenderCode(userUpdateDTO.getGenderCode());
 
-        List<Role> roles = roleService.findAllEntitiesByCode(userUpdateDTO.getRoleCodes());
+        List<Role> roles = roleService.findAllEntitiesByCode(userUpdateDTO.getRoleIds());
         user.setRoles(roles);
 
         return mapper.map(user, UserDTO.class);

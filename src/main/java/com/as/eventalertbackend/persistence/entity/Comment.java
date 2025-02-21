@@ -22,8 +22,8 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @CreationTimestamp
     @Column(nullable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
     @UpdateTimestamp

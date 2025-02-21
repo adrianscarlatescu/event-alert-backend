@@ -1,8 +1,8 @@
 CREATE TABLE users_roles
 (
-    user_id BIGINT NOT NULL,
-    role_id BIGINT NOT NULL,
-    CONSTRAINT pk_users_roles PRIMARY KEY (role_id, user_id)
+    user_id     BIGINT      NOT NULL,
+    role_id     VARCHAR(50) NOT NULL,
+    CONSTRAINT pk_users_roles PRIMARY KEY (user_id, role_id)
 );
 
 ALTER TABLE users_roles

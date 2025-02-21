@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
@@ -16,9 +17,9 @@ import static com.as.eventalertbackend.AppConstants.MAX_LENGTH_50;
 @NoArgsConstructor
 public class SeverityCreateDTO implements Serializable {
 
-    @NotBlank(message = "The code is mandatory")
+    @NotBlank(message = "The id is mandatory")
     @Size(max = MAX_LENGTH_50, message = "The code must not exceed " + MAX_LENGTH_50 + " characters")
-    private String code;
+    private String id;
 
     @NotBlank(message = "The label is mandatory")
     @Size(max = MAX_LENGTH_50, message = "The label must not exceed " + MAX_LENGTH_50 + " characters")
@@ -26,5 +27,9 @@ public class SeverityCreateDTO implements Serializable {
 
     @NotNull(message = "The color is mandatory")
     private Integer color;
+
+    @NotNull(message = "The position is mandatory")
+    @Positive(message = "The position must be greater than 0")
+    private Integer position;
 
 }

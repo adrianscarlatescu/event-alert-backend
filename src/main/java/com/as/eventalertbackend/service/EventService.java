@@ -1,20 +1,17 @@
 package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.AppConstants;
-import com.as.eventalertbackend.dto.event.EventCreateDTO;
-import com.as.eventalertbackend.dto.event.EventDTO;
-import com.as.eventalertbackend.dto.event.EventFilterDTO;
-import com.as.eventalertbackend.dto.event.EventUpdateDTO;
+import com.as.eventalertbackend.dto.event.*;
 import com.as.eventalertbackend.dto.page.PageDTO;
 import com.as.eventalertbackend.enums.OrderCode;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
 import com.as.eventalertbackend.error.exception.ResourceNotFoundException;
-import com.as.eventalertbackend.persistence.entity.Event;
-import com.as.eventalertbackend.persistence.entity.Severity;
-import com.as.eventalertbackend.persistence.entity.Type;
-import com.as.eventalertbackend.persistence.entity.User;
+import com.as.eventalertbackend.persistence.entity.*;
+import com.as.eventalertbackend.persistence.entity.lookup.Severity;
+import com.as.eventalertbackend.persistence.entity.lookup.Status;
+import com.as.eventalertbackend.persistence.entity.lookup.Type;
 import com.as.eventalertbackend.persistence.projection.EventProjection;
 import com.as.eventalertbackend.persistence.reopsitory.EventRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +40,7 @@ public class EventService {
 
     private final SeverityService severityService;
     private final TypeService typeService;
+    private final StatusService statusService;
     private final UserService userService;
     private final FileService fileService;
     private final NotificationService notificationService;
@@ -52,6 +50,7 @@ public class EventService {
                         EventRepository eventRepository,
                         SeverityService severityService,
                         TypeService typeService,
+                        StatusService statusService,
                         UserService userService,
                         FileService fileService,
                         NotificationService notificationService) {
@@ -59,6 +58,7 @@ public class EventService {
         this.eventRepository = eventRepository;
         this.severityService = severityService;
         this.typeService = typeService;
+        this.statusService = statusService;
         this.userService = userService;
         this.fileService = fileService;
         this.notificationService = notificationService;
@@ -79,16 +79,16 @@ public class EventService {
                 .collect(Collectors.toList());
     }
 
-    public PageDTO<EventDTO> findByFilter(EventFilterDTO filterRequest, int pageSize, int pageNumber, OrderCode orderCode) {
+    public PageDTO<EventBaseDTO> findByFilter(EventFilterDTO eventFilterDTO, int pageSize, int pageNumber, OrderCode orderCode) {
         if (pageSize > AppConstants.MAX_PAGE_SIZE) {
             throw new InvalidActionException(ApiErrorMessage.FILTER_MAX_PAGE_SIZE);
         }
 
-        if (filterRequest.getStartDate().isAfter(filterRequest.getEndDate())) {
+        if (eventFilterDTO.getStartDate().isAfter(eventFilterDTO.getEndDate())) {
             throw new InvalidActionException(ApiErrorMessage.FILTER_END_DATE_AFTER_START_DATE);
         }
 
-        if (filterRequest.getEndDate().getYear() - filterRequest.getStartDate().getYear() > AppConstants.MAX_YEARS_INTERVAL) {
+        if (eventFilterDTO.getEndDate().getYear() - eventFilterDTO.getStartDate().getYear() > AppConstants.MAX_YEARS_INTERVAL) {
             throw new InvalidActionException(ApiErrorMessage.FILTER_MAX_YEARS_INTERVAL);
         }
 
@@ -96,17 +96,17 @@ public class EventService {
             orderCode = OrderCode.BY_DATE_DESCENDING;
         }
 
-        LocalDateTime startDateTime = filterRequest.getStartDate().atStartOfDay();
-        LocalDateTime endDateTime = filterRequest.getEndDate().atTime(23, 59, 59);
+        LocalDateTime startDateTime = eventFilterDTO.getStartDate().atStartOfDay();
+        LocalDateTime endDateTime = eventFilterDTO.getEndDate().atTime(23, 59, 59);
 
         List<EventProjection> eventProjections = eventRepository.findByFilter(
-                filterRequest.getLatitude(),
-                filterRequest.getLongitude(),
-                filterRequest.getRadius(),
+                eventFilterDTO.getLatitude(),
+                eventFilterDTO.getLongitude(),
+                eventFilterDTO.getRadius(),
                 startDateTime,
                 endDateTime,
-                filterRequest.getTypeIds(),
-                filterRequest.getSeverityIds()
+                eventFilterDTO.getTypeIds(),
+                eventFilterDTO.getSeverityIds()
         );
 
         if (orderCode == OrderCode.BY_DISTANCE_DESCENDING) {
@@ -152,7 +152,7 @@ public class EventService {
                 eventsPage.getTotalPages(),
                 eventsPage.getTotalElements(),
                 eventsPage.getContent().stream()
-                        .map(event -> mapper.map(event, EventDTO.class))
+                        .map(event -> mapper.map(event, EventBaseDTO.class))
                         .collect(Collectors.toList())
         );
     }
@@ -160,9 +160,10 @@ public class EventService {
     public EventDTO save(EventCreateDTO eventCreateDTO) {
         Event newEvent = new Event();
 
-        User user = userService.findEntityById(eventCreateDTO.getUserId());
         Type type = typeService.findEntityById(eventCreateDTO.getTypeId());
         Severity severity = severityService.findEntityById(eventCreateDTO.getSeverityId());
+        Status status = statusService.findEntityById(eventCreateDTO.getStatusId());
+        User user = userService.findEntityById(eventCreateDTO.getUserId());
 
         if (user.getFirstName() == null || user.getLastName() == null) {
             throw new InvalidActionException(ApiErrorMessage.PROFILE_FULL_NAME_MANDATORY);
@@ -174,11 +175,13 @@ public class EventService {
 
         newEvent.setLatitude(eventCreateDTO.getLatitude());
         newEvent.setLongitude(eventCreateDTO.getLongitude());
-        newEvent.setImagePath(eventCreateDTO.getImagePath());
-        newEvent.setDescription(eventCreateDTO.getDescription());
+        newEvent.setImpactRadius(eventCreateDTO.getImpactRadius());
         newEvent.setSeverity(severity);
         newEvent.setType(type);
+        newEvent.setStatus(status);
         newEvent.setUser(user);
+        newEvent.setImagePath(eventCreateDTO.getImagePath());
+        newEvent.setDescription(eventCreateDTO.getDescription());
 
         Event event = eventRepository.save(newEvent);
 
@@ -187,20 +190,19 @@ public class EventService {
         return mapper.map(event, EventDTO.class);
     }
 
-    public EventDTO updateById(EventUpdateDTO eventUpdateDTO, Long id) {
+    public EventDTO updateById(EventUpdateDTO eventStatusUpdateDTO, Long id) {
         Event event = findEntityById(id);
 
-        Type type = typeService.findEntityById(eventUpdateDTO.getTypeId());
-        Severity severity = severityService.findEntityById(eventUpdateDTO.getSeverityId());
+        Type type = typeService.findEntityById(eventStatusUpdateDTO.getTypeId());
+        Severity severity = severityService.findEntityById(eventStatusUpdateDTO.getSeverityId());
+        Status status = statusService.findEntityById(eventStatusUpdateDTO.getStatusId());
 
-        if (!fileService.imageExists(eventUpdateDTO.getImagePath())) {
-            throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
-        }
-
-        event.setImagePath(eventUpdateDTO.getImagePath());
-        event.setDescription(eventUpdateDTO.getDescription());
+        event.setImpactRadius(eventStatusUpdateDTO.getImpactRadius());
         event.setSeverity(severity);
         event.setType(type);
+        event.setStatus(status);
+        event.setImagePath(eventStatusUpdateDTO.getImagePath());
+        event.setDescription(eventStatusUpdateDTO.getDescription());
 
         return mapper.map(event, EventDTO.class);
     }

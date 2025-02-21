@@ -1,0 +1,30 @@
+package com.as.eventalertbackend.persistence.entity.lookup;
+
+import com.as.eventalertbackend.enums.id.GenderId;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import javax.persistence.*;
+
+import static com.as.eventalertbackend.AppConstants.MAX_LENGTH_50;
+
+@Entity
+@Table(name = "gender")
+@Getter
+@Setter
+@NoArgsConstructor
+public class Gender {
+
+    @Id
+    @Column(length = MAX_LENGTH_50)
+    @Enumerated(EnumType.STRING)
+    private GenderId id;
+
+    @Column(nullable = false, length = MAX_LENGTH_50)
+    private String label;
+
+    @Column(nullable = false, unique = true)
+    private Integer position;
+
+}

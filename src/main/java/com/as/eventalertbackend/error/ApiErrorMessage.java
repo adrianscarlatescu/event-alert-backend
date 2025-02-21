@@ -23,20 +23,29 @@ public enum ApiErrorMessage {
     INVALID_IMAGE_PATH("Invalid image path"),
 
     ROLE_NOT_FOUND("Role not found"),
+    GENDER_NOT_FOUND("Gender not found"),
     USER_NOT_FOUND("User not found"),
-    SEVERITY_NOT_FOUND("Severity not found"),
+    STATUS_NOT_FOUND("Status not found"),
     CATEGORY_NOT_FOUND("Category not found"),
+    SEVERITY_NOT_FOUND("Severity not found"),
     TYPE_NOT_FOUND("Type not found"),
     COMMENT_NOT_FOUND("Comment not found"),
     EVENT_NOT_FOUND("Event not found"),
 
-    SEVERITY_CODE_EXISTS("A severity with this code already exists"),
-    CATEGORY_CODE_EXISTS("A category with this code already exists"),
-    TYPE_CODE_EXISTS("A type with this code already exists"),
+    CATEGORY_ID_EXISTS("A category with this id already exists"),
+    TYPE_ID_EXISTS("A type with this id already exists"),
+    SEVERITY_ID_EXISTS("A severity with this id already exists"),
+    STATUS_ID_EXISTS("A status with this id already exists"),
 
-    SEVERITY_REFERENCED("The severity is still referenced by one or more events"),
+    CATEGORY_POSITION_EXISTS("A category with this position already exists"),
+    TYPE_POSITION_EXISTS("A type with this position already exists"),
+    SEVERITY_POSITION_EXISTS("A severity with this position already exists"),
+    STATUS_POSITION_EXISTS("A status with this position already exists"),
+
     CATEGORY_REFERENCED("The category is still referenced by one or more types"),
     TYPE_REFERENCED("The type is still referenced by one or more events"),
+    SEVERITY_REFERENCED("The severity is still referenced by one or more events"),
+    STATUS_REFERENCED("The status is still referenced by one or more events"),
 
     DEFAULT_ROLE_MANDATORY("The default role is mandatory"),
 

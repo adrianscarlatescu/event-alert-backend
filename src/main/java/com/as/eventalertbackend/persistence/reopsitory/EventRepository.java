@@ -29,8 +29,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             Integer radius,
             LocalDateTime startDate,
             LocalDateTime endDate,
-            Set<Long> typeIds,
-            Set<Long> severityIds);
+            Set<String> typeIds,
+            Set<String> severityIds);
 
     @Query(value = "SELECT * FROM event WHERE id in ?1",
             countQuery = "SELECT COUNT(*) FROM event WHERE id in ?1",

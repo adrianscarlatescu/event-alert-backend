@@ -31,7 +31,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<CategoryDTO> getById(@PathVariable String id) {
         return ResponseEntity.ok(categoryService.findById(id));
     }
 
@@ -46,13 +46,13 @@ public class CategoryController {
     @Secured({"ROLE_ADMIN"})
     @PutMapping("/{id}")
     public ResponseEntity<CategoryBaseDTO> updateById(@Valid @RequestBody CategoryUpdateDTO categoryUpdateDTO,
-                                                      @PathVariable("id") Long id) {
+                                                      @PathVariable("id") String id) {
         return ResponseEntity.ok(categoryService.updateById(categoryUpdateDTO, id));
     }
 
     @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteByCode(@PathVariable("id") String id) {
         categoryService.deleteById(id);
         return ResponseEntity.ok().build();
     }

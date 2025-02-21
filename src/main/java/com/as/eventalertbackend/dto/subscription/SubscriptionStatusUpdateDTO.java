@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @NoArgsConstructor
-public class SubscriptionStatusDTO {
+public class SubscriptionStatusUpdateDTO {
 
     @NotNull(message = "The active status is mandatory")
     private Boolean isActive;

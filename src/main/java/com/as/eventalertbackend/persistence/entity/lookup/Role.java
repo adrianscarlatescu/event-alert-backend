@@ -1,6 +1,7 @@
-package com.as.eventalertbackend.persistence.entity;
+package com.as.eventalertbackend.persistence.entity.lookup;
 
-import com.as.eventalertbackend.enums.RoleCode;
+import com.as.eventalertbackend.enums.id.RoleId;
+import com.as.eventalertbackend.persistence.entity.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,18 +20,18 @@ import static com.as.eventalertbackend.AppConstants.MAX_LENGTH_50;
 public class Role {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    @Column(length = MAX_LENGTH_50)
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = MAX_LENGTH_50)
-    private RoleCode code;
+    private RoleId id;
 
     @Column(nullable = false, length = MAX_LENGTH_50)
     private String label;
 
     @Column(nullable = false, length = MAX_LENGTH_1000)
     private String description;
+
+    @Column(nullable = false, unique = true)
+    private Integer position;
 
     @ManyToMany(mappedBy = "roles")
     private List<User> users;

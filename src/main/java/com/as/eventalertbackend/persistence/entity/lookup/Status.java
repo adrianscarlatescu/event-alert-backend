@@ -1,5 +1,6 @@
-package com.as.eventalertbackend.persistence.entity;
+package com.as.eventalertbackend.persistence.entity.lookup;
 
+import com.as.eventalertbackend.persistence.entity.Event;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,27 +12,29 @@ import static com.as.eventalertbackend.AppConstants.MAX_LENGTH_1000;
 import static com.as.eventalertbackend.AppConstants.MAX_LENGTH_50;
 
 @Entity
-@Table(name = "category")
+@Table(name = "status")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Category {
+public class Status {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false, unique = true, length = MAX_LENGTH_50)
-    private String code; // More flexibility instead of using an enum
+    @Column(length = MAX_LENGTH_50)
+    private String id;
 
     @Column(nullable = false, length = MAX_LENGTH_50)
     private String label;
 
-    @Column(nullable = false, length = MAX_LENGTH_1000)
-    private String imagePath;
+    @Column(nullable = false)
+    private Integer color;
 
-    @OneToMany(mappedBy = "category")
-    @OrderBy("label asc")
-    private List<Type> types;
+    @Column(nullable = false, length = MAX_LENGTH_1000)
+    private String description;
+
+    @Column(nullable = false, unique = true)
+    private Integer position;
+
+    @OneToMany(mappedBy = "status")
+    private List<Event> events;
 
 }

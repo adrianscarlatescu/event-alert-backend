@@ -13,10 +13,10 @@ import java.util.List;
 @NoArgsConstructor
 public class CategoryDTO implements Serializable {
 
-    private Long id;
-    private String code;
+    private String id;
     private String label;
     private String imagePath;
+    private Integer position;
     private List<TypeBaseDTO> types;
 
 }

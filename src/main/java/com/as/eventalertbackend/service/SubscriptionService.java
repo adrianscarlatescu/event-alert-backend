@@ -79,19 +79,19 @@ public class SubscriptionService {
         return mapper.map(subscription, SubscriptionDTO.class);
     }
 
-    public SubscriptionDTO updateStatus(Long userId, String deviceToken, SubscriptionStatusDTO subscriptionStatusDTO) {
+    public SubscriptionDTO updateStatus(Long userId, String deviceToken, SubscriptionStatusUpdateDTO subscriptionStatusUpdateDTO) {
         Subscription subscription = findEntity(userId, deviceToken);
-        subscription.setIsActive(subscriptionStatusDTO.getIsActive());
+        subscription.setIsActive(subscriptionStatusUpdateDTO.getIsActive());
         return mapper.map(subscription, SubscriptionDTO.class);
     }
 
 
-    public void updateToken(String deviceId, SubscriptionTokenDTO subscriptionTokenDTO) {
+    public void updateToken(String deviceId, SubscriptionTokenUpdateDTO subscriptionTokenUpdateDTO) {
         log.info("Updating token for device");
         List<Subscription> subscriptions = subscriptionRepository.findAllByDeviceId(deviceId);
 
         if (!subscriptions.isEmpty()) {
-            subscriptions.forEach(subscription -> subscription.setFirebaseToken(subscriptionTokenDTO.getFirebaseToken()));
+            subscriptions.forEach(subscription -> subscription.setFirebaseToken(subscriptionTokenUpdateDTO.getFirebaseToken()));
             log.info("Tokens successfully updated");
         } else {
             log.info("No subscriptions eligible, skip update");

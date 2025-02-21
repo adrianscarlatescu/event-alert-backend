@@ -10,6 +10,11 @@ public abstract class AppConstants {
 
     public static final String PHONE_NUMBER_PATTERN = "^[- +()0-9]{10,15}$";
 
+    public static final String MIN_IMPACT_RADIUS = "0.00";
+    public static final String MAX_IMPACT_RADIUS = "10000.00";
+
+    public static final int MIN_POSITION = 0;
+
     public static final int MIN_RADIUS = 1;
     public static final int MAX_RADIUS = 10_000;
     public static final int MAX_YEARS_INTERVAL = 2;

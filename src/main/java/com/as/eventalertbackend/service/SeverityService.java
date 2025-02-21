@@ -6,7 +6,7 @@ import com.as.eventalertbackend.dto.severity.SeverityUpdateDTO;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
-import com.as.eventalertbackend.persistence.entity.Severity;
+import com.as.eventalertbackend.persistence.entity.lookup.Severity;
 import com.as.eventalertbackend.persistence.reopsitory.SeverityRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,45 +31,54 @@ public class SeverityService {
         this.severityRepository = severityRepository;
     }
 
-    Severity findEntityById(Long id) {
+    Severity findEntityById(String id) {
         return severityRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.SEVERITY_NOT_FOUND));
     }
 
     public List<SeverityDTO> findAll() {
-        return severityRepository.findAll().stream()
+        return severityRepository.findAllByOrderByPositionAsc().stream()
                 .map(severity -> mapper.map(severity, SeverityDTO.class))
                 .collect(Collectors.toList());
     }
 
-    public SeverityDTO findById(Long id) {
+    public SeverityDTO findById(String id) {
         return mapper.map(findEntityById(id), SeverityDTO.class);
     }
 
     public SeverityDTO save(SeverityCreateDTO severityCreateDTO) {
         Severity severity = new Severity();
 
-        if (severityRepository.existsByCode(severityCreateDTO.getCode())) {
-            throw new InvalidActionException(ApiErrorMessage.SEVERITY_CODE_EXISTS);
+        if (severityRepository.existsById(severityCreateDTO.getId())) {
+            throw new InvalidActionException(ApiErrorMessage.SEVERITY_ID_EXISTS);
+        }
+        if (severityRepository.existsByPosition(severityCreateDTO.getPosition())) {
+            throw new InvalidActionException(ApiErrorMessage.SEVERITY_POSITION_EXISTS);
         }
 
-        severity.setCode(severityCreateDTO.getCode());
+        severity.setId(severityCreateDTO.getId());
         severity.setLabel(severityCreateDTO.getLabel());
         severity.setColor(severityCreateDTO.getColor());
+        severity.setPosition(severityCreateDTO.getPosition());
 
         return mapper.map(severityRepository.save(severity), SeverityDTO.class);
     }
 
-    public SeverityDTO updateById(SeverityUpdateDTO severityUpdateDTO, Long id) {
+    public SeverityDTO updateById(SeverityUpdateDTO severityUpdateDTO, String id) {
         Severity severity = findEntityById(id);
+
+        if (severityRepository.existsByPosition(severityUpdateDTO.getPosition())) {
+            throw new InvalidActionException(ApiErrorMessage.SEVERITY_POSITION_EXISTS);
+        }
 
         severity.setLabel(severityUpdateDTO.getLabel());
         severity.setColor(severityUpdateDTO.getColor());
+        severity.setPosition(severityUpdateDTO.getPosition());
 
         return mapper.map(severity, SeverityDTO.class);
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(String id) {
         if (!severityRepository.existsById(id)) {
             throw new RecordNotFoundException(ApiErrorMessage.SEVERITY_NOT_FOUND);
         }

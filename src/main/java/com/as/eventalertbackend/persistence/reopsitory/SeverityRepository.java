@@ -1,16 +1,20 @@
 package com.as.eventalertbackend.persistence.reopsitory;
 
-import com.as.eventalertbackend.persistence.entity.Severity;
+import com.as.eventalertbackend.persistence.entity.lookup.Severity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface SeverityRepository extends JpaRepository<Severity, Long> {
+import java.util.List;
 
-    boolean existsByCode(String code);
+@Repository
+public interface SeverityRepository extends JpaRepository<Severity, String> {
+
+    List<Severity> findAllByOrderByPositionAsc();
+
+    boolean existsByPosition(Integer position);
 
     @Query("SELECT COUNT(e) > 0 FROM Event e WHERE e.severity.id = :severityId")
-    boolean existsEventBySeverityId(Long severityId);
+    boolean existsEventBySeverityId(String severityId);
 
 }

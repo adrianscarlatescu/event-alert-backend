@@ -1,6 +1,7 @@
 package com.as.eventalertbackend.persistence.entity;
 
-import com.as.eventalertbackend.enums.GenderCode;
+import com.as.eventalertbackend.persistence.entity.lookup.Gender;
+import com.as.eventalertbackend.persistence.entity.lookup.Role;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,8 +32,8 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @CreationTimestamp
     @Column(nullable = false)
+    @CreationTimestamp
     private LocalDateTime joinedAt;
 
     @UpdateTimestamp
@@ -50,6 +51,10 @@ public class User implements UserDetails {
     @Column(length = MAX_LENGTH_50)
     private String lastName;
 
+    @ManyToOne
+    @JoinColumn(name = "gender_id")
+    private Gender gender;
+
     private LocalDate dateOfBirth;
 
     @Column(length = MAX_LENGTH_15)
@@ -57,10 +62,6 @@ public class User implements UserDetails {
 
     @Column(length = MAX_LENGTH_1000)
     private String imagePath;
-
-    @Enumerated(EnumType.STRING)
-    @Column(length = MAX_LENGTH_50)
-    private GenderCode genderCode;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Event> events;
@@ -89,7 +90,7 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getCode().name()))
+                .map(role -> new SimpleGrantedAuthority(role.getId().name()))
                 .collect(Collectors.toList());
     }
 

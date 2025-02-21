@@ -1,5 +1,6 @@
-package com.as.eventalertbackend.persistence.entity;
+package com.as.eventalertbackend.persistence.entity.lookup;
 
+import com.as.eventalertbackend.persistence.entity.Event;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,15 +19,8 @@ import static com.as.eventalertbackend.AppConstants.MAX_LENGTH_50;
 public class Type {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
-
-    @Column(nullable = false, unique = true, length = MAX_LENGTH_50)
-    private String code; // More flexibility instead of using an enum
+    @Column(length = MAX_LENGTH_50)
+    private String id;
 
     @Column(nullable = false, length = MAX_LENGTH_50)
     private String label;
@@ -34,7 +28,14 @@ public class Type {
     @Column(nullable = false, length = MAX_LENGTH_1000)
     private String imagePath;
 
+    @Column(nullable = false, unique = true)
+    private Integer position;
+
     @OneToMany(mappedBy = "type")
     private List<Event> events;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
 }

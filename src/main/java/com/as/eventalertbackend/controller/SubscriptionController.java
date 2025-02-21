@@ -48,14 +48,14 @@ public class SubscriptionController {
     @PatchMapping(path = "/{userId}/{deviceId}/status")
     public ResponseEntity<SubscriptionDTO> updateStatus(@PathVariable("userId") Long userId,
                                                         @PathVariable("deviceId") String deviceId,
-                                                        @Valid @RequestBody SubscriptionStatusDTO subscriptionStatusDTO) {
-        return ResponseEntity.ok(subscriptionService.updateStatus(userId, deviceId, subscriptionStatusDTO));
+                                                        @Valid @RequestBody SubscriptionStatusUpdateDTO subscriptionStatusUpdateDTO) {
+        return ResponseEntity.ok(subscriptionService.updateStatus(userId, deviceId, subscriptionStatusUpdateDTO));
     }
 
     @PatchMapping(path = "/{deviceId}/token")
     public ResponseEntity<Void> updateToken(@PathVariable("deviceId") String deviceId,
-                                            @Valid @RequestBody SubscriptionTokenDTO subscriptionTokenDTO) {
-        subscriptionService.updateToken(deviceId, subscriptionTokenDTO);
+                                            @Valid @RequestBody SubscriptionTokenUpdateDTO subscriptionTokenUpdateDTO) {
+        subscriptionService.updateToken(deviceId, subscriptionTokenUpdateDTO);
         return ResponseEntity.ok().build();
     }
 

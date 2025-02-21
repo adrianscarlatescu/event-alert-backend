@@ -11,9 +11,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class SeverityDTO implements Serializable {
 
-    private Long id;
-    private String code;
+    private String id;
     private String label;
     private Integer color;
+    private Integer position;
 
 }

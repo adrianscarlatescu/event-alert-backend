@@ -7,7 +7,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-
 import java.time.LocalDateTime;
 
 import static com.as.eventalertbackend.AppConstants.MAX_LENGTH_1000;
@@ -23,8 +22,8 @@ public class Subscription {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @CreationTimestamp
     @Column(nullable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
     @UpdateTimestamp

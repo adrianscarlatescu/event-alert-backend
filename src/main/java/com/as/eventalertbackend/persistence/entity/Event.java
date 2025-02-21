@@ -1,5 +1,8 @@
 package com.as.eventalertbackend.persistence.entity;
 
+import com.as.eventalertbackend.persistence.entity.lookup.Severity;
+import com.as.eventalertbackend.persistence.entity.lookup.Status;
+import com.as.eventalertbackend.persistence.entity.lookup.Type;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,8 +27,8 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @CreationTimestamp
     @Column(nullable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
@@ -36,15 +40,8 @@ public class Event {
     @Column(nullable = false)
     private Double longitude;
 
-    @Column(nullable = false, length = MAX_LENGTH_1000)
-    private String imagePath;
-
-    @Column(length = MAX_LENGTH_1000)
-    private String description;
-
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
-    @OrderBy("createdAt desc")
-    private List<Comment> comments;
+    @Column(precision = 7, scale = 2)
+    private BigDecimal impactRadius;
 
     @ManyToOne
     @JoinColumn(name = "severity_id", nullable = false)
@@ -55,8 +52,22 @@ public class Event {
     private Type type;
 
     @ManyToOne
+    @JoinColumn(name = "status_id", nullable = false)
+    private Status status;
+
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+    @OrderBy("createdAt desc")
+    private List<Comment> comments;
+
+    @Column(nullable = false, length = MAX_LENGTH_1000)
+    private String imagePath;
+
+    @Column(length = MAX_LENGTH_1000)
+    private String description;
 
     @Transient
     private Double distance;

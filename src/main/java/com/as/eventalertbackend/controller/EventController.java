@@ -1,9 +1,6 @@
 package com.as.eventalertbackend.controller;
 
-import com.as.eventalertbackend.dto.event.EventCreateDTO;
-import com.as.eventalertbackend.dto.event.EventDTO;
-import com.as.eventalertbackend.dto.event.EventFilterDTO;
-import com.as.eventalertbackend.dto.event.EventUpdateDTO;
+import com.as.eventalertbackend.dto.event.*;
 import com.as.eventalertbackend.dto.page.PageDTO;
 import com.as.eventalertbackend.enums.OrderCode;
 import com.as.eventalertbackend.service.EventService;
@@ -28,7 +25,7 @@ public class EventController {
     }
 
     @PostMapping("/filter")
-    public ResponseEntity<PageDTO<EventDTO>> getByFilter(@Valid @RequestBody EventFilterDTO filterRequest,
+    public ResponseEntity<PageDTO<EventBaseDTO>> getByFilter(@Valid @RequestBody EventFilterDTO filterRequest,
                                                          @RequestParam("pageSize") int pageSize,
                                                          @RequestParam("pageNumber") int pageNumber,
                                                          @RequestParam(required = false, value = "orderCode") OrderCode orderCode) {

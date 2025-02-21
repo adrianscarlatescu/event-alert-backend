@@ -30,7 +30,7 @@ public class TypeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TypeDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<TypeDTO> getById(@PathVariable String id) {
         return ResponseEntity.ok(typeService.findById(id));
     }
 
@@ -45,13 +45,13 @@ public class TypeController {
     @Secured({"ROLE_ADMIN"})
     @PutMapping("/{id}")
     public ResponseEntity<TypeDTO> updateById(@Valid @RequestBody TypeUpdateDTO typeUpdateDTO,
-                                              @PathVariable("id") Long id) {
+                                              @PathVariable("id") String id) {
         return ResponseEntity.ok(typeService.updateById(typeUpdateDTO, id));
     }
 
     @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteById(@PathVariable("id") String id) {
         typeService.deleteById(id);
         return ResponseEntity.ok().build();
     }

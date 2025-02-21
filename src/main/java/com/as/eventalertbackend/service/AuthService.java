@@ -5,10 +5,10 @@ import com.as.eventalertbackend.dto.auth.AuthLoginDTO;
 import com.as.eventalertbackend.dto.auth.AuthRegisterDTO;
 import com.as.eventalertbackend.dto.auth.AuthTokensDTO;
 import com.as.eventalertbackend.dto.user.UserDTO;
+import com.as.eventalertbackend.enums.id.RoleId;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
-import com.as.eventalertbackend.enums.RoleCode;
-import com.as.eventalertbackend.persistence.entity.Role;
+import com.as.eventalertbackend.persistence.entity.lookup.Role;
 import com.as.eventalertbackend.persistence.entity.User;
 import com.as.eventalertbackend.security.jwt.JwtManager;
 import lombok.extern.slf4j.Slf4j;
@@ -71,7 +71,7 @@ public class AuthService {
             throw new InvalidActionException(ApiErrorMessage.PASSWORDS_NOT_MATCH);
         }
 
-        Role role = roleService.findEntityByCode(RoleCode.ROLE_BASIC);
+        Role role = roleService.findEntityByCode(RoleId.ROLE_BASIC);
 
         User user = new User(email,
                 passwordEncoder.encode(confirmPassword),

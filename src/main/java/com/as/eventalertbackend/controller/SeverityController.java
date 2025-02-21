@@ -30,7 +30,7 @@ public class SeverityController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SeverityDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<SeverityDTO> getById(@PathVariable String id) {
         return ResponseEntity.ok(severityService.findById(id));
     }
 
@@ -45,13 +45,13 @@ public class SeverityController {
     @Secured({"ROLE_ADMIN"})
     @PutMapping("/{id}")
     public ResponseEntity<SeverityDTO> updateById(@Valid @RequestBody SeverityUpdateDTO severityUpdateDTO,
-                                                  @PathVariable("id") Long id) {
+                                                  @PathVariable("id") String id) {
         return ResponseEntity.ok(severityService.updateById(severityUpdateDTO, id));
     }
 
     @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteById(@PathVariable("id") String id) {
         severityService.deleteById(id);
         return ResponseEntity.ok().build();
     }

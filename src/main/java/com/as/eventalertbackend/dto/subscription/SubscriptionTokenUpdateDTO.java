@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @NoArgsConstructor
-public class SubscriptionTokenDTO implements Serializable {
+public class SubscriptionTokenUpdateDTO implements Serializable {
 
     @NotBlank(message = "The Firebase token is mandatory")
     private String firebaseToken;

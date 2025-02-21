@@ -1,16 +1,13 @@
 package com.as.eventalertbackend.persistence.reopsitory;
 
-import com.as.eventalertbackend.enums.RoleCode;
-import com.as.eventalertbackend.persistence.entity.Role;
+import com.as.eventalertbackend.enums.id.RoleId;
+import com.as.eventalertbackend.persistence.entity.lookup.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface RoleRepository extends JpaRepository<Role, Long> {
+public interface RoleRepository extends JpaRepository<Role, RoleId> {
 
-    Optional<Role> findByCode(RoleCode roleCode);
-
-    List<Role> findAllByCodeIn(List<RoleCode> roleCodes);
+    List<Role> findAllByOrderByPositionAsc();
 
 }

@@ -1,5 +1,6 @@
-package com.as.eventalertbackend.persistence.entity;
+package com.as.eventalertbackend.persistence.entity.lookup;
 
+import com.as.eventalertbackend.persistence.entity.Event;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,17 +18,17 @@ import static com.as.eventalertbackend.AppConstants.MAX_LENGTH_50;
 public class Severity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false, unique = true, length = MAX_LENGTH_50)
-    private String code; // More flexibility instead of using an enum
+    @Column(length = MAX_LENGTH_50)
+    private String id;
 
     @Column(nullable = false, length = MAX_LENGTH_50)
     private String label;
 
     @Column(nullable = false)
     private Integer color;
+
+    @Column(nullable = false, unique = true)
+    private Integer position;
 
     @OneToMany(mappedBy = "severity")
     private List<Event> events;
