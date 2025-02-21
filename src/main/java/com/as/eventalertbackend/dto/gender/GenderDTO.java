@@ -16,5 +16,4 @@ public class GenderDTO implements Serializable {
     private String label;
     private Integer position;
 
-
 }
