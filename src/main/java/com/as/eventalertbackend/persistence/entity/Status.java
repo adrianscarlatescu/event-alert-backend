@@ -17,16 +17,16 @@ import static com.as.eventalertbackend.AppConstants.*;
 public class Status {
 
     @Id
-    @Column(length = MAX_LENGTH_50)
+    @Column(length = LENGTH_50)
     private String id;
 
-    @Column(nullable = false, length = MAX_LENGTH_50)
+    @Column(nullable = false, length = LENGTH_50)
     private String label;
 
-    @Column(nullable = false, length = FIXED_COLOR_LENGTH)
+    @Column(nullable = false, length = LENGTH_7)
     private String color;
 
-    @Column(nullable = false, length = MAX_LENGTH_1000)
+    @Column(nullable = false, length = LENGTH_1000)
     private String description;
 
     @Column(nullable = false, unique = true)

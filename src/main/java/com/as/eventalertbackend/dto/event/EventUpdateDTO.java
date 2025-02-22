@@ -31,7 +31,7 @@ public class EventUpdateDTO implements Serializable {
     @NotBlank(message = "The image path is mandatory")
     private String imagePath;
 
-    @Size(max = MAX_LENGTH_1000, message = "The description must not exceed " + MAX_LENGTH_1000 + " characters")
+    @Size(max = LENGTH_1000, message = "The description must not exceed " + LENGTH_1000 + " characters")
     private String description;
 
 }

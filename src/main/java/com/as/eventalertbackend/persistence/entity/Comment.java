@@ -9,7 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-import static com.as.eventalertbackend.AppConstants.MAX_LENGTH_1000;
+import static com.as.eventalertbackend.AppConstants.LENGTH_1000;
 
 @Entity
 @Table(name = "comment")
@@ -29,7 +29,7 @@ public class Comment {
     @UpdateTimestamp
     private LocalDateTime modifiedAt;
 
-    @Column(nullable = false, length = MAX_LENGTH_1000)
+    @Column(nullable = false, length = LENGTH_1000)
     private String comment;
 
     @ManyToOne

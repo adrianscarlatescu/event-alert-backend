@@ -1,18 +1,17 @@
 package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.AppConstants;
-import com.as.eventalertbackend.dto.event.*;
+import com.as.eventalertbackend.dto.event.EventCreateDTO;
+import com.as.eventalertbackend.dto.event.EventDTO;
+import com.as.eventalertbackend.dto.event.EventFilterDTO;
+import com.as.eventalertbackend.dto.event.EventUpdateDTO;
 import com.as.eventalertbackend.dto.page.PageDTO;
 import com.as.eventalertbackend.enums.OrderCode;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
 import com.as.eventalertbackend.error.exception.ResourceNotFoundException;
-import com.as.eventalertbackend.persistence.entity.Event;
-import com.as.eventalertbackend.persistence.entity.User;
-import com.as.eventalertbackend.persistence.entity.Severity;
-import com.as.eventalertbackend.persistence.entity.Status;
-import com.as.eventalertbackend.persistence.entity.Type;
+import com.as.eventalertbackend.persistence.entity.*;
 import com.as.eventalertbackend.persistence.projection.EventProjection;
 import com.as.eventalertbackend.persistence.reopsitory.EventRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -80,7 +79,7 @@ public class EventService {
                 .collect(Collectors.toList());
     }
 
-    public PageDTO<EventBaseDTO> findByFilter(EventFilterDTO eventFilterDTO, int pageSize, int pageNumber, OrderCode orderCode) {
+    public PageDTO<EventDTO> findByFilter(EventFilterDTO eventFilterDTO, int pageSize, int pageNumber, OrderCode orderCode) {
         if (pageSize > AppConstants.MAX_PAGE_SIZE) {
             throw new InvalidActionException(ApiErrorMessage.FILTER_MAX_PAGE_SIZE);
         }
@@ -153,7 +152,7 @@ public class EventService {
                 eventsPage.getTotalPages(),
                 eventsPage.getTotalElements(),
                 eventsPage.getContent().stream()
-                        .map(event -> mapper.map(event, EventBaseDTO.class))
+                        .map(event -> mapper.map(event, EventDTO.class))
                         .collect(Collectors.toList())
         );
     }

@@ -10,7 +10,7 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
-import static com.as.eventalertbackend.AppConstants.MAX_LENGTH_50;
+import static com.as.eventalertbackend.AppConstants.LENGTH_50;
 
 @Getter
 @Setter
@@ -21,11 +21,11 @@ public class TypeCreateDTO implements Serializable {
     private String categoryId;
 
     @NotNull(message = "The id is mandatory")
-    @Size(max = MAX_LENGTH_50, message = "The id must not exceed " + MAX_LENGTH_50 + " characters")
+    @Size(max = LENGTH_50, message = "The id must not exceed " + LENGTH_50 + " characters")
     private String id;
 
     @NotBlank(message = "The label is mandatory")
-    @Size(max = MAX_LENGTH_50, message = "The label must not exceed " + MAX_LENGTH_50 + " characters")
+    @Size(max = LENGTH_50, message = "The label must not exceed " + LENGTH_50 + " characters")
     private String label;
 
     @NotBlank(message = "The image path is mandatory")

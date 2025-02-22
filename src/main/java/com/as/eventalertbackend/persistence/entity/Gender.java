@@ -7,7 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-import static com.as.eventalertbackend.AppConstants.MAX_LENGTH_50;
+import static com.as.eventalertbackend.AppConstants.LENGTH_50;
 
 @Entity
 @Table(name = "gender") // Lookup table
@@ -17,11 +17,11 @@ import static com.as.eventalertbackend.AppConstants.MAX_LENGTH_50;
 public class Gender {
 
     @Id
-    @Column(length = MAX_LENGTH_50)
+    @Column(length = LENGTH_50)
     @Enumerated(EnumType.STRING)
     private GenderId id;
 
-    @Column(nullable = false, length = MAX_LENGTH_50)
+    @Column(nullable = false, length = LENGTH_50)
     private String label;
 
     @Column(nullable = false, unique = true)

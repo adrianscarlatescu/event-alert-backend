@@ -40,13 +40,13 @@ public class User implements UserDetails {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(length = MAX_LENGTH_1000)
+    @Column(length = LENGTH_1000)
     private String password;
 
-    @Column(length = MAX_LENGTH_50)
+    @Column(length = LENGTH_50)
     private String firstName;
 
-    @Column(length = MAX_LENGTH_50)
+    @Column(length = LENGTH_50)
     private String lastName;
 
     @ManyToOne
@@ -55,10 +55,10 @@ public class User implements UserDetails {
 
     private LocalDate dateOfBirth;
 
-    @Column(length = MAX_LENGTH_15)
+    @Column(length = LENGTH_15)
     private String phoneNumber;
 
-    @Column(length = MAX_LENGTH_1000)
+    @Column(length = LENGTH_1000)
     private String imagePath;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

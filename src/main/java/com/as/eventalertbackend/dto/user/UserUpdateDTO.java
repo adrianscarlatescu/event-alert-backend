@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
 
-import static com.as.eventalertbackend.AppConstants.MAX_LENGTH_50;
+import static com.as.eventalertbackend.AppConstants.LENGTH_50;
 import static com.as.eventalertbackend.AppConstants.PHONE_NUMBER_PATTERN;
 
 @Getter
@@ -21,10 +21,10 @@ import static com.as.eventalertbackend.AppConstants.PHONE_NUMBER_PATTERN;
 @NoArgsConstructor
 public class UserUpdateDTO {
 
-    @Size(max = MAX_LENGTH_50, message = "The first name must not exceed " + MAX_LENGTH_50 + " characters")
+    @Size(max = LENGTH_50, message = "The first name must not exceed " + LENGTH_50 + " characters")
     private String firstName;
 
-    @Size(max = MAX_LENGTH_50, message = "The last name must not exceed " + MAX_LENGTH_50 + " characters")
+    @Size(max = LENGTH_50, message = "The last name must not exceed " + LENGTH_50 + " characters")
     private String lastName;
 
     @Past(message = "The date of birth must be in the past")
