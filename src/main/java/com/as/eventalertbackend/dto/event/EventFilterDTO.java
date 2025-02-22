@@ -38,11 +38,11 @@ public class EventFilterDTO implements Serializable {
     @PositiveOrZero(message = "The longitude must be greater or equal to 0")
     public Double longitude;
 
-    @NotEmpty(message = "At least one severity is required")
-    public Set<String> severityIds;
-
     @NotEmpty(message = "At least one type is required")
     public Set<String> typeIds;
+
+    @NotEmpty(message = "At least one severity is required")
+    public Set<String> severityIds;
 
     @NotEmpty(message = "At least one status is required")
     public Set<String> statusIds;

@@ -23,8 +23,8 @@ public class EventDTO implements Serializable {
     private Double latitude;
     private Double longitude;
     private BigDecimal impactRadius;
-    private SeverityDTO severity;
     private TypeDTO type;
+    private SeverityDTO severity;
     private StatusDTO status;
     private UserBaseDTO user;
     private String imagePath;

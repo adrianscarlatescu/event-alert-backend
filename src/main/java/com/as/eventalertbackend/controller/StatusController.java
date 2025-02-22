@@ -14,7 +14,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/status")
+@RequestMapping("/statuses")
 public class StatusController {
 
     private final StatusService statusService;

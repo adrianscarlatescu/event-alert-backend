@@ -27,11 +27,11 @@ public class EventCreateDTO implements Serializable {
     @DecimalMax(value = MAX_IMPACT_RADIUS, message = "The impact radius must be less or equal to " + MAX_IMPACT_RADIUS + " km")
     public BigDecimal impactRadius;
 
-    @NotNull(message = "The severity is mandatory")
-    private String severityId;
-
     @NotNull(message = "The type is mandatory")
     private String typeId;
+
+    @NotNull(message = "The severity is mandatory")
+    private String severityId;
 
     @NotNull(message = "The status is mandatory")
     private String statusId;

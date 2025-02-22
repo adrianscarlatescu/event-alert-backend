@@ -177,8 +177,8 @@ public class EventService {
         newEvent.setLatitude(eventCreateDTO.getLatitude());
         newEvent.setLongitude(eventCreateDTO.getLongitude());
         newEvent.setImpactRadius(eventCreateDTO.getImpactRadius());
-        newEvent.setSeverity(severity);
         newEvent.setType(type);
+        newEvent.setSeverity(severity);
         newEvent.setStatus(status);
         newEvent.setUser(user);
         newEvent.setImagePath(eventCreateDTO.getImagePath());
@@ -199,8 +199,8 @@ public class EventService {
         Status status = statusService.findEntityById(eventStatusUpdateDTO.getStatusId());
 
         event.setImpactRadius(eventStatusUpdateDTO.getImpactRadius());
-        event.setSeverity(severity);
         event.setType(type);
+        event.setSeverity(severity);
         event.setStatus(status);
         event.setImagePath(eventStatusUpdateDTO.getImagePath());
         event.setDescription(eventStatusUpdateDTO.getDescription());
