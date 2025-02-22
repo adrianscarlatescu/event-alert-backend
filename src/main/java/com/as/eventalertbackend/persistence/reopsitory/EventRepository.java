@@ -16,7 +16,7 @@ import java.util.Set;
 public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Query(value = """
-            SELECT id, ST_Distance_Sphere(point(latitude, longitude),point(?1, ?2)) / 1000 AS distance
+            SELECT id, ST_Distance_Sphere(point(latitude, longitude), point(?1, ?2)) / 1000 AS distance
             FROM event
             WHERE created_at BETWEEN ?4 AND ?5 
             AND type_id IN ?6 

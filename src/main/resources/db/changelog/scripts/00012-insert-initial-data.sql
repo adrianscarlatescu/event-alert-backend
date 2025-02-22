@@ -20,7 +20,7 @@ values
     (5, 'user5@test.com', 'Amy', 'Patterson', 'FEMALE', '1991-06-12', '+44226812555', 'media/user/user_5.jpg', '2020-03-15 11:30:00');
 
 insert into users_roles
-(user_id, role_id)
+    (user_id, role_id)
 values
     (1, 'ROLE_BASIC'),
     (1, 'ROLE_ADMIN'),
