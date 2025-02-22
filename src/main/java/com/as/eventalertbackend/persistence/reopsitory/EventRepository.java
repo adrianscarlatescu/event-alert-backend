@@ -21,6 +21,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             WHERE created_at BETWEEN ?4 AND ?5 
             AND type_id IN ?6 
             AND severity_id IN ?7
+            AND status_id IN ?8
             HAVING distance <= ?3
             ORDER BY distance ASC
             """,
@@ -32,7 +33,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             LocalDateTime startDate,
             LocalDateTime endDate,
             Set<String> typeIds,
-            Set<String> severityIds);
+            Set<String> severityIds,
+            Set<String> statusIds);
 
     @Query(value = "SELECT * FROM event WHERE id in ?1",
             countQuery = "SELECT COUNT(*) FROM event WHERE id in ?1",

@@ -44,4 +44,7 @@ public class EventFilterDTO implements Serializable {
     @NotEmpty(message = "At least one type is required")
     public Set<String> typeIds;
 
+    @NotEmpty(message = "At least one status is required")
+    public Set<String> statusIds;
+
 }

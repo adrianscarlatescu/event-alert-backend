@@ -106,7 +106,8 @@ public class EventService {
                 startDateTime,
                 endDateTime,
                 eventFilterDTO.getTypeIds(),
-                eventFilterDTO.getSeverityIds()
+                eventFilterDTO.getSeverityIds(),
+                eventFilterDTO.getStatusIds()
         );
 
         if (orderCode == OrderCode.BY_DISTANCE_DESCENDING) {
