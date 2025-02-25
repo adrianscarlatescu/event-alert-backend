@@ -58,7 +58,7 @@ public class FileService {
         }
     }
 
-    public String writeImage(ImageTypeCode imageTypeCode, String suffix, MultipartFile file) {
+    public String writeImage(ImageTypeCode imageTypeCode, MultipartFile file) {
         String mediaPath = appProperties.getMediaDirectoryPath();
 
         if (file.getSize() == 0) {
@@ -76,7 +76,7 @@ public class FileService {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
 
         String imageDirectoryPath = mediaPath + imageTypeName;
-        String imageName = imageTypeName + "_" + suffix + "_" + timestamp + "." + extension;
+        String imageName = imageTypeName + "_" + timestamp + "." + extension;
 
         String imagePath = imageDirectoryPath + "/" + imageName;
 

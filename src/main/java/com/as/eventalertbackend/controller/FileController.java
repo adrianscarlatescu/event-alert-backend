@@ -31,9 +31,8 @@ public class FileController {
 
     @PostMapping("/images")
     public ResponseEntity<String> uploadImage(@RequestParam("imageTypeCode") ImageTypeCode imageTypeCode,
-                                              @RequestParam("suffix") String suffix,
                                               @RequestPart("image") MultipartFile image) {
-        return ResponseEntity.ok("\"" + fileService.writeImage(imageTypeCode, suffix, image) + "\"");
+        return ResponseEntity.ok("\"" + fileService.writeImage(imageTypeCode, image) + "\"");
     }
 
 }
