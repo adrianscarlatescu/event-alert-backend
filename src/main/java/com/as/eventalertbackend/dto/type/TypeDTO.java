@@ -1,6 +1,5 @@
 package com.as.eventalertbackend.dto.type;
 
-import com.as.eventalertbackend.dto.category.CategoryBaseDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +15,5 @@ public class TypeDTO implements Serializable {
     private String label;
     private String imagePath;
     private Integer position;
-    private CategoryBaseDTO category;
 
 }

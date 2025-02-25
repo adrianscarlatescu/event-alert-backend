@@ -1,6 +1,5 @@
 package com.as.eventalertbackend.service;
 
-import com.as.eventalertbackend.dto.category.CategoryBaseDTO;
 import com.as.eventalertbackend.dto.category.CategoryCreateDTO;
 import com.as.eventalertbackend.dto.category.CategoryDTO;
 import com.as.eventalertbackend.dto.category.CategoryUpdateDTO;
@@ -52,7 +51,7 @@ public class CategoryService {
         return mapper.map(findEntityById(id), CategoryDTO.class);
     }
 
-    public CategoryBaseDTO save(CategoryCreateDTO categoryCreateDTO) {
+    public CategoryDTO save(CategoryCreateDTO categoryCreateDTO) {
         Category category = new Category();
 
         if (categoryRepository.existsById(categoryCreateDTO.getId())) {
@@ -70,10 +69,10 @@ public class CategoryService {
         category.setImagePath(categoryCreateDTO.getImagePath());
         category.setPosition(categoryCreateDTO.getPosition());
 
-        return mapper.map(categoryRepository.save(category), CategoryBaseDTO.class);
+        return mapper.map(categoryRepository.save(category), CategoryDTO.class);
     }
 
-    public CategoryBaseDTO updateById(CategoryUpdateDTO categoryUpdateDTO, String id) {
+    public CategoryDTO updateById(CategoryUpdateDTO categoryUpdateDTO, String id) {
         Category category = findEntityById(id);
 
         if (categoryRepository.existsByPositionAndIdIsNot(categoryUpdateDTO.getPosition(), id)) {
@@ -87,7 +86,7 @@ public class CategoryService {
         category.setImagePath(categoryUpdateDTO.getImagePath());
         category.setPosition(categoryUpdateDTO.getPosition());
 
-        return mapper.map(category, CategoryBaseDTO.class);
+        return mapper.map(category, CategoryDTO.class);
     }
 
     public void deleteById(String id) {

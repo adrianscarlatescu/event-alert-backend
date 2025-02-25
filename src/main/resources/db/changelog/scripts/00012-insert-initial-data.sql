@@ -1,14 +1,14 @@
 insert into role
     (id, label, description, position)
 values
-    ('ROLE_BASIC', 'Basic', 'Access to the main features of the application', 1),
-    ('ROLE_ADMIN', 'Admin', 'High privileged access to create, modify or delete resources', 2);
+    ('ROLE_ADMIN', 'Admin', 'High privileged access to create, modify or delete resources', 1),
+    ('ROLE_BASIC', 'Basic', 'Access to the main features of the application', 2);
 
 insert into gender
     (id, label, position)
 values
-    ('MALE', 'Male', 1),
-    ('FEMALE', 'Female', 2);
+    ('FEMALE', 'Female', 1),
+    ('MALE', 'Male', 2);
 
 insert into user
     (id, email, first_name, last_name, gender_id, date_of_birth, phone_number, image_path, joined_at)
@@ -22,8 +22,8 @@ values
 insert into users_roles
     (user_id, role_id)
 values
-    (1, 'ROLE_BASIC'),
     (1, 'ROLE_ADMIN'),
+    (1, 'ROLE_BASIC'),
     (2, 'ROLE_BASIC'),
     (3, 'ROLE_BASIC'),
     (4, 'ROLE_BASIC'),
@@ -94,11 +94,10 @@ insert into status
 values
     ('PENDING', 'Pending', '#E3EE00', 'The event has not yet occurred', 1),
     ('ACTIVE_ONGOING', 'Active/Ongoing', '#07E300', 'The event is currently occurring', 2),
-    ('CONTAINED', 'Contained', '#00E3B9', 'The situation is under control, but risks remain', 3),
-    ('RESOLVED', 'Resolved', '#00D1EE', 'Immediate danger has passed', 4),
-    ('RECOVERY', 'Recovery', '#AD00EE', 'Efforts are ongoing to recover the effects', 5),
-    ('CLOSED', 'Closed', '#909090', 'The event is concluded or no longer relevant', 6),
-    ('CANCELED', 'Canceled', '#EE3600', 'The event was a false alarm or did not escalate', 7);
+    ('RESOLVED', 'Resolved', '#00D1EE', 'Immediate danger has passed', 3),
+    ('RECOVERY', 'Recovery', '#AD00EE', 'Efforts are ongoing to recover the effects', 4),
+    ('CLOSED', 'Closed', '#FF9900', 'The event is concluded or no longer relevant', 5),
+    ('CANCELED', 'Canceled', '#EE3600', 'The event was a false alarm or did not escalate', 6);
 
 insert into event
     (id, created_at, image_path, latitude, longitude, impact_radius, severity_id, type_id, status_id, user_id)
@@ -109,17 +108,17 @@ values
     (4, '2020-04-10 17:47:31', 'media/event/event_4.jpg', 28.212882, 83.9754403, 100, 'EXTREME', 'EARTHQUAKE', 'RECOVERY',  4),
     (5, '2020-04-11 03:13:27', 'media/event/event_5.jpg', 47.8032022, 22.8595308, 0, 'MINOR', 'TRAFFIC_ACCIDENT', 'ACTIVE_ONGOING', 1),
     (6, '2020-04-11 04:24:14', 'media/event/event_6.jpg', 41.1717768, -8.6875015, 5, 'MINOR', 'FLOOD', 'ACTIVE_ONGOING', 1),
-    (7, '2020-04-12 08:44:27', 'media/event/event_7.jpg', 59.6081696, 16.5511619, 25, 'MINOR', 'SNOW', 'ACTIVE_ONGOING', 2),
+    (7, '2020-04-12 08:44:27', 'media/event/event_7.jpg', 59.6081696, 16.5511619, 25, 'MINOR', 'SNOW', 'RESOLVED', 2),
     (8, '2020-04-12 14:52:31', 'media/event/event_8.jpg', 51.4927285, -0.2003438, null, 'MINOR', 'FOG', 'CLOSED', 3),
     (9, '2020-04-13 11:11:55', 'media/event/event_9.jpg', 50.9505312, 28.6475922, null, 'TRIVIAL', 'LOW_TEMPERATURE', 'ACTIVE_ONGOING', 2),
-    (10, '2020-04-13 12:12:42', 'media/event/event_10.jpg', 45.3410878, 25.5164494, 10, 'MAJOR', 'AVALANCHE', 'RECOVERY', 1),
+    (10, '2020-04-13 12:12:42', 'media/event/event_10.jpg', 45.3410878, 25.5164494, 10, 'MAJOR', 'AVALANCHE', 'PENDING', 1),
     (11, '2020-04-13 14:30:55', 'media/event/event_11.jpg', 37.7510042, 14.9846801, 100, 'MINOR', 'VOLCANIC_ERUPTION', 'RECOVERY', 4),
     (12, '2020-04-13 21:00:31', 'media/event/event_12.jpg', 44.4536997, 26.1206009, 0.5, 'TRIVIAL', 'SINKHOLE', 'RESOLVED', 3),
     (13, '2020-04-14 16:01:16', 'media/event/event_13.jpg', 44.4287873, 26.1038463, 250, 'EXTREME', 'POLLUTION', 'ACTIVE_ONGOING', 3),
     (14, '2020-04-14 16:04:42', 'media/event/event_14.jpg', 44.4345057, 26.0486993, 5, 'MAJOR', 'INDUSTRIAL_ACCIDENT', 'ACTIVE_ONGOING', 1),
     (15, '2020-04-14 18:22:43', 'media/event/event_15.jpg', 23.2575926, 26.1826986, null, 'TRIVIAL', 'SNOW', 'CLOSED', 1),
     (16, '2020-04-15 22:21:43', 'media/event/event_16.jpg', 44.8466356, 24.8753764, 0, 'TRIVIAL', 'TRAFFIC_ACCIDENT', 'RESOLVED', 2),
-    (17, '2020-04-16 04:06:52', 'media/event/event_17.jpg', 44.4526384, 26.0858512, 5, 'TRIVIAL', 'PROTEST_RIOT', 'PENDING', 1),
+    (17, '2020-04-16 04:06:52', 'media/event/event_17.jpg', 44.4526384, 26.0858512, 5, 'TRIVIAL', 'PROTEST_RIOT', 'CANCELED', 1),
     (18, '2020-04-16 23:42:27', 'media/event/event_18.jpg', 45.7593737, 27.0649587, 50, 'MAJOR', 'EARTHQUAKE', 'ACTIVE_ONGOING', 4),
     (19, '2020-04-18 10:11:55', 'media/event/event_19.jpg', 44.4201438, 26.1000533, 1, 'EXTREME', 'FIRE', 'ACTIVE_ONGOING', 2),
     (20, '2020-04-18 14:15:31', 'media/event/event_20.jpg', 44.8671652, 24.8496802, 1, 'MAJOR', 'FIRE', 'ACTIVE_ONGOING', 1),
@@ -134,7 +133,7 @@ values
     (29, '2020-05-02 15:26:47', 'media/event/event_29.jpg', 52.0487892, 29.2550429, null, 'MINOR', 'SNOW', 'ACTIVE_ONGOING', 3),
     (30, '2020-05-02 16:10:10', 'media/event/event_30.jpg', 56.946783, 23.6172156, 75, 'EXTREME', 'STORM', 'PENDING', 3),
     (31, '2020-05-02 18:52:09', 'media/event/event_31.jpg', 25.2640939, 63.4767481, 500, 'EXTREME', 'TSUNAMI', 'ACTIVE_ONGOING', 3),
-    (32, '2020-05-03 08:22:09', 'media/event/event_32.jpg', 46.0611305, 8.4043662, 5, 'TRIVIAL', 'AVALANCHE', 'RECOVERY', 3),
+    (32, '2020-05-03 08:22:09', 'media/event/event_32.jpg', 46.0611305, 8.4043662, 5, 'TRIVIAL', 'AVALANCHE', 'CLOSED', 3),
     (33, '2020-05-03 10:13:55', 'media/event/event_33.jpg', 51.5148142, -0.0651437, 0, 'EXTREME', 'MURDER_CRIME', 'RESOLVED', 3),
     (34, '2020-05-03 14:02:13', 'media/event/event_34.jpg', 46.6053988, 27.7682106, 0, 'EXTREME', 'MURDER_CRIME', 'RESOLVED', 3),
     (35, '2020-05-03 15:27:25', 'media/event/event_35.jpg', 47.8123253, 13.0818412, 0, 'MINOR', 'TRAFFIC_ACCIDENT', 'CLOSED', 4),
