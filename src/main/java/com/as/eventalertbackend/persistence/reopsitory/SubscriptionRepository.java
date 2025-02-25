@@ -14,8 +14,8 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
     @Query(value = """
             SELECT * 
             FROM subscription
-            WHERE ST_Distance_Sphere(point(latitude, longitude),point(?1, ?2)) / 1000 <= radius
-            AND user_id != ?3 
+            WHERE ST_Distance_Sphere(point(latitude, longitude),point(:eventLatitude, :eventLongitude)) / 1000 <= radius
+            AND user_id != :userIdToExclude
             AND is_active = true
             """,
             nativeQuery = true)
