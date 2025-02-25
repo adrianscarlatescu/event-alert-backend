@@ -45,7 +45,7 @@ public class CategoryController {
     @Secured({"ROLE_ADMIN"})
     @PutMapping("/{id}")
     public ResponseEntity<CategoryDTO> updateById(@Valid @RequestBody CategoryUpdateDTO categoryUpdateDTO,
-                                                      @PathVariable("id") String id) {
+                                                  @PathVariable("id") String id) {
         return ResponseEntity.ok(categoryService.updateById(categoryUpdateDTO, id));
     }
 

@@ -23,13 +23,13 @@ import java.util.stream.Collectors;
 public class NotificationService {
 
     private static final String KEY_EVENT_ID = "eventId";
-    private static final String KEY_EVENT_CREATED_AT = "eventCreatedAt";
+    private static final String KEY_CREATED_AT = "createdAt";
     private static final String KEY_TYPE_LABEL = "typeLabel";
     private static final String KEY_TYPE_IMAGE_PATH = "typeImagePath";
     private static final String KEY_SEVERITY_LABEL = "severityLabel";
     private static final String KEY_SEVERITY_COLOR = "severityColor";
-    private static final String KEY_EVENT_LATITUDE = "eventLatitude";
-    private static final String KEY_EVENT_LONGITUDE = "eventLongitude";
+    private static final String KEY_LATITUDE = "latitude";
+    private static final String KEY_LONGITUDE = "longitude";
 
     private final AppProperties appProperties;
 
@@ -106,13 +106,13 @@ public class NotificationService {
     private Map<String, String> getMessageMap(Event event) {
         Map<String, String> messageMap = new HashMap<>();
         messageMap.put(KEY_EVENT_ID, String.valueOf(event.getId()));
-        messageMap.put(KEY_EVENT_CREATED_AT, event.getCreatedAt().toString());
+        messageMap.put(KEY_CREATED_AT, event.getCreatedAt().toString());
         messageMap.put(KEY_TYPE_LABEL, event.getType().getLabel());
         messageMap.put(KEY_TYPE_IMAGE_PATH, event.getType().getImagePath());
         messageMap.put(KEY_SEVERITY_LABEL, event.getSeverity().getLabel());
         messageMap.put(KEY_SEVERITY_COLOR, String.valueOf(event.getSeverity().getColor()));
-        messageMap.put(KEY_EVENT_LATITUDE, String.valueOf(event.getLatitude()));
-        messageMap.put(KEY_EVENT_LONGITUDE, String.valueOf(event.getLongitude()));
+        messageMap.put(KEY_LATITUDE, String.valueOf(event.getLatitude()));
+        messageMap.put(KEY_LONGITUDE, String.valueOf(event.getLongitude()));
         return messageMap;
     }
 

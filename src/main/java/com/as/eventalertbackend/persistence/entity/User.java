@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import static com.as.eventalertbackend.AppConstants.*;
 
 @Entity
-@Table(name = "user", indexes ={@Index(name = "idx_email", columnList = "email")})
+@Table(name = "user", indexes = {@Index(name = "idx_email", columnList = "email")})
 @Getter
 @Setter
 @NoArgsConstructor
