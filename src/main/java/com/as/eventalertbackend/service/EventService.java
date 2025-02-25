@@ -130,10 +130,10 @@ public class EventService {
                 pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("created_at").descending());
                 break;
             case BY_SEVERITY_ASCENDING:
-                pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("severity_id"));
+                pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("s.position"));
                 break;
             case BY_SEVERITY_DESCENDING:
-                pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("severity_id").descending());
+                pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("s.position").descending());
                 break;
             case BY_DISTANCE_ASCENDING, BY_DISTANCE_DESCENDING:
                 pageRequest = PageRequest.of(pageNumber, pageSize, JpaSort.unsafe("field(id, ?1)"));

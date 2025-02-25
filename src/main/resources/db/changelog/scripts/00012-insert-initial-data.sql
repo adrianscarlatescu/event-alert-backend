@@ -84,10 +84,10 @@ values
 insert into severity
     (id, label, color, position)
 values
-    ('EXTREME', 'Extreme', '#FF0000', 1),
-    ('MAJOR', 'Major', '#FF8533', 2),
-    ('MINOR', 'Minor', '#FFC864', 3),
-    ('TRIVIAL', 'Trivial', '#AAC864', 4);
+    ('TRIVIAL', 'Trivial', '#AAC864', 1),
+    ('MINOR', 'Minor', '#FFC864', 2),
+    ('MAJOR', 'Major', '#FF8533', 3),
+    ('EXTREME', 'Extreme', '#FF0000', 4);
 
 insert into status
     (id, label, color, description, position)
