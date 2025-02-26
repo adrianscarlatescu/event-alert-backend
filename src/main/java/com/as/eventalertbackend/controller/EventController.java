@@ -2,10 +2,10 @@ package com.as.eventalertbackend.controller;
 
 import com.as.eventalertbackend.dto.event.EventCreateDTO;
 import com.as.eventalertbackend.dto.event.EventDTO;
-import com.as.eventalertbackend.dto.event.EventFilterDTO;
+import com.as.eventalertbackend.dto.event.EventsFilterDTO;
 import com.as.eventalertbackend.dto.event.EventUpdateDTO;
 import com.as.eventalertbackend.dto.page.PageDTO;
-import com.as.eventalertbackend.enums.OrderCode;
+import com.as.eventalertbackend.enums.EventsOrder;
 import com.as.eventalertbackend.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,11 +28,11 @@ public class EventController {
     }
 
     @PostMapping("/filter")
-    public ResponseEntity<PageDTO<EventDTO>> getByFilter(@Valid @RequestBody EventFilterDTO filterRequest,
+    public ResponseEntity<PageDTO<EventDTO>> getByFilter(@Valid @RequestBody EventsFilterDTO eventsFilterDTO,
                                                          @RequestParam("pageSize") int pageSize,
                                                          @RequestParam("pageNumber") int pageNumber,
-                                                         @RequestParam(required = false, value = "orderCode") OrderCode orderCode) {
-        return ResponseEntity.ok(eventService.findByFilter(filterRequest, pageSize, pageNumber, orderCode));
+                                                         @RequestParam(value = "order") EventsOrder eventsOrder) {
+        return ResponseEntity.ok(eventService.findByFilter(eventsFilterDTO, pageSize, pageNumber, eventsOrder));
     }
 
     @GetMapping("/{id}")

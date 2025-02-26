@@ -1,6 +1,6 @@
 package com.as.eventalertbackend.controller;
 
-import com.as.eventalertbackend.enums.ImageTypeCode;
+import com.as.eventalertbackend.enums.ImageType;
 import com.as.eventalertbackend.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -30,9 +30,9 @@ public class FileController {
     }
 
     @PostMapping("/images")
-    public ResponseEntity<String> uploadImage(@RequestParam("imageTypeCode") ImageTypeCode imageTypeCode,
+    public ResponseEntity<String> uploadImage(@RequestParam("type") ImageType imageType,
                                               @RequestPart("image") MultipartFile image) {
-        return ResponseEntity.ok("\"" + fileService.writeImage(imageTypeCode, image) + "\"");
+        return ResponseEntity.ok("\"" + fileService.writeImage(imageType, image) + "\"");
     }
 
 }

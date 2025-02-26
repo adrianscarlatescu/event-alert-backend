@@ -1,6 +1,6 @@
 package com.as.eventalertbackend.enums;
 
-public enum OrderCode {
+public enum EventsOrder {
 
     BY_DATE_ASCENDING,
     BY_DATE_DESCENDING,

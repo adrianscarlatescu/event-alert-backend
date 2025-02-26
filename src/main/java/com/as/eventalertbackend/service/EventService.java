@@ -3,10 +3,10 @@ package com.as.eventalertbackend.service;
 import com.as.eventalertbackend.AppConstants;
 import com.as.eventalertbackend.dto.event.EventCreateDTO;
 import com.as.eventalertbackend.dto.event.EventDTO;
-import com.as.eventalertbackend.dto.event.EventFilterDTO;
+import com.as.eventalertbackend.dto.event.EventsFilterDTO;
 import com.as.eventalertbackend.dto.event.EventUpdateDTO;
 import com.as.eventalertbackend.dto.page.PageDTO;
-import com.as.eventalertbackend.enums.OrderCode;
+import com.as.eventalertbackend.enums.EventsOrder;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
@@ -79,38 +79,34 @@ public class EventService {
                 .collect(Collectors.toList());
     }
 
-    public PageDTO<EventDTO> findByFilter(EventFilterDTO eventFilterDTO, int pageSize, int pageNumber, OrderCode orderCode) {
+    public PageDTO<EventDTO> findByFilter(EventsFilterDTO eventsFilterDTO, int pageSize, int pageNumber, EventsOrder eventsOrder) {
         if (pageSize > AppConstants.MAX_PAGE_SIZE) {
             throw new InvalidActionException(ApiErrorMessage.FILTER_MAX_PAGE_SIZE);
         }
 
-        if (eventFilterDTO.getStartDate().isAfter(eventFilterDTO.getEndDate())) {
+        if (eventsFilterDTO.getStartDate().isAfter(eventsFilterDTO.getEndDate())) {
             throw new InvalidActionException(ApiErrorMessage.FILTER_END_DATE_AFTER_START_DATE);
         }
 
-        if (eventFilterDTO.getEndDate().getYear() - eventFilterDTO.getStartDate().getYear() > AppConstants.MAX_YEARS_INTERVAL) {
+        if (eventsFilterDTO.getEndDate().getYear() - eventsFilterDTO.getStartDate().getYear() > AppConstants.MAX_YEARS_INTERVAL) {
             throw new InvalidActionException(ApiErrorMessage.FILTER_MAX_YEARS_INTERVAL);
         }
 
-        if (orderCode == null) {
-            orderCode = OrderCode.BY_DATE_DESCENDING;
-        }
-
-        LocalDateTime startDateTime = eventFilterDTO.getStartDate().atStartOfDay();
-        LocalDateTime endDateTime = eventFilterDTO.getEndDate().atTime(23, 59, 59);
+        LocalDateTime startDateTime = eventsFilterDTO.getStartDate().atStartOfDay();
+        LocalDateTime endDateTime = eventsFilterDTO.getEndDate().atTime(23, 59, 59);
 
         List<EventProjection> eventProjections = eventRepository.findByFilter(
-                eventFilterDTO.getLatitude(),
-                eventFilterDTO.getLongitude(),
-                eventFilterDTO.getRadius(),
+                eventsFilterDTO.getLatitude(),
+                eventsFilterDTO.getLongitude(),
+                eventsFilterDTO.getRadius(),
                 startDateTime,
                 endDateTime,
-                eventFilterDTO.getTypeIds(),
-                eventFilterDTO.getSeverityIds(),
-                eventFilterDTO.getStatusIds()
+                eventsFilterDTO.getTypeIds(),
+                eventsFilterDTO.getSeverityIds(),
+                eventsFilterDTO.getStatusIds()
         );
 
-        if (orderCode == OrderCode.BY_DISTANCE_DESCENDING) {
+        if (eventsOrder == EventsOrder.BY_DISTANCE_DESCENDING) {
             Collections.reverse(eventProjections);
         }
 
@@ -119,7 +115,7 @@ public class EventService {
                 .toArray();
 
         PageRequest pageRequest;
-        switch (orderCode) {
+        switch (eventsOrder) {
             default:
                 pageRequest = PageRequest.of(pageNumber, pageSize);
                 break;

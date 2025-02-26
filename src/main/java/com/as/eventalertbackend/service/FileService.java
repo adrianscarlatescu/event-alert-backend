@@ -1,7 +1,7 @@
 package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.AppProperties;
-import com.as.eventalertbackend.enums.ImageTypeCode;
+import com.as.eventalertbackend.enums.ImageType;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.StorageFailException;
@@ -58,7 +58,7 @@ public class FileService {
         }
     }
 
-    public String writeImage(ImageTypeCode imageTypeCode, MultipartFile file) {
+    public String writeImage(ImageType imageType, MultipartFile file) {
         String mediaPath = appProperties.getMediaDirectoryPath();
 
         if (file.getSize() == 0) {
@@ -72,7 +72,7 @@ public class FileService {
 
         int extensionStartIndex = fileOriginalName.lastIndexOf(".") + 1;
         String extension = fileOriginalName.substring(extensionStartIndex);
-        String imageTypeName = imageTypeCode.name().toLowerCase();
+        String imageTypeName = imageType.name().toLowerCase();
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
 
         String imageDirectoryPath = mediaPath + imageTypeName;
