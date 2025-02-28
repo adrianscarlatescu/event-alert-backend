@@ -1,5 +1,6 @@
 package com.as.eventalertbackend.controller;
 
+import com.as.eventalertbackend.dto.category.CategoryBaseDTO;
 import com.as.eventalertbackend.dto.category.CategoryCreateDTO;
 import com.as.eventalertbackend.dto.category.CategoryDTO;
 import com.as.eventalertbackend.dto.category.CategoryUpdateDTO;
@@ -36,7 +37,7 @@ public class CategoryController {
 
     @Secured({"ROLE_ADMIN"})
     @PostMapping
-    public ResponseEntity<CategoryDTO> save(@Valid @RequestBody CategoryCreateDTO categoryCreateDTO) {
+    public ResponseEntity<CategoryBaseDTO> save(@Valid @RequestBody CategoryCreateDTO categoryCreateDTO) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(categoryService.save(categoryCreateDTO));
@@ -44,7 +45,7 @@ public class CategoryController {
 
     @Secured({"ROLE_ADMIN"})
     @PutMapping("/{id}")
-    public ResponseEntity<CategoryDTO> updateById(@Valid @RequestBody CategoryUpdateDTO categoryUpdateDTO,
+    public ResponseEntity<CategoryBaseDTO> updateById(@Valid @RequestBody CategoryUpdateDTO categoryUpdateDTO,
                                                   @PathVariable("id") String id) {
         return ResponseEntity.ok(categoryService.updateById(categoryUpdateDTO, id));
     }
