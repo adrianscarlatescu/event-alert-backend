@@ -126,13 +126,19 @@ public class EventService {
                 pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("created_at").descending());
                 break;
             case BY_SEVERITY_ASCENDING:
-                pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("s.position"));
+                pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("severity_position"));
                 break;
             case BY_SEVERITY_DESCENDING:
-                pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("s.position").descending());
+                pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("severity_position").descending());
+                break;
+            case BY_IMPACT_RADIUS_ASCENDING:
+                pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("impact_radius"));
+                break;
+            case BY_IMPACT_RADIUS_DESCENDING:
+                pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("impact_radius").descending());
                 break;
             case BY_DISTANCE_ASCENDING, BY_DISTANCE_DESCENDING:
-                pageRequest = PageRequest.of(pageNumber, pageSize, JpaSort.unsafe("field(id, ?1)"));
+                pageRequest = PageRequest.of(pageNumber, pageSize, JpaSort.unsafe("field(e.id, :eventIds)"));
                 break;
         }
 
