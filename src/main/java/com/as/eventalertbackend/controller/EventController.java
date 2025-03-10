@@ -2,8 +2,8 @@ package com.as.eventalertbackend.controller;
 
 import com.as.eventalertbackend.dto.event.EventCreateDTO;
 import com.as.eventalertbackend.dto.event.EventDTO;
-import com.as.eventalertbackend.dto.event.EventsFilterDTO;
 import com.as.eventalertbackend.dto.event.EventUpdateDTO;
+import com.as.eventalertbackend.dto.event.EventsFilterDTO;
 import com.as.eventalertbackend.dto.page.PageDTO;
 import com.as.eventalertbackend.enums.EventsOrder;
 import com.as.eventalertbackend.service.EventService;

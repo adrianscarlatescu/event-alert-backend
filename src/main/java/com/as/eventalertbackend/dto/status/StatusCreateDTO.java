@@ -11,7 +11,6 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 import static com.as.eventalertbackend.AppConstants.*;
-import static com.as.eventalertbackend.AppConstants.LENGTH_7;
 
 @Getter
 @Setter

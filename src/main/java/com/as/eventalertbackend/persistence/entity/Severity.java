@@ -7,8 +7,8 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.List;
 
-import static com.as.eventalertbackend.AppConstants.LENGTH_7;
 import static com.as.eventalertbackend.AppConstants.LENGTH_50;
+import static com.as.eventalertbackend.AppConstants.LENGTH_7;
 
 @Entity
 @Table(name = "severity") // Lookup table
