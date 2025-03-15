@@ -6,7 +6,6 @@ import com.as.eventalertbackend.dto.category.CategoryUpdateDTO;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
-import com.as.eventalertbackend.error.exception.ResourceNotFoundException;
 import com.as.eventalertbackend.persistence.entity.Category;
 import com.as.eventalertbackend.persistence.reopsitory.CategoryRepository;
 import org.modelmapper.ModelMapper;
@@ -25,15 +24,11 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    private final FileService fileService;
-
     @Autowired
     public CategoryService(ModelMapper mapper,
-                           CategoryRepository categoryRepository,
-                           FileService fileService) {
+                           CategoryRepository categoryRepository) {
         this.mapper = mapper;
         this.categoryRepository = categoryRepository;
-        this.fileService = fileService;
     }
 
     Category findEntityById(String id) {
@@ -60,13 +55,9 @@ public class CategoryService {
         if (categoryRepository.existsByPosition(categoryCreateDTO.getPosition())) {
             throw new InvalidActionException(ApiErrorMessage.CATEGORY_POSITION_EXISTS);
         }
-        if (!fileService.imageExists(categoryCreateDTO.getImagePath())) {
-            throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
-        }
 
         category.setId(categoryCreateDTO.getId());
         category.setLabel(categoryCreateDTO.getLabel());
-        category.setImagePath(categoryCreateDTO.getImagePath());
         category.setPosition(categoryCreateDTO.getPosition());
 
         return mapper.map(categoryRepository.save(category), CategoryDTO.class);
@@ -78,12 +69,8 @@ public class CategoryService {
         if (categoryRepository.existsByPositionAndIdIsNot(categoryUpdateDTO.getPosition(), id)) {
             throw new InvalidActionException(ApiErrorMessage.CATEGORY_POSITION_EXISTS);
         }
-        if (!fileService.imageExists(categoryUpdateDTO.getImagePath())) {
-            throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
-        }
 
         category.setLabel(categoryUpdateDTO.getLabel());
-        category.setImagePath(categoryUpdateDTO.getImagePath());
         category.setPosition(categoryUpdateDTO.getPosition());
 
         return mapper.map(category, CategoryDTO.class);

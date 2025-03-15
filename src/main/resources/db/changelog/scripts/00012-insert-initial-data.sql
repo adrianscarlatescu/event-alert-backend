@@ -30,11 +30,11 @@ values
     (5, 'ROLE_BASIC');
 
 insert into category
-    (id, label, image_path, position)
+    (id, label, position)
 values
-    ('HUMAN_MADE', 'Human-made', 'media/category/category_human_made.png', 1),
-    ('NATURAL', 'Natural', 'media/category/category_natural.png', 2),
-    ('OTHER', 'Other', 'media/category/category_other.png', 3);
+    ('HUMAN_MADE', 'Human-made', 1),
+    ('NATURAL', 'Natural', 2),
+    ('OTHER', 'Other', 3);
 
 insert into type
     (id, label, image_path, category_id, position)

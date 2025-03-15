@@ -25,9 +25,6 @@ public class CategoryCreateDTO implements Serializable {
     @Size(max = LENGTH_50, message = "The label must not exceed " + LENGTH_50 + " characters")
     private String label;
 
-    @NotBlank(message = "The image path is mandatory")
-    private String imagePath;
-
     @NotNull(message = "The position is mandatory")
     @Positive(message = "The position must be greater than 0")
     private Integer position;
