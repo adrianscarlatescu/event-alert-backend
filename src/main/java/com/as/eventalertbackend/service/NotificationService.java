@@ -28,6 +28,9 @@ public class NotificationService {
     private static final String KEY_TYPE_IMAGE_PATH = "typeImagePath";
     private static final String KEY_SEVERITY_LABEL = "severityLabel";
     private static final String KEY_SEVERITY_COLOR = "severityColor";
+    private static final String KEY_STATUS_LABEL = "statusLabel";
+    private static final String KEY_STATUS_COLOR = "statusColor";
+    private static final String KEY_IMPACT_RADIUS = "impactRadius";
     private static final String KEY_LATITUDE = "latitude";
     private static final String KEY_LONGITUDE = "longitude";
 
@@ -111,6 +114,9 @@ public class NotificationService {
         messageMap.put(KEY_TYPE_IMAGE_PATH, event.getType().getImagePath());
         messageMap.put(KEY_SEVERITY_LABEL, event.getSeverity().getLabel());
         messageMap.put(KEY_SEVERITY_COLOR, String.valueOf(event.getSeverity().getColor()));
+        messageMap.put(KEY_STATUS_LABEL, event.getStatus().getLabel());
+        messageMap.put(KEY_STATUS_COLOR, event.getStatus().getColor());
+        messageMap.put(KEY_IMPACT_RADIUS, event.getImpactRadius() != null ? event.getImpactRadius().stripTrailingZeros().toPlainString() : "");
         messageMap.put(KEY_LATITUDE, String.valueOf(event.getLatitude()));
         messageMap.put(KEY_LONGITUDE, String.valueOf(event.getLongitude()));
         return messageMap;

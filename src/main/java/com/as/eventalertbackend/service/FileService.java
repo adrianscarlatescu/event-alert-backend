@@ -65,18 +65,11 @@ public class FileService {
             throw new InvalidActionException(ApiErrorMessage.IMAGE_MANDATORY);
         }
 
-        String fileOriginalName = file.getOriginalFilename();
-        if (fileOriginalName == null) {
-            throw new InvalidActionException(ApiErrorMessage.IMAGE_NAME_MANDATORY);
-        }
-
-        int extensionStartIndex = fileOriginalName.lastIndexOf(".") + 1;
-        String extension = fileOriginalName.substring(extensionStartIndex);
         String imageTypeName = imageType.name().toLowerCase();
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
 
         String imageDirectoryPath = mediaPath + imageTypeName;
-        String imageName = imageTypeName + "_" + timestamp + "." + extension;
+        String imageName = imageTypeName + "_" + timestamp;
 
         String imagePath = imageDirectoryPath + "/" + imageName;
 
