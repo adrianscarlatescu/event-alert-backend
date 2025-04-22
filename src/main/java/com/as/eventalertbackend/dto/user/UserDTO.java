@@ -1,6 +1,5 @@
 package com.as.eventalertbackend.dto.user;
 
-import com.as.eventalertbackend.dto.gender.GenderDTO;
 import com.as.eventalertbackend.dto.role.RoleDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +21,6 @@ public class UserDTO implements Serializable {
     private String email;
     private String firstName;
     private String lastName;
-    private GenderDTO gender;
     private LocalDate dateOfBirth;
     private String phoneNumber;
     private String imagePath;

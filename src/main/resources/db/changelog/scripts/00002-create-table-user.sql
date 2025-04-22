@@ -7,7 +7,6 @@ CREATE TABLE user
     password        VARCHAR(1000)         NULL,
     first_name      VARCHAR(50)           NULL,
     last_name       VARCHAR(50)           NULL,
-    gender_id       VARCHAR(50)           NULL,
     date_of_birth   DATE                  NULL,
     phone_number    VARCHAR(15)           NULL,
     image_path      VARCHAR(1000)         NULL,
@@ -19,9 +18,6 @@ ALTER TABLE user
     ADD CONSTRAINT uc_user_email UNIQUE (email);
 
 CREATE INDEX idx_email ON user (email);
-
-ALTER TABLE user
-    ADD CONSTRAINT fk_user_on_gender FOREIGN KEY (gender_id) REFERENCES gender (id);
 
 ALTER TABLE user
     ALTER reports_number SET DEFAULT 0;

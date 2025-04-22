@@ -7,7 +7,6 @@ import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
 import com.as.eventalertbackend.error.exception.ResourceNotFoundException;
-import com.as.eventalertbackend.persistence.entity.Gender;
 import com.as.eventalertbackend.persistence.entity.Role;
 import com.as.eventalertbackend.persistence.entity.User;
 import com.as.eventalertbackend.persistence.reopsitory.UserRepository;
@@ -31,19 +30,16 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
 
     private final RoleService roleService;
-    private final GenderService genderService;
     private final FileService fileService;
 
     @Autowired
     public UserService(ModelMapper mapper,
                        UserRepository userRepository,
                        RoleService roleService,
-                       GenderService genderService,
                        FileService fileService) {
         this.mapper = mapper;
         this.userRepository = userRepository;
         this.roleService = roleService;
-        this.genderService = genderService;
         this.fileService = fileService;
     }
 
@@ -88,13 +84,6 @@ public class UserService implements UserDetailsService {
         }
         if (userUpdateDTO.getImagePath() != null && !fileService.imageExists(userUpdateDTO.getImagePath())) {
             throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
-        }
-
-        if (userUpdateDTO.getGenderId() != null) {
-            Gender gender = genderService.findEntityByCode(userUpdateDTO.getGenderId());
-            user.setGender(gender);
-        } else {
-            user.setGender(null);
         }
 
         user.setFirstName(userUpdateDTO.getFirstName());

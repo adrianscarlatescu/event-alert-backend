@@ -49,10 +49,6 @@ public class User implements UserDetails {
     @Column(length = LENGTH_50)
     private String lastName;
 
-    @ManyToOne
-    @JoinColumn(name = "gender_id")
-    private Gender gender;
-
     private LocalDate dateOfBirth;
 
     @Column(length = LENGTH_15)

@@ -1,6 +1,5 @@
 package com.as.eventalertbackend.dto.user;
 
-import com.as.eventalertbackend.enums.id.GenderId;
 import com.as.eventalertbackend.enums.id.RoleId;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,8 +33,6 @@ public class UserUpdateDTO {
     private String phoneNumber;
 
     private String imagePath;
-
-    private GenderId genderId;
 
     @NotEmpty(message = "At least one role is required")
     private List<RoleId> roleIds;

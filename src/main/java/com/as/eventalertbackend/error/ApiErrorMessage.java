@@ -22,7 +22,6 @@ public enum ApiErrorMessage {
     INVALID_IMAGE_PATH("Invalid image path"),
 
     ROLE_NOT_FOUND("Role not found"),
-    GENDER_NOT_FOUND("Gender not found"),
     USER_NOT_FOUND("User not found"),
     STATUS_NOT_FOUND("Status not found"),
     CATEGORY_NOT_FOUND("Category not found"),

@@ -4,20 +4,14 @@ values
     ('ROLE_ADMIN', 'Admin', 'High privileged access to create, modify or delete resources', 1),
     ('ROLE_BASIC', 'Basic', 'Access to the main features of the application', 2);
 
-insert into gender
-    (id, label, position)
-values
-    ('FEMALE', 'Female', 1),
-    ('MALE', 'Male', 2);
-
 insert into user
-    (id, email, first_name, last_name, gender_id, date_of_birth, phone_number, image_path, joined_at)
+    (id, email, first_name, last_name, date_of_birth, phone_number, image_path, joined_at)
 values
-    (1, 'user1@test.com' , 'Alan', 'Walter', 'MALE', '1984-05-23', '+03442777999', 'media/user/user_1.jpg', '2020-03-15 11:30:00'),
-    (2, 'user2@test.com', 'John', 'Smith', 'MALE', '1987-10-16', '+44627779991', 'media/user/user_2.jpg', '2020-03-15 11:30:00'),
-    (3, 'user3@test.com', 'Cindy', 'Milner', 'FEMALE', '1990-09-27', '+44848992441', 'media/user/user_3.jpg', '2020-03-15 11:30:00'),
-    (4, 'user4@test.com', 'Andrew', 'Carter', 'MALE', '1992-02-14', '+44226812612', 'media/user/user_4.jpg', '2020-03-15 11:30:00'),
-    (5, 'user5@test.com', 'Amy', 'Patterson', 'FEMALE', '1991-06-12', '+44226812555', 'media/user/user_5.jpg', '2020-03-15 11:30:00');
+    (1, 'user1@test.com' , 'Alan', 'Walter', '1984-05-23', '+03442777999', 'media/user/user_1.jpg', '2020-03-15 11:30:00'),
+    (2, 'user2@test.com', 'John', 'Smith', '1987-10-16', '+44627779991', 'media/user/user_2.jpg', '2020-03-15 11:30:00'),
+    (3, 'user3@test.com', 'Cindy', 'Milner', '1990-09-27', '+44848992441', 'media/user/user_3.jpg', '2020-03-15 11:30:00'),
+    (4, 'user4@test.com', 'Andrew', 'Carter', '1992-02-14', '+44226812612', 'media/user/user_4.jpg', '2020-03-15 11:30:00'),
+    (5, 'user5@test.com', 'Amy', 'Patterson', '1991-06-12', '+44226812555', 'media/user/user_5.jpg', '2020-03-15 11:30:00');
 
 insert into users_roles
     (user_id, role_id)
