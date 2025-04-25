@@ -1,4 +1,4 @@
-package com.as.eventalertbackend.dto.category;
+package com.as.eventalertbackend.dto.order;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,10 +9,11 @@ import java.io.Serializable;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CategoryDTO implements Serializable {
+public class OrderDTO implements Serializable {
 
     private String id;
     private String label;
+    private String imagePath;
     private Integer position;
 
 }

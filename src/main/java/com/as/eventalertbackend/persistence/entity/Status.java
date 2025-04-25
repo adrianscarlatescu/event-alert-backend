@@ -10,7 +10,7 @@ import java.util.List;
 import static com.as.eventalertbackend.AppConstants.*;
 
 @Entity
-@Table(name = "status") // Lookup table
+@Table(name = "ref_status") // Lookup table
 @Getter
 @Setter
 @NoArgsConstructor

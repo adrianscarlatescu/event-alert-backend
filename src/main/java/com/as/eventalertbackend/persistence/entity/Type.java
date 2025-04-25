@@ -11,7 +11,7 @@ import static com.as.eventalertbackend.AppConstants.LENGTH_1000;
 import static com.as.eventalertbackend.AppConstants.LENGTH_50;
 
 @Entity
-@Table(name = "type") // Lookup table
+@Table(name = "ref_type") // Lookup table
 @Getter
 @Setter
 @NoArgsConstructor

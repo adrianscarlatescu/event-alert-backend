@@ -17,12 +17,12 @@ import static com.as.eventalertbackend.AppConstants.LENGTH_50;
 @NoArgsConstructor
 public class TypeCreateDTO implements Serializable {
 
-    @NotNull(message = "The category is mandatory")
-    private String categoryId;
-
     @NotNull(message = "The id is mandatory")
     @Size(max = LENGTH_50, message = "The id must not exceed " + LENGTH_50 + " characters")
     private String id;
+
+    @NotNull(message = "The category is mandatory")
+    private String categoryId;
 
     @NotBlank(message = "The label is mandatory")
     @Size(max = LENGTH_50, message = "The label must not exceed " + LENGTH_50 + " characters")

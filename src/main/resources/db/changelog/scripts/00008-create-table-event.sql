@@ -25,10 +25,10 @@ ALTER TABLE event
     ADD CONSTRAINT fk_event_on_user FOREIGN KEY (user_id) REFERENCES user (id);
 
 ALTER TABLE event
-    ADD CONSTRAINT fk_event_on_severity FOREIGN KEY (severity_id) REFERENCES severity (id);
+    ADD CONSTRAINT fk_event_on_ref_severity FOREIGN KEY (severity_id) REFERENCES ref_severity (id);
 
 ALTER TABLE event
-    ADD CONSTRAINT fk_event_on_type FOREIGN KEY (type_id) REFERENCES type (id);
+    ADD CONSTRAINT fk_event_on_ref_type FOREIGN KEY (type_id) REFERENCES ref_type (id);
 
 ALTER TABLE event
-    ADD CONSTRAINT fk_event_on_status FOREIGN KEY (status_id) REFERENCES status (id);
+    ADD CONSTRAINT fk_event_on_ref_status FOREIGN KEY (status_id) REFERENCES ref_status (id);

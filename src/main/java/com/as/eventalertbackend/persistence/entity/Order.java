@@ -1,36 +1,34 @@
 package com.as.eventalertbackend.persistence.entity;
 
+import com.as.eventalertbackend.enums.id.OrderId;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.List;
 
+import static com.as.eventalertbackend.AppConstants.LENGTH_1000;
 import static com.as.eventalertbackend.AppConstants.LENGTH_50;
-import static com.as.eventalertbackend.AppConstants.LENGTH_7;
 
 @Entity
-@Table(name = "ref_severity") // Lookup table
+@Table(name = "ref_order") // Lookup table
 @Getter
 @Setter
 @NoArgsConstructor
-public class Severity {
+public class Order {
 
     @Id
     @Column(length = LENGTH_50)
-    private String id;
+    @Enumerated(EnumType.STRING)
+    private OrderId id;
 
     @Column(nullable = false, length = LENGTH_50)
     private String label;
 
-    @Column(nullable = false, length = LENGTH_7)
-    private String color;
+    @Column(nullable = false, length = LENGTH_1000)
+    private String imagePath;
 
     @Column(nullable = false, unique = true)
     private Integer position;
-
-    @OneToMany(mappedBy = "severity")
-    private List<Event> events;
 
 }

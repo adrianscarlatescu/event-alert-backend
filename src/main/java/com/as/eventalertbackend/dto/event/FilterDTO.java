@@ -15,7 +15,7 @@ import static com.as.eventalertbackend.AppConstants.MIN_RADIUS;
 @Getter
 @Setter
 @NoArgsConstructor
-public class EventsFilterDTO implements Serializable {
+public class FilterDTO implements Serializable {
 
     @NotNull(message = "The radius is mandatory")
     @Min(value = MIN_RADIUS, message = "The radius must be greater or equal to " + MIN_RADIUS + " km")

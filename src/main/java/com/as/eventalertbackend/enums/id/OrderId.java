@@ -1,6 +1,6 @@
-package com.as.eventalertbackend.enums;
+package com.as.eventalertbackend.enums.id;
 
-public enum EventsOrder {
+public enum OrderId {
 
     BY_DATE_ASCENDING,
     BY_DATE_DESCENDING,

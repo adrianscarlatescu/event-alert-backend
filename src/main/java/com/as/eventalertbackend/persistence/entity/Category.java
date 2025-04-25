@@ -10,7 +10,7 @@ import java.util.List;
 import static com.as.eventalertbackend.AppConstants.LENGTH_50;
 
 @Entity
-@Table(name = "category") // Lookup table
+@Table(name = "ref_category") // Lookup table
 @Getter
 @Setter
 @NoArgsConstructor

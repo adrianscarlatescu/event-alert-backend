@@ -1,4 +1,4 @@
-insert into role
+insert into ref_role
     (id, label, description, position)
 values
     ('ROLE_ADMIN', 'Admin', 'High privileged access to create, modify or delete resources', 1),
@@ -23,14 +23,14 @@ values
     (4, 'ROLE_BASIC'),
     (5, 'ROLE_BASIC');
 
-insert into category
+insert into ref_category
     (id, label, position)
 values
     ('HUMAN_MADE', 'Human-made', 1),
     ('NATURAL', 'Natural', 2),
     ('OTHER', 'Other', 3);
 
-insert into type
+insert into ref_type
     (id, label, image_path, category_id, position)
 values
     ('BLOCKED_ROAD', 'Blocked road', 'media/type/type_blocked_road.png', 'HUMAN_MADE', 1),
@@ -75,7 +75,7 @@ values
 
     ('OTHER', 'Other', 'media/type/type_other.png', 'OTHER', 39);
 
-insert into severity
+insert into ref_severity
     (id, label, color, position)
 values
     ('TRIVIAL', 'Trivial', '#AAC864', 1),
@@ -83,7 +83,7 @@ values
     ('MAJOR', 'Major', '#FF8533', 3),
     ('EXTREME', 'Extreme', '#FF0000', 4);
 
-insert into status
+insert into ref_status
     (id, label, color, description, position)
 values
     ('PENDING', 'Pending', '#E3EE00', 'The event has not yet occurred', 1),
@@ -154,3 +154,15 @@ values
     (10, '2020-04-15 14:18:37', 15, 5, '#$@!%*@*$@!#'),
     (11, '2020-05-02 18:15:11', 24, 5, 'Snow in April? Lol.'),
     (12, '2020-04-10 19:23:33', 4, 2, 'Thank God this app exists.');
+
+insert into ref_order
+    (id, label, image_path, position)
+values
+    ('BY_DATE_ASCENDING', 'By date ascending', 'media/order/by_date.png', 1),
+    ('BY_DATE_DESCENDING', 'By date descending', 'media/order/by_date.png', 2),
+    ('BY_SEVERITY_ASCENDING', 'By severity ascending', 'media/order/by_severity.png', 3),
+    ('BY_SEVERITY_DESCENDING', 'By severity descending', 'media/order/by_severity.png', 4),
+    ('BY_IMPACT_RADIUS_ASCENDING', 'By impact radius ascending', 'media/order/by_impact_radius.png', 5),
+    ('BY_IMPACT_RADIUS_DESCENDING', 'By impact radius descending', 'media/order/by_impact_radius.png', 6),
+    ('BY_DISTANCE_ASCENDING', 'By distance ascending', 'media/order/by_distance.png', 7),
+    ('BY_DISTANCE_DESCENDING', 'By distance descending', 'media/order/by_distance.png', 8);

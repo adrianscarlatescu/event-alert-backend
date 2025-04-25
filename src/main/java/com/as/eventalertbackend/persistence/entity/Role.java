@@ -12,7 +12,7 @@ import static com.as.eventalertbackend.AppConstants.LENGTH_1000;
 import static com.as.eventalertbackend.AppConstants.LENGTH_50;
 
 @Entity
-@Table(name = "role") // Lookup table
+@Table(name = "ref_role") // Lookup table
 @Getter
 @Setter
 @NoArgsConstructor

@@ -37,7 +37,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             Set<String> severityIds,
             Set<String> statusIds);
 
-    @Query(value = "SELECT e.*, s.position AS severity_position FROM event e LEFT JOIN severity s ON s.id = e.severity_id WHERE e.id IN :eventIds",
+    @Query(value = "SELECT e.*, s.position AS severity_position FROM event e LEFT JOIN ref_severity s ON s.id = e.severity_id WHERE e.id IN :eventIds",
             countQuery = "SELECT COUNT(id) FROM event WHERE id IN :eventIds",
             nativeQuery = true)
     Page<Event> findByIds(long[] eventIds, Pageable pageable);
