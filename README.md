@@ -1,6 +1,17 @@
 ## Getting Started
 Event Alert - Backend is a REST API server that provides the required endpoints for the client applications.<br/>
-The technology stack consists of: Java, Spring Boot, Spring Security, Spring Data JPA, Firebase Cloud Messaging, Hibernate, MySQL database, Liquibase, OAuth 2.0 protocol, JWT, Project Lombok.
+The technology stack consists of:
+* [Java](https://www.oracle.com/java/) - The programming language used to develop the application.
+* [Spring Boot](https://spring.io/projects/spring-boot#overview) - The base framework used for the REST controllers, services, dependency injection, Tomcat server and everything else needed by a stand-alone application.
+* [Spring Security](https://spring.io/projects/spring-security) - The framework used to secure the application and provide both authentication and authorization.
+* [Spring Data JPA](https://spring.io/projects/spring-data-jpa) - The framework used to provide Data Access Object interfaces by extending its repositories.
+* [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) - The cross-platform messaging solution to send notifications.
+* [Hibernate](https://hibernate.org/) - The Object-Relational Mapping framework used to map the object-oriented domain models to the relational database.
+* [MySQL Server](https://dev.mysql.com/doc/refman/5.7/en/) - The database server.
+* [Liquibase](https://www.liquibase.com/) - The library for tracking, managing and applying database schema changes.
+* [OAuth 2.0](https://oauth.net/2/) - The protocol used for authorization.
+* [JWT](https://jwt.io/introduction/) - The standard used to securely transmit the information.
+* [Project Lombok](https://projectlombok.org/) - The library used to minimize boilerplate code and save development time.
 
 ## Project scope
 The purpose of this project is to provide all the required features for users that may want to be aware of the incidents reported around them.  
