@@ -1,5 +1,5 @@
 ## Getting Started
-Event Alert - Backend is a REST API server that provides the required endpoints for the client applications.  
+Event Alert - Backend is a REST API server that provides the required endpoints for the client applications.<br/>
 The technology stack consists of: Java, Spring Boot, Spring Security, Spring Data JPA, Firebase Cloud Messaging, Hibernate, MySQL database, Liquibase, OAuth 2.0 protocol, JWT, Project Lombok.
 
 ## Project scope
