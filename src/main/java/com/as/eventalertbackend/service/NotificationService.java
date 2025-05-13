@@ -63,6 +63,7 @@ public class NotificationService {
                 subscriptionRepository.findByLocation(
                         event.getLatitude(),
                         event.getLongitude(),
+                        event.getImpactRadius(),
                         event.getUser().getId());
 
         Map<String, String> messageMap = getMessageMap(event);

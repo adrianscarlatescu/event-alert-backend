@@ -23,11 +23,9 @@ public class FilterDTO implements Serializable {
     private Integer radius;
 
     @NotNull(message = "The start date is mandatory")
-    @PastOrPresent(message = "The start date must be in the past or present")
     private LocalDate startDate;
 
     @NotNull(message = "The end date is mandatory")
-    @PastOrPresent(message = "The end date must be in the past or present")
     private LocalDate endDate;
 
     @NotNull(message = "The latitude is mandatory")
