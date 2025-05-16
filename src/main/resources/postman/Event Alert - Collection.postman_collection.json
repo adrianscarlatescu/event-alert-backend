@@ -991,7 +991,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"startDate\": \"2020-04-01\",\r\n    \"endDate\": \"2020-04-21\",\r\n    \"radius\": 500,\r\n    \"latitude\": 44.8481,\r\n    \"longitude\": 24.8839,\r\n    \"typeIds\": [\"FIRE\", \"MURDER_CRIME\", \"POLLUTION\", \"PROTEST_RIOT\", \"TRAFFIC_ACCIDENT\", \"AVALANCHE\", \"EARTHQUAKE\", \"FLOOD\", \"HURRICANE\"],\r\n    \"severityIds\": [\"EXTREME\", \"MAJOR\", \"MINOR\", \"TRIVIAL\"],\r\n    \"statusIds\": [\"ACTIVE_ONGOING\", \"RECOVERY\", \"CLOSED\"]\r\n}",
+							"raw": "{\r\n    \"startDate\": \"2025-04-01\",\r\n    \"endDate\": \"2025-04-21\",\r\n    \"radius\": 500,\r\n    \"latitude\": 44.8481,\r\n    \"longitude\": 24.8839,\r\n    \"typeIds\": [\"FIRE\", \"MURDER_CRIME\", \"POLLUTION\", \"PROTEST_RIOT\", \"TRAFFIC_ACCIDENT\", \"AVALANCHE\", \"EARTHQUAKE\", \"FLOOD\", \"HURRICANE\"],\r\n    \"severityIds\": [\"EXTREME\", \"MAJOR\", \"MINOR\", \"TRIVIAL\"],\r\n    \"statusIds\": [\"ACTIVE_ONGOING\", \"RECOVERY\", \"CLOSED\"]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
