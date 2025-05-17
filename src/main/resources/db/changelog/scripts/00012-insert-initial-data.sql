@@ -97,7 +97,7 @@ insert into event
 (id, created_at, image_path, latitude, longitude, impact_radius, severity_id, type_id, status_id, user_id)
 values
     (1, '2025-04-10 09:10:00', 'media/event/event_1.jpg', 44.459127, 25.9936983, 1.5, 'MAJOR', 'FLOOD', 'ACTIVE_ONGOING', 1),
-    (2, '2025-04-10 13:11:16', 'media/event/event_2.jpg', 44.4157608, 26.0232191, 1, 'EXTREME', 'FIRE', 'RESOLVED', 1),
+    (2, '2025-04-10 21:15:05', 'media/event/event_2.jpg', 44.4157608, 26.0232191, 1, 'EXTREME', 'FIRE', 'RESOLVED', 1),
     (3, '2025-04-10 14:23:55', 'media/event/event_3.jpg', 44.3196758, 27.2105093, 10, 'EXTREME', 'HURRICANE', 'RECOVERY', 3),
     (4, '2025-04-10 17:47:31', 'media/event/event_4.jpg', 28.212882, 83.9754403, 100, 'EXTREME', 'EARTHQUAKE', 'RECOVERY',  4),
     (5, '2025-04-11 03:13:27', 'media/event/event_5.jpg', 47.8032022, 22.8595308, 0, 'MINOR', 'TRAFFIC_ACCIDENT', 'ACTIVE_ONGOING', 1),
@@ -142,11 +142,11 @@ values
 insert into comment
 (id, created_at, event_id, user_id, comment)
 values
-    (1, '2025-04-10 17:15:11', 2, 2, 'Is everything fine out there?'),
-    (2, '2025-04-10 18:44:02', 2, 3, 'I''ve seen that the fire passed and only one person got hurt. I will try to get in contact with someone out there.'),
-    (3, '2025-04-10 19:23:33', 2, 4, 'Thanks a lot. Let us know what you''ve found out.'),
-    (4, '2025-04-10 20:22:46', 2, 3, 'It seems that everything is back to normal. The person that got hurt is safe now.'),
-    (5, '2025-04-10 20:50:17', 2, 1, 'The fire has been extinguished and everyone is OK :)'),
+    (1, '2025-04-10 21:17:11', 2, 2, 'Is everything fine out there?'),
+    (2, '2025-04-10 21:45:02', 2, 3, 'I''ve seen that the fire passed and only one person got hurt. I will try to get in contact with someone out there.'),
+    (3, '2025-04-10 21:50:33', 2, 4, 'Thanks a lot. Let us know what you''ve found out.'),
+    (4, '2025-04-10 22:03:46', 2, 3, 'It seems that everything is back to normal. The person that got hurt is safe now.'),
+    (5, '2025-04-10 23:34:17', 2, 1, 'The fire has been extinguished and everyone is OK :)'),
     (6, '2025-04-12 10:11:52', 6, 3, 'Such a bad weather in Portugal... Is everyone OK?'),
     (7, '2025-04-12 11:25:02', 6, 1, 'The water level is not so high. Each person is safe and no one got hurt. I think this bad weather will pass soon. Such a climate change is not usual in the region of Porto.'),
     (8, '2025-04-15 12:38:55', 15, 5, 'How is it possible to snow in Sahara? Lol.'),
