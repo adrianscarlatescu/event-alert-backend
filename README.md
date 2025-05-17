@@ -42,10 +42,10 @@ It will create the required tables and insert some basic data.
   * Set [app.notification.enabled](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L43) property to `true`.
 
 ## Database schema
-<img alt="Database schema" src="src/main/resources/readme/database_schema.png" width="800">  
+<img alt="Database schema" src="src/main/resources/readme/database_schema.png" width="auto">  
 
 ## Authorization diagram
-<img alt="Authorization diagram" src="src/main/resources/readme/authorization_diagram.png" width="800">
+<img alt="Authorization diagram" src="src/main/resources/readme/authorization_diagram.png" width="auto">
 
 ## Request - response example
 The target is to get all the events filtered by the following *body*:
