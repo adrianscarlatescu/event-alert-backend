@@ -64,11 +64,12 @@ The target is to get all the events filtered by the following *body*:
 Field description:
 * *startDate* - the event's report date must be after this value.
 * *endDate* - the event's report date must be before this value.
+* *radius* - it is the radius in kilometers of the circle having its center as the coordinate made by the *latitude* and the *longitude* mentioned above (the events coordinates must be within this circle's area).
 * *latitude* - it is the latitude of the coordiante from which the request is made.
 * *longitude* - it is the longitude of the coordiante from which the request is made.
-* *radius* - it is the radius in kilometers of the circle having its center as the coordinate made by the *latitude* and the *longitude* mentioned above (the events coordinates must be within this circle's area).
-* *severitiesIds* - the event's severity identifier must be among these values.
-* *tagsIds* - the event's tag identifier must be among these values.
+* *typeIds* - the event's tag identifier must be among these values.
+* *severityIds* - the event's severity identifier must be among these values.
+* *statusIds* - the event's tag identifier must be among these values.
 
 Required *headers*:
 ```
