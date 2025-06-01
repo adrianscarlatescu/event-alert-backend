@@ -1,19 +1,21 @@
 package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.AppConstants;
-import com.as.eventalertbackend.dto.request.EventFilterRequest;
-import com.as.eventalertbackend.dto.request.EventRequest;
-import com.as.eventalertbackend.enums.Order;
+import com.as.eventalertbackend.dto.event.EventCreateDTO;
+import com.as.eventalertbackend.dto.event.EventDTO;
+import com.as.eventalertbackend.dto.event.EventUpdateDTO;
+import com.as.eventalertbackend.dto.event.FilterDTO;
+import com.as.eventalertbackend.dto.page.PageDTO;
+import com.as.eventalertbackend.enums.id.OrderId;
 import com.as.eventalertbackend.error.ApiErrorMessage;
 import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.RecordNotFoundException;
 import com.as.eventalertbackend.error.exception.ResourceNotFoundException;
-import com.as.eventalertbackend.persistence.entity.Event;
-import com.as.eventalertbackend.persistence.entity.EventSeverity;
-import com.as.eventalertbackend.persistence.entity.EventTag;
-import com.as.eventalertbackend.persistence.entity.User;
+import com.as.eventalertbackend.persistence.entity.*;
+import com.as.eventalertbackend.persistence.projection.EventProjection;
 import com.as.eventalertbackend.persistence.reopsitory.EventRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,129 +27,187 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @Transactional
 public class EventService {
 
+    private final ModelMapper mapper;
+
     private final EventRepository eventRepository;
 
-    private final EventSeverityService severityService;
-    private final EventTagService tagService;
+    private final SeverityService severityService;
+    private final TypeService typeService;
+    private final StatusService statusService;
     private final UserService userService;
     private final FileService fileService;
     private final NotificationService notificationService;
 
     @Autowired
-    public EventService(EventRepository eventRepository,
-                        EventSeverityService severityService,
-                        EventTagService tagService,
+    public EventService(ModelMapper mapper,
+                        EventRepository eventRepository,
+                        SeverityService severityService,
+                        TypeService typeService,
+                        StatusService statusService,
                         UserService userService,
                         FileService fileService,
                         NotificationService notificationService) {
+        this.mapper = mapper;
         this.eventRepository = eventRepository;
         this.severityService = severityService;
-        this.tagService = tagService;
+        this.typeService = typeService;
+        this.statusService = statusService;
         this.userService = userService;
         this.fileService = fileService;
         this.notificationService = notificationService;
     }
 
-    public Event findById(Long id) {
+    Event findEntityById(Long id) {
         return eventRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(ApiErrorMessage.EVENT_NOT_FOUND));
     }
 
-    public List<Event> findAllByUserId(Long userId) {
-        return eventRepository.findByUserIdOrderByDateTimeDesc(userId);
+    public EventDTO findById(Long id) {
+        return mapper.map(findEntityById(id), EventDTO.class);
     }
 
-    public Page<Event> findByFilter(EventFilterRequest filterRequest, int pageSize, int pageNumber, Order order) {
-        if (pageSize > AppConstants.MAX_PAGES) {
+    public List<EventDTO> findAllByUserId(Long userId) {
+        return eventRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
+                .map(event -> mapper.map(event, EventDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    public PageDTO<EventDTO> findByFilter(FilterDTO filterDTO, int pageSize, int pageNumber, OrderId orderId) {
+        if (pageSize > AppConstants.MAX_PAGE_SIZE) {
             throw new InvalidActionException(ApiErrorMessage.FILTER_MAX_PAGE_SIZE);
         }
 
-        if (filterRequest.getStartDate().isAfter(filterRequest.getEndDate())) {
+        if (filterDTO.getStartDate().isAfter(filterDTO.getEndDate())) {
             throw new InvalidActionException(ApiErrorMessage.FILTER_END_DATE_AFTER_START_DATE);
         }
 
-        if (filterRequest.getEndDate().getYear() - filterRequest.getStartDate().getYear() > AppConstants.MAX_YEARS_INTERVAL) {
+        if (filterDTO.getEndDate().getYear() - filterDTO.getStartDate().getYear() > AppConstants.MAX_YEARS_INTERVAL) {
             throw new InvalidActionException(ApiErrorMessage.FILTER_MAX_YEARS_INTERVAL);
         }
 
-        if (order == null) {
-            order = Order.BY_DATE_DESCENDING;
+        LocalDateTime startDateTime = filterDTO.getStartDate().atStartOfDay();
+        LocalDateTime endDateTime = filterDTO.getEndDate().atTime(23, 59, 59);
+
+        List<EventProjection> eventProjections = eventRepository.findByFilter(
+                filterDTO.getLatitude(),
+                filterDTO.getLongitude(),
+                filterDTO.getRadius(),
+                startDateTime,
+                endDateTime,
+                filterDTO.getTypeIds(),
+                filterDTO.getSeverityIds(),
+                filterDTO.getStatusIds()
+        );
+
+        if (orderId == OrderId.BY_DISTANCE_DESCENDING) {
+            Collections.reverse(eventProjections);
         }
 
-        LocalDateTime startDateTime = filterRequest.getStartDate().atStartOfDay();
-        LocalDateTime endDateTime = filterRequest.getEndDate().atTime(23, 59, 59);
-
-        log.debug("Starting events retrieval; latitude: {}, longitude: {}, radius: {}, start date: {}, end date: {}, tags: {}, severities: {}",
-                filterRequest.getLatitude(), filterRequest.getLongitude(), filterRequest.getRadius(),
-                startDateTime, endDateTime,
-                filterRequest.getTagsIds(), filterRequest.getSeveritiesIds());
-
-        List<EventRepository.DistanceProjection> distanceProjections = eventRepository.findByFilter(
-                filterRequest.getLatitude(), filterRequest.getLongitude(), filterRequest.getRadius(),
-                startDateTime, endDateTime,
-                filterRequest.getTagsIds(), filterRequest.getSeveritiesIds());
-
-        if (order == Order.BY_DISTANCE_DESCENDING) {
-            Collections.reverse(distanceProjections);
-        }
-
-        long[] eventsIds = distanceProjections.stream()
-                .mapToLong(EventRepository.DistanceProjection::getId)
+        long[] eventIds = eventProjections.stream()
+                .mapToLong(EventProjection::getId)
                 .toArray();
 
         PageRequest pageRequest;
-        switch (order) {
+        switch (orderId) {
             default:
                 pageRequest = PageRequest.of(pageNumber, pageSize);
                 break;
             case BY_DATE_ASCENDING:
-                pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("date_time"));
+                pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("created_at"));
                 break;
             case BY_DATE_DESCENDING:
-                pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("date_time").descending());
+                pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("created_at").descending());
                 break;
             case BY_SEVERITY_ASCENDING:
-                pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("severity_id"));
+                pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("severity_position"));
                 break;
             case BY_SEVERITY_DESCENDING:
-                pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("severity_id").descending());
+                pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("severity_position").descending());
+                break;
+            case BY_IMPACT_RADIUS_ASCENDING:
+                pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("impact_radius"));
+                break;
+            case BY_IMPACT_RADIUS_DESCENDING:
+                pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("impact_radius").descending());
                 break;
             case BY_DISTANCE_ASCENDING, BY_DISTANCE_DESCENDING:
-                pageRequest = PageRequest.of(pageNumber, pageSize, JpaSort.unsafe("field(id, ?1)"));
+                pageRequest = PageRequest.of(pageNumber, pageSize, JpaSort.unsafe("field(e.id, :eventIds)"));
                 break;
         }
 
-        Page<Event> eventsPage = eventRepository.findByIds(eventsIds, pageRequest);
+        Page<Event> eventsPage = eventRepository.findByIds(eventIds, pageRequest);
 
         eventsPage.get().forEach(event ->
-                distanceProjections.stream()
-                        .filter(distanceProjection -> distanceProjection.getId().longValue() == event.getId().longValue())
+                eventProjections.stream()
+                        .filter(eventProjection -> eventProjection.getId().longValue() == event.getId().longValue())
                         .findFirst()
-                        .ifPresent(distanceProjection -> event.setDistance(distanceProjection.getDistance()))
+                        .ifPresent(eventProjection -> event.setDistance(eventProjection.getDistance()))
         );
 
-        log.debug("Retrieved total pages: {}, total elements: {}, events: {}",
+        return new PageDTO<>(
                 eventsPage.getTotalPages(),
                 eventsPage.getTotalElements(),
-                eventsPage.getContent().stream().mapToLong(Event::getId).toArray());
-
-        return eventsPage;
+                eventsPage.getContent().stream()
+                        .map(event -> mapper.map(event, EventDTO.class))
+                        .collect(Collectors.toList())
+        );
     }
 
-    public Event save(EventRequest eventRequest) {
-        Event event = eventRepository.save(createOrUpdate(new Event(), eventRequest));
+    public EventDTO save(EventCreateDTO eventCreateDTO) {
+        Event newEvent = new Event();
+
+        Type type = typeService.findEntityById(eventCreateDTO.getTypeId());
+        Severity severity = severityService.findEntityById(eventCreateDTO.getSeverityId());
+        Status status = statusService.findEntityById(eventCreateDTO.getStatusId());
+        User user = userService.findEntityById(eventCreateDTO.getUserId());
+
+        if (user.getFirstName() == null || user.getLastName() == null) {
+            throw new InvalidActionException(ApiErrorMessage.PROFILE_FULL_NAME_MANDATORY);
+        }
+
+        if (!fileService.imageExists(eventCreateDTO.getImagePath())) {
+            throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
+        }
+
+        newEvent.setLatitude(eventCreateDTO.getLatitude());
+        newEvent.setLongitude(eventCreateDTO.getLongitude());
+        newEvent.setImpactRadius(eventCreateDTO.getImpactRadius());
+        newEvent.setType(type);
+        newEvent.setSeverity(severity);
+        newEvent.setStatus(status);
+        newEvent.setUser(user);
+        newEvent.setImagePath(eventCreateDTO.getImagePath());
+        newEvent.setDescription(eventCreateDTO.getDescription());
+
+        Event event = eventRepository.save(newEvent);
+
         notificationService.send(event);
-        return event;
+
+        return mapper.map(event, EventDTO.class);
     }
 
-    public Event updateById(EventRequest eventRequest, Long id) {
-        return createOrUpdate(findById(id), eventRequest);
+    public EventDTO updateById(EventUpdateDTO eventStatusUpdateDTO, Long id) {
+        Event event = findEntityById(id);
+
+        Type type = typeService.findEntityById(eventStatusUpdateDTO.getTypeId());
+        Severity severity = severityService.findEntityById(eventStatusUpdateDTO.getSeverityId());
+        Status status = statusService.findEntityById(eventStatusUpdateDTO.getStatusId());
+
+        event.setImpactRadius(eventStatusUpdateDTO.getImpactRadius());
+        event.setType(type);
+        event.setSeverity(severity);
+        event.setStatus(status);
+        event.setImagePath(eventStatusUpdateDTO.getImagePath());
+        event.setDescription(eventStatusUpdateDTO.getDescription());
+
+        return mapper.map(event, EventDTO.class);
     }
 
     public void deleteById(Long id) {
@@ -156,39 +216,6 @@ public class EventService {
         } else {
             throw new RecordNotFoundException(ApiErrorMessage.EVENT_NOT_FOUND);
         }
-    }
-
-    private Event createOrUpdate(Event event, EventRequest eventRequest) {
-        User user = userService.findById(eventRequest.getUserId());
-        EventTag tag = tagService.findById(eventRequest.getTagId());
-        EventSeverity severity = severityService.findById(eventRequest.getSeverityId());
-
-        if (user.getFirstName() == null || user.getFirstName().isEmpty()) {
-            throw new InvalidActionException(ApiErrorMessage.PROFILE_FIRST_NAME_MANDATORY);
-        }
-        if (user.getLastName() == null || user.getLastName().isEmpty()) {
-            throw new InvalidActionException(ApiErrorMessage.PROFILE_LAST_NAME_MANDATORY);
-        }
-        if (user.getPhoneNumber() == null || user.getPhoneNumber().isEmpty()) {
-            throw new InvalidActionException(ApiErrorMessage.PROFILE_PHONE_NUMBER_MANDATORY);
-        }
-
-        if (!fileService.imageExists(eventRequest.getImagePath())) {
-            throw new ResourceNotFoundException(ApiErrorMessage.IMAGE_NOT_FOUND);
-        }
-
-        String description = eventRequest.getDescription() == null ?
-                null : eventRequest.getDescription().replaceAll("\n", " ");
-
-        event.setLatitude(eventRequest.getLatitude());
-        event.setLongitude(eventRequest.getLongitude());
-        event.setImagePath(eventRequest.getImagePath());
-        event.setDescription(description);
-        event.setSeverity(severity);
-        event.setTag(tag);
-        event.setUser(user);
-
-        return event;
     }
 
 }

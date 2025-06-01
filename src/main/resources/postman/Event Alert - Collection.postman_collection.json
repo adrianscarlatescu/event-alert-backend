@@ -100,13 +100,19 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}/api/image",
+							"raw": "{{url}}/api/images?type=EVENT",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
-								"image"
+								"images"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "EVENT"
+								}
 							]
 						},
 						"description": "Register user"
@@ -137,18 +143,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/api/image?path=img/user_1.jpg",
+							"raw": "{{url}}/api/images?path=media/type/type_fire.png",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
-								"image"
+								"images"
 							],
 							"query": [
 								{
 									"key": "path",
-									"value": "img/user_1.jpg"
+									"value": "media/type/type_fire.png"
 								}
 							]
 						},
@@ -159,10 +165,10 @@
 			]
 		},
 		{
-			"name": "User",
+			"name": "Role",
 			"item": [
 				{
-					"name": "Get Profile",
+					"name": "Get Roles",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -173,149 +179,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/api/profile",
+							"raw": "{{url}}/api/roles",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
-								"profile"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Profile",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"firstName\": \"Alan\",\r\n    \"lastName\": \"Walter\",\r\n    \"dateOfBirth\": \"1984-05-23\",\r\n    \"phoneNumber\": \"+03442777999\",\r\n    \"imagePath\": \"img/user_1.jpg\",\r\n    \"gender\": \"MALE\",\r\n    \"roles\": [\r\n        \"ROLE_USER\",\r\n        \"ROLE_ADMIN\"\r\n    ]\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{url}}/api/profile",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"api",
-								"profile"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Users",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{url}}/api/users",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"api",
-								"users"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get User",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{url}}/api/users/3",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"api",
-								"users",
-								"3"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update User",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"firstName\": \"Cindy\",\r\n    \"lastName\": \"Milner\",\r\n    \"dateOfBirth\": \"1990-09-27\",\r\n    \"phoneNumber\": \"+44848992441\",\r\n    \"imagePath\": \"img/user_3.jpg\",\r\n    \"gender\": \"FEMALE\",\r\n    \"roles\": [\r\n        \"ROLE_USER\"\r\n    ]\r\n}"
-						},
-						"url": {
-							"raw": "{{url}}/api/users/3",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"api",
-								"users",
-								"3"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete User",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{url}}/api/users/6",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"api",
-								"users",
-								"6"
+								"roles"
 							]
 						}
 					},
@@ -324,10 +194,10 @@
 			]
 		},
 		{
-			"name": "Tag",
+			"name": "Order",
 			"item": [
 				{
-					"name": "Get Tags",
+					"name": "Order",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -338,20 +208,25 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/api/tags",
+							"raw": "{{url}}/api/orders",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
-								"tags"
+								"orders"
 							]
 						}
 					},
 					"response": []
-				},
+				}
+			]
+		},
+		{
+			"name": "Category",
+			"item": [
 				{
-					"name": "Get Tag",
+					"name": "Get Categories",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -362,21 +237,45 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/api/tags/7",
+							"raw": "{{url}}/api/categories",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
-								"tags",
-								"7"
+								"categories"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Save Tag",
+					"name": "Get Category",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/categories/HUMAN_MADE",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"categories",
+								"HUMAN_MADE"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Save Category",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -388,23 +287,23 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"SavedTag\",\r\n    \"imagePath\": \"img/tag_avalanche.png\"\r\n}"
+							"raw": "{\r\n    \"id\": \"TEST\",\r\n    \"label\": \"Test\",\r\n    \"position\": 4\r\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/tags",
+							"raw": "{{url}}/api/categories",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
-								"tags"
+								"categories"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Update Tag",
+					"name": "Update Category",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -416,24 +315,24 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"UpdatedTag\",\r\n    \"imagePath\": \"img/tag_avalanche.png\"\r\n}"
+							"raw": "{\r\n    \"label\": \"Test\",\r\n    \"position\": 4\r\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/tags/31",
+							"raw": "{{url}}/api/categories/TEST",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
-								"tags",
-								"31"
+								"categories",
+								"TEST"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Delete Tag",
+					"name": "Delete Category",
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -448,14 +347,154 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/tags/31",
+							"raw": "{{url}}/api/categories/TEST",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
-								"tags",
-								"31"
+								"categories",
+								"TEST"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Type",
+			"item": [
+				{
+					"name": "Get Types",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/types",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"types"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Type",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/types/WILDFIRE",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"types",
+								"WILDFIRE"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Save Type",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"TEST\",\r\n    \"label\": \"Test\",\r\n    \"imagePath\": \"media/type/type_test.png\",\r\n    \"position\": 40,\r\n    \"categoryId\": \"NATURAL\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/types",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"types"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Type",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"label\": \"Test\",\r\n    \"imagePath\": \"media/type/type_test.png\",\r\n    \"position\": 40,\r\n    \"categoryId\": \"NATURAL\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/types/TEST",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"types",
+								"TEST"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Type",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/types/TEST",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"types",
+								"TEST"
 							]
 						}
 					},
@@ -502,14 +541,14 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/api/severities/1",
+							"raw": "{{url}}/api/severities/EXTREME",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
 								"severities",
-								"1"
+								"EXTREME"
 							]
 						}
 					},
@@ -528,7 +567,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"SavedSeverity\",\r\n    \"color\": 6579400\r\n}"
+							"raw": "{\r\n    \"id\": \"TEST\",\r\n    \"label\": \"Test\",\r\n    \"color\": \"#FF1122\",\r\n    \"position\": 5\r\n}"
 						},
 						"url": {
 							"raw": "{{url}}/api/severities",
@@ -556,17 +595,17 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"UpdatedSeverity\",\r\n    \"color\": 6604900\r\n}"
+							"raw": "{\r\n    \"label\": \"Test\",\r\n    \"color\": \"#FF1122\",\r\n    \"position\": 5\r\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/severities/5",
+							"raw": "{{url}}/api/severities/TEST",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
 								"severities",
-								"5"
+								"TEST"
 							]
 						}
 					},
@@ -588,14 +627,292 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/severities/5",
+							"raw": "{{url}}/api/severities/TEST",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
 								"severities",
-								"5"
+								"TEST"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Status",
+			"item": [
+				{
+					"name": "Get Statuses",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/statuses",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"statuses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/statuses/ACTIVE_ONGOING",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"statuses",
+								"ACTIVE_ONGOING"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Save Status",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"TEST\",\r\n    \"label\": \"Test\",\r\n    \"color\": \"#FF1122\",\r\n    \"description\": \"Test\",\r\n    \"position\": 8\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/statuses",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"statuses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"label\": \"Test\",\r\n    \"color\": \"#FF1122\",\r\n    \"description\": \"Test\",\r\n    \"position\": 8\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/statuses/TEST",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"statuses",
+								"TEST"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Status",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/statuses/TEST",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"statuses",
+								"TEST"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/users/profile",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"Alan\",\r\n    \"lastName\": \"Walter\",\r\n    \"dateOfBirth\": \"1984-05-23\",\r\n    \"phoneNumber\": \"+03442777999\",\r\n    \"imagePath\": \"media/user/user_1.jpg\",\r\n    \"roleIds\": [\r\n        \"ROLE_BASIC\",\r\n        \"ROLE_ADMIN\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/users/profile",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/users/3",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/users",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/users/6",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"6"
 							]
 						}
 					},
@@ -632,6 +949,36 @@
 					"response": []
 				},
 				{
+					"name": "Get Event By User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/events?userId=1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"events"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get Event By Filter",
 					"request": {
 						"method": "POST",
@@ -644,7 +991,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"startDate\": \"2020-04-01\",\r\n    \"endDate\": \"2020-04-21\",\r\n    \"radius\": 500,\r\n    \"latitude\": 44.8481,\r\n    \"longitude\": 24.8839,\r\n    \"severitiesIds\": [1, 2, 3, 4],\r\n    \"tagsIds\": [1, 2, 3, 4, 5, 6, 7, 20, 21, 22]\r\n}",
+							"raw": "{\r\n    \"startDate\": \"2025-04-01\",\r\n    \"endDate\": \"2025-04-21\",\r\n    \"radius\": 500,\r\n    \"latitude\": 44.8481,\r\n    \"longitude\": 24.8839,\r\n    \"typeIds\": [\"FIRE\", \"MURDER_CRIME\", \"POLLUTION\", \"PROTEST_RIOT\", \"TRAFFIC_ACCIDENT\", \"AVALANCHE\", \"EARTHQUAKE\", \"FLOOD\", \"HURRICANE\"],\r\n    \"severityIds\": [\"EXTREME\", \"MAJOR\", \"MINOR\", \"TRIVIAL\"],\r\n    \"statusIds\": [\"ACTIVE_ONGOING\", \"RECOVERY\", \"CLOSED\"]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -652,7 +999,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/api/events/filter?pageSize=20&pageNumber=0&order=BY_DATE_DESCENDING",
+							"raw": "{{url}}/api/events/filter?pageSize=10&pageNumber=0&orderId=BY_DISTANCE_ASCENDING",
 							"host": [
 								"{{url}}"
 							],
@@ -664,15 +1011,15 @@
 							"query": [
 								{
 									"key": "pageSize",
-									"value": "20"
+									"value": "10"
 								},
 								{
 									"key": "pageNumber",
 									"value": "0"
 								},
 								{
-									"key": "order",
-									"value": "BY_DATE_DESCENDING"
+									"key": "orderId",
+									"value": "BY_DISTANCE_ASCENDING"
 								}
 							]
 						}
@@ -692,7 +1039,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"latitude\": 44.8481,\r\n    \"longitude\": 24.8839,\r\n    \"imagePath\": \"img/event_1.jpg\",\r\n    \"severityId\": 2,\r\n    \"tagId\": 3,\r\n    \"userId\": 2\r\n}",
+							"raw": "{\r\n    \"latitude\": 44.8481,\r\n    \"longitude\": 24.8839,\r\n    \"impactRadius\": 125.50,\r\n    \"imagePath\": \"media/event/event_test.jpg\",\r\n    \"typeId\": \"WILDFIRE\",\r\n    \"severityId\": \"EXTREME\",\r\n    \"statusId\": \"ACTIVE_ONGOING\",\r\n    \"userId\": 1,\r\n    \"description\": \"Test\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -725,7 +1072,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"latitude\": 44.8481,\r\n    \"longitude\": 24.8839,\r\n    \"imagePath\": \"img/event_1.jpg\",\r\n    \"severityId\": 1,\r\n    \"tagId\": 3,\r\n    \"userId\": 2\r\n}"
+							"raw": "{\r\n    \"impactRadius\": 125.50,\r\n    \"imagePath\": \"media/event/event_test.jpg\",\r\n    \"typeId\": \"WILDFIRE\",\r\n    \"severityId\": \"EXTREME\",\r\n    \"statusId\": \"ACTIVE_ONGOING\",\r\n    \"description\": \"Test\"\r\n}"
 						},
 						"url": {
 							"raw": "{{url}}/api/events/43",
@@ -809,7 +1156,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"comment\": \"SavedComment\",\r\n    \"eventId\": 1,\r\n    \"userId\": 1\r\n}"
+							"raw": "{\r\n    \"comment\": \"Test\",\r\n    \"eventId\": 1,\r\n    \"userId\": 1\r\n}"
 						},
 						"url": {
 							"raw": "{{url}}/api/comments",
@@ -837,7 +1184,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"comment\": \"UpdatedComment\",\r\n    \"eventId\": 1,\r\n    \"userId\": 1\r\n}"
+							"raw": "{\r\n    \"comment\": \"Test\"\r\n}"
 						},
 						"url": {
 							"raw": "{{url}}/api/comments/12",
@@ -869,14 +1216,14 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/comments/12",
+							"raw": "{{url}}/api/comments/13",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
 								"comments",
-								"12"
+								"13"
 							]
 						}
 					},
@@ -905,7 +1252,7 @@
 					"const url = pm.environment.get('url');\r",
 					"const loginPath = '/api/auth/login';\r",
 					"const refreshTokenPath = '/api/auth/refresh';\r",
-					"const autEmail = pm.environment.get('authEmail');\r",
+					"const authEmail = pm.environment.get('authEmail');\r",
 					"const authPassword = pm.environment.get('authPassword');\r",
 					"const accessToken = pm.environment.get('accessToken');\r",
 					"const refreshToken = pm.environment.get('refreshToken');\r",
@@ -928,7 +1275,7 @@
 					"            body: {\r",
 					"                mode: 'raw',\r",
 					"                raw: JSON.stringify({\r",
-					"                    email: autEmail,\r",
+					"                    email: authEmail,\r",
 					"                    password: authPassword\r",
 					"                })\r",
 					"            }\r",

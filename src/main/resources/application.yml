@@ -27,7 +27,7 @@ spring:
 
 app:
   name: "Event Alert"
-  images-directory-path: "img/"
+  media-directory-path: "media/"
   security:
     secret: "SecretKeyToGenerateJWTs"
     access-token-expiration-time: 3600000 # 1 hour
@@ -40,14 +40,6 @@ app:
     auth-login-url-regex: ".*\\/auth\\/register$"
     subscription-token-url-regex: ".*\\/subscriptions\\/.*\\/token$"
   notification:
-    firebase-service-account-path: "firebase/firebase-service-account.json"
     enabled: false
-    event-id-key: "eventId"
-    event-date-time-key: "eventDateTime"
-    event-tag-name-key: "eventTagName"
-    event-tag-image-path-key: "eventTagImagePath"
-    event-severity-name-key: "eventSeverityName"
-    event-severity-color-key: "eventSeverityColor"
-    event-latitude-key: "eventLatitude"
-    event-longitude-key: "eventLongitude"
+    firebase-service-account-path: "firebase/firebase-service-account.json"
   mocked-users-emails: user1@test.com, user2@test.com, user3@test.com, user4@test.com, user5@test.com

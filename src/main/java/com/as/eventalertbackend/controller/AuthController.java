@@ -1,11 +1,10 @@
 package com.as.eventalertbackend.controller;
 
-import com.as.eventalertbackend.dto.request.AuthLoginRequest;
-import com.as.eventalertbackend.dto.request.AuthRegisterRequest;
-import com.as.eventalertbackend.dto.response.AuthTokensResponse;
-import com.as.eventalertbackend.dto.response.UserResponse;
+import com.as.eventalertbackend.dto.auth.AuthLoginDTO;
+import com.as.eventalertbackend.dto.auth.AuthRegisterDTO;
+import com.as.eventalertbackend.dto.auth.AuthTokensDTO;
+import com.as.eventalertbackend.dto.user.UserDTO;
 import com.as.eventalertbackend.service.AuthService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,30 +17,27 @@ import javax.validation.Valid;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final ModelMapper mapper;
     private final AuthService authService;
 
     @Autowired
-    public AuthController(ModelMapper mapper,
-                          AuthService authService) {
-        this.mapper = mapper;
+    public AuthController(AuthService authService) {
         this.authService = authService;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> register(@Valid @RequestBody AuthRegisterRequest registerRequest) {
+    public ResponseEntity<UserDTO> register(@Valid @RequestBody AuthRegisterDTO registerDTO) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(mapper.map(authService.register(registerRequest), UserResponse.class));
+                .body(authService.register(registerDTO));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthTokensResponse> login(@Valid @RequestBody AuthLoginRequest loginRequest) {
-        return ResponseEntity.ok(authService.login(loginRequest));
+    public ResponseEntity<AuthTokensDTO> login(@Valid @RequestBody AuthLoginDTO loginDTO) {
+        return ResponseEntity.ok(authService.login(loginDTO));
     }
 
     @GetMapping("/refresh")
-    public ResponseEntity<AuthTokensResponse> refreshToken(HttpServletRequest httpRequest) {
+    public ResponseEntity<AuthTokensDTO> refreshToken(HttpServletRequest httpRequest) {
         return ResponseEntity.ok(authService.refreshToken(httpRequest));
     }
 

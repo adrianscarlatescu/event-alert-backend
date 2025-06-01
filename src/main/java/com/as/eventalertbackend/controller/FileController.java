@@ -1,5 +1,6 @@
 package com.as.eventalertbackend.controller;
 
+import com.as.eventalertbackend.enums.ImageType;
 import com.as.eventalertbackend.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -19,8 +20,8 @@ public class FileController {
         this.fileService = fileService;
     }
 
-    @GetMapping("/image")
-    public ResponseEntity<Resource> singleImageDownload(@RequestParam("path") String imagePath) {
+    @GetMapping("/images")
+    public ResponseEntity<Resource> downloadImage(@RequestParam("path") String imagePath) {
         Resource resource = fileService.readImage(imagePath);
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("application/octet-stream"))
@@ -28,9 +29,10 @@ public class FileController {
                 .body(resource);
     }
 
-    @PostMapping("/image")
-    public ResponseEntity<String> singleImageUpload(@RequestPart("image") MultipartFile image) {
-        return ResponseEntity.ok("\"" + fileService.writeImage(image) + "\"");
+    @PostMapping("/images")
+    public ResponseEntity<String> uploadImage(@RequestParam("type") ImageType imageType,
+                                              @RequestPart("image") MultipartFile image) {
+        return ResponseEntity.ok("\"" + fileService.writeImage(imageType, image) + "\"");
     }
 
 }

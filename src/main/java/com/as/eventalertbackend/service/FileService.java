@@ -1,7 +1,9 @@
 package com.as.eventalertbackend.service;
 
 import com.as.eventalertbackend.AppProperties;
+import com.as.eventalertbackend.enums.ImageType;
 import com.as.eventalertbackend.error.ApiErrorMessage;
+import com.as.eventalertbackend.error.exception.InvalidActionException;
 import com.as.eventalertbackend.error.exception.StorageFailException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 
 @Service
 @Slf4j
@@ -32,27 +33,20 @@ public class FileService {
     }
 
     public boolean imageExists(String imagePath) {
-        String imagesPath = appProperties.getImagesDirectoryPath();
-        ClassPathResource imagesResource = new ClassPathResource(imagesPath);
+        String mediaPath = appProperties.getMediaDirectoryPath();
+        if (!imagePath.startsWith(mediaPath)) {
+            throw new StorageFailException(ApiErrorMessage.INVALID_IMAGE_PATH);
+        }
 
-        File imagesDirectory;
+        ClassPathResource mediaResource = new ClassPathResource(imagePath);
+        File imageFile;
         try {
-            imagesDirectory = imagesResource.getFile();
+            imageFile = mediaResource.getFile();
         } catch (IOException e) {
-            throw new StorageFailException(ApiErrorMessage.FILE_LIST_FAIL);
+            throw new StorageFailException(ApiErrorMessage.IMAGE_RETRIEVE_FAIL);
         }
 
-        String[] filesNames = imagesDirectory.list();
-        if (filesNames == null) {
-            throw new StorageFailException(ApiErrorMessage.FILE_LIST_FAIL);
-        }
-
-        if (!imagePath.startsWith(imagesPath)) {
-            throw new StorageFailException(ApiErrorMessage.INVALID_IMAGE_NAME);
-        }
-
-        String imageName = imagePath.substring(imagesPath.length());
-        return Arrays.asList(filesNames).contains(imageName);
+        return imageFile.exists() && !imageFile.isDirectory();
     }
 
     public Resource readImage(String imagePath) {
@@ -64,26 +58,34 @@ public class FileService {
         }
     }
 
-    public String writeImage(MultipartFile file) {
-        String imagesPath = appProperties.getImagesDirectoryPath();
+    public String writeImage(ImageType imageType, MultipartFile file) {
+        String mediaPath = appProperties.getMediaDirectoryPath();
 
-        LocalDateTime dateTime = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
-        String imageName = file.getOriginalFilename() + dateTime.format(formatter) + ".jpg";
+        if (file.getSize() == 0) {
+            throw new InvalidActionException(ApiErrorMessage.IMAGE_MANDATORY);
+        }
 
-        ClassPathResource imagesResource = new ClassPathResource(imagesPath);
+        String imageTypeName = imageType.name().toLowerCase();
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+
+        String imageDirectoryPath = mediaPath + imageTypeName;
+        String imageName = imageTypeName + "_" + timestamp;
+
+        String imagePath = imageDirectoryPath + "/" + imageName;
+
+        ClassPathResource imageResource = new ClassPathResource(imageDirectoryPath);
         log.info("Begin image write request");
 
         try {
             byte[] bytes = file.getBytes();
-            Path path = Paths.get(imagesResource.getFile().getPath(), imageName);
+            Path path = Paths.get(imageResource.getFile().getPath(), imageName);
             Files.write(path, bytes);
-            log.info("Image successfully stored: {}", imageName);
+            log.info("Image successfully stored: {}", imagePath);
         } catch (IOException e) {
             throw new StorageFailException(ApiErrorMessage.IMAGE_STORE_FAIL);
         }
 
-        return imagesPath + imageName;
+        return imagePath;
     }
 
 }

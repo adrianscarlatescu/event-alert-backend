@@ -5,4 +5,5 @@ target/**
 .mvn/**
 mvnw
 mvnw.cmd
+event-alert-backend.iml
 /src/main/resources/firebase/firebase-service-account.json

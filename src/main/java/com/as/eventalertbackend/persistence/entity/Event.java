@@ -4,12 +4,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
+
+import static com.as.eventalertbackend.AppConstants.LENGTH_1000;
 
 @Entity
+@Table(name = "event")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,8 +24,12 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     @CreationTimestamp
-    private LocalDateTime dateTime;
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime modifiedAt;
 
     @Column(nullable = false)
     private Double latitude;
@@ -28,36 +37,36 @@ public class Event {
     @Column(nullable = false)
     private Double longitude;
 
-    @Column(nullable = false)
-    private String imagePath;
-
-    private String description;
-
-    @OneToMany(mappedBy = "event")
-    private Set<EventComment> eventComments;
+    @Column(precision = 6, scale = 2)
+    private BigDecimal impactRadius;
 
     @ManyToOne
     @JoinColumn(name = "severity_id", nullable = false)
-    private EventSeverity severity;
+    private Severity severity;
 
     @ManyToOne
-    @JoinColumn(name = "tag_id", nullable = false)
-    private EventTag tag;
+    @JoinColumn(name = "type_id", nullable = false)
+    private Type type;
+
+    @ManyToOne
+    @JoinColumn(name = "status_id", nullable = false)
+    private Status status;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Transient
-    private double distance;
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+    @OrderBy("createdAt desc")
+    private List<Comment> comments;
 
-    @Override
-    public String toString() {
-        return "{id: " + id + ", date_time: " + dateTime.toString() +
-                ", latitude: " + latitude + ", longitude: " + longitude +
-                ", tag_id: " + tag.getId() + ", severity_id: " + severity.getId() + ", user_id: " + user.getId() +
-                ", image_path: " + imagePath + ", description: " + description +
-                ", distance: " + distance + "}";
-    }
+    @Column(nullable = false, length = LENGTH_1000)
+    private String imagePath;
+
+    @Column(length = LENGTH_1000)
+    private String description;
+
+    @Transient
+    private Double distance;
 
 }

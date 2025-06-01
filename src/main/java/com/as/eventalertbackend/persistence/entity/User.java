@@ -1,11 +1,11 @@
 package com.as.eventalertbackend.persistence.entity;
 
-import com.as.eventalertbackend.enums.Gender;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,11 +14,13 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.as.eventalertbackend.AppConstants.*;
+
 @Entity
-@Table(name = "user", indexes ={@Index(name = "idx_email", columnList = "email")})
+@Table(name = "user", indexes = {@Index(name = "idx_email", columnList = "email")})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,54 +30,63 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     @CreationTimestamp
-    private LocalDateTime joinDateTime;
+    private LocalDateTime joinedAt;
 
-    @Column(unique = true)
+    @UpdateTimestamp
+    private LocalDateTime modifiedAt;
+
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column(length = LENGTH_1000)
     private String password;
 
+    @Column(length = LENGTH_50)
     private String firstName;
+
+    @Column(length = LENGTH_50)
     private String lastName;
 
     private LocalDate dateOfBirth;
+
+    @Column(length = LENGTH_15)
     private String phoneNumber;
+
+    @Column(length = LENGTH_1000)
     private String imagePath;
 
-    @Enumerated(EnumType.STRING)
-    private Gender gender;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Event> events;
 
-    @OneToMany(mappedBy = "user")
-    private Set<Event> events;
-
-    @OneToMany(mappedBy = "user")
-    private Set<EventComment> eventComments;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Comment> comments;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<UserRole> userRoles;
+    @OrderBy("position")
+    private List<Role> roles;
 
-    @OneToMany(mappedBy = "user")
-    private Set<Subscription> subscriptions;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Subscription> subscriptions;
 
     @Formula("(SELECT COUNT(e.id) FROM event e WHERE e.user_id = id)")
-    private int reportsNumber;
+    private Integer reportsNumber;
 
-    public User(String email, String password, Set<UserRole> userRoles) {
+    public User(String email, String password, List<Role> roles) {
         this.email = email;
         this.password = password;
-        this.userRoles = userRoles;
+        this.roles = roles;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return userRoles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
-                .collect(Collectors.toSet());
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getId().name()))
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -41,7 +41,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         }
 
         try {
-            String token = jwtManager.parseJwt(request);
+            String authHeader = request.getHeader(appProperties.getSecurity().getAuthHeader());
+            String token = jwtManager.parseJwt(authHeader);
 
             boolean isTokenNull = token == null;
             boolean isAccessToken = false;

@@ -1,6 +1,7 @@
 package com.as.eventalertbackend.persistence.reopsitory;
 
 import com.as.eventalertbackend.persistence.entity.Event;
+import com.as.eventalertbackend.persistence.projection.EventProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,28 +15,33 @@ import java.util.Set;
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    @Query(value = "SELECT id, ST_Distance_Sphere(point(latitude, longitude),point(?1, ?2)) / 1000 AS distance " +
-            "FROM event " +
-            "WHERE date_time BETWEEN ?4 AND ?5 AND tag_id IN ?6 AND severity_id IN ?7 " +
-            "HAVING distance <= ?3 " +
-            "ORDER BY distance ASC",
+    @Query(value = """
+            SELECT id, impact_radius, ST_Distance_Sphere(point(longitude, latitude), point(:longitude, :latitude)) / 1000 AS distance
+            FROM event
+            WHERE created_at BETWEEN :startDate AND :endDate 
+            AND type_id IN :typeIds 
+            AND severity_id IN :severityIds
+            AND status_id IN :statusIds
+            HAVING distance <= :radius
+            OR (impact_radius + :radius) >= distance
+            ORDER BY distance ASC
+            """,
             nativeQuery = true)
-    List<DistanceProjection> findByFilter(
-            Double latitude, Double longitude, Integer radius,
-            LocalDateTime startDate, LocalDateTime endDate,
-            Set<Long> tagsIds, Set<Long> severitiesIds);
+    List<EventProjection> findByFilter(
+            Double latitude,
+            Double longitude,
+            Integer radius,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            Set<String> typeIds,
+            Set<String> severityIds,
+            Set<String> statusIds);
 
-    @Query(value = "SELECT * FROM event WHERE id in ?1",
-            countQuery = "SELECT COUNT(*) FROM event WHERE id in ?1",
+    @Query(value = "SELECT e.*, s.position AS severity_position FROM event e LEFT JOIN ref_severity s ON s.id = e.severity_id WHERE e.id IN :eventIds",
+            countQuery = "SELECT COUNT(id) FROM event WHERE id IN :eventIds",
             nativeQuery = true)
-    Page<Event> findByIds(long[] eventsIds, Pageable pageable);
+    Page<Event> findByIds(long[] eventIds, Pageable pageable);
 
-    List<Event> findByUserIdOrderByDateTimeDesc(Long userId);
-
-    interface DistanceProjection {
-        Long getId();
-
-        Double getDistance();
-    }
+    List<Event> findByUserIdOrderByCreatedAtDesc(Long userId);
 
 }

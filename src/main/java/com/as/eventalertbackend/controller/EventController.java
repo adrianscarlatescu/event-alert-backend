@@ -1,15 +1,13 @@
 package com.as.eventalertbackend.controller;
 
-import com.as.eventalertbackend.dto.request.EventFilterRequest;
-import com.as.eventalertbackend.dto.request.EventRequest;
-import com.as.eventalertbackend.dto.response.EventResponse;
-import com.as.eventalertbackend.dto.response.PageResponse;
-import com.as.eventalertbackend.enums.Order;
-import com.as.eventalertbackend.persistence.entity.Event;
+import com.as.eventalertbackend.dto.event.EventCreateDTO;
+import com.as.eventalertbackend.dto.event.EventDTO;
+import com.as.eventalertbackend.dto.event.EventUpdateDTO;
+import com.as.eventalertbackend.dto.event.FilterDTO;
+import com.as.eventalertbackend.dto.page.PageDTO;
+import com.as.eventalertbackend.enums.id.OrderId;
 import com.as.eventalertbackend.service.EventService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -17,65 +15,47 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/events")
 public class EventController {
 
-    private final ModelMapper mapper;
     private final EventService eventService;
 
     @Autowired
-    public EventController(ModelMapper mapper,
-                           EventService eventService) {
-        this.mapper = mapper;
+    public EventController(EventService eventService) {
         this.eventService = eventService;
     }
 
     @PostMapping("/filter")
-    public ResponseEntity<PageResponse<EventResponse>> getByFilter(@Valid @RequestBody EventFilterRequest filterRequest,
-                                                                   @RequestParam("pageSize") int pageSize,
-                                                                   @RequestParam("pageNumber") int pageNumber,
-                                                                   @RequestParam(required = false, value = "order") Order order) {
-        Page<Event> eventsPage = eventService.findByFilter(filterRequest, pageSize, pageNumber, order);
-        return ResponseEntity.ok(
-                new PageResponse<>(
-                        eventsPage.getTotalPages(),
-                        eventsPage.getTotalElements(),
-                        eventsPage.getContent().stream()
-                                .map(event -> mapper.map(event, EventResponse.class))
-                                .collect(Collectors.toList())
-                )
-        );
+    public ResponseEntity<PageDTO<EventDTO>> getByFilter(@Valid @RequestBody FilterDTO filterDTO,
+                                                         @RequestParam("pageSize") int pageSize,
+                                                         @RequestParam("pageNumber") int pageNumber,
+                                                         @RequestParam("orderId") OrderId orderId) {
+        return ResponseEntity.ok(eventService.findByFilter(filterDTO, pageSize, pageNumber, orderId));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EventResponse> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(mapper.map(eventService.findById(id), EventResponse.class));
+    public ResponseEntity<EventDTO> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(eventService.findById(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<EventResponse>> getAllByUserId(@RequestParam("userId") Long userId) {
-        return ResponseEntity.ok(
-                eventService.findAllByUserId(userId).stream()
-                        .map(event -> mapper.map(event, EventResponse.class))
-                        .collect(Collectors.toList())
-        );
+    public ResponseEntity<List<EventDTO>> getAllByUserId(@RequestParam("userId") Long userId) {
+        return ResponseEntity.ok(eventService.findAllByUserId(userId));
     }
 
     @PostMapping
-    public ResponseEntity<EventResponse> save(@Valid @RequestBody EventRequest eventRequest) {
+    public ResponseEntity<EventDTO> save(@Valid @RequestBody EventCreateDTO eventCreateDTO) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(mapper.map(eventService.save(eventRequest), EventResponse.class));
+                .body(eventService.save(eventCreateDTO));
     }
 
-    @Secured({"ROLE_ADMIN"})
     @PutMapping("/{id}")
-    public ResponseEntity<EventResponse> updateById(@Valid @RequestBody EventRequest eventRequest,
-                                                    @PathVariable("id") Long id) {
-        return ResponseEntity.ok(mapper.map(eventService.updateById(eventRequest, id), EventResponse.class));
+    public ResponseEntity<EventDTO> updateById(@Valid @RequestBody EventUpdateDTO eventUpdateDTO,
+                                               @PathVariable("id") Long id) {
+        return ResponseEntity.ok(eventService.updateById(eventUpdateDTO, id));
     }
 
     @Secured({"ROLE_ADMIN"})

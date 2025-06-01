@@ -1,5 +1,5 @@
 ## Getting Started
-Event Alert - Backend is a REST API server that provides the required endpoints for the client applications.  
+Event Alert - Backend is a REST API server that provides the required endpoints for the client applications.<br/>
 The technology stack consists of:
 * [Java](https://www.oracle.com/java/) - The programming language used to develop the application.
 * [Spring Boot](https://spring.io/projects/spring-boot#overview) - The base framework used for the REST controllers, services, dependency injection, Tomcat server and everything else needed by a stand-alone application.
@@ -39,35 +39,37 @@ It will create the required tables and insert some basic data.
 * Push notifications feature (to skip this feature, nothing has to be done):
   * Create a [Firebase](https://console.firebase.google.com/) project and generate the service account private key.
   This key must be put in `resources` directory according to [app.notification.firebase-service-account-path](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L43) property.
-  * Set [app.notification.enabled](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L44) property to `true`.
+  * Set [app.notification.enabled](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L43) property to `true`.
 
 ## Database schema
-<img alt="Database schema" src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/readme/database_schema.png" width="800">  
+<img alt="Database schema" src="src/main/resources/readme/database_schema.png" width="auto">  
 
 ## Authorization diagram
-<img alt="Authorization diagram" src="https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/readme/authorization_diagram.png" width="800">
+<img alt="Authorization diagram" src="src/main/resources/readme/authorization_diagram.png" width="auto">
 
 ## Request - response example
 The target is to get all the events filtered by the following *body*:
 ```
 {
-    "startDate": "2020-04-01",
-    "endDate": "2020-04-21",
+    "startDate": "2025-04-01",
+    "endDate": "2025-04-10",
+    "radius": 125,
     "latitude": 44.8481,
     "longitude": 24.8839,
-    "radius": 100,
-    "severitiesIds": [1, 2, 3, 4],
-    "tagsIds": [1, 2, 3, 4, 5, 6, 7, 20, 21, 22]
+    "typeIds": ["FIRE", "MURDER_CRIME", "POLLUTION", "PROTEST_RIOT", "TRAFFIC_ACCIDENT", "AVALANCHE", "EARTHQUAKE", "FLOOD", "HURRICANE"],
+    "severityIds": ["EXTREME", "MAJOR", "MINOR", "TRIVIAL"],
+    "statusIds": ["ACTIVE_ONGOING", "RECOVERY", "CLOSED"]
 }
 ```
 Field description:
 * *startDate* - the event's report date must be after this value.
 * *endDate* - the event's report date must be before this value.
+* *radius* - it is the radius in kilometers of the circle having its center as the coordinate made by the *latitude* and the *longitude* mentioned above (the events coordinates must be within this circle's area).
 * *latitude* - it is the latitude of the coordiante from which the request is made.
 * *longitude* - it is the longitude of the coordiante from which the request is made.
-* *radius* - it is the radius in kilometers of the circle having its center as the coordinate made by the *latitude* and the *longitude* mentioned above (the events coordinates must be within this circle's area).
-* *severitiesIds* - the event's severity identifier must be among these values.
-* *tagsIds* - the event's tag identifier must be among these values.
+* *typeIds* - the event's tag identifier must be among these values.
+* *severityIds* - the event's severity identifier must be among these values.
+* *statusIds* - the event's tag identifier must be among these values.
 
 Required *headers*:
 ```
@@ -88,29 +90,45 @@ Response:
     "totalElements": 1,
     "content": [
         {
-            "id": 20,
-            "dateTime": "2020-04-18T14:15:31",
-            "latitude": 44.8671652,
-            "longitude": 24.8496802,
-            "imagePath": "img/event_20.jpg",
-            "description": null,
-            "severity": {
-                "id": 2,
-                "name": "Major",
-                "color": 16745779
+            "id": 1,
+            "createdAt": "2025-04-10T09:10:00",
+            "modifiedAt": null,
+            "latitude": 44.459127,
+            "longitude": 25.9936983,
+            "impactRadius": 1.50,
+            "type": {
+                "id": "FLOOD",
+                "label": "Flood",
+                "imagePath": "media/type/type_flood.png",
+                "position": 26,
+                "category": {
+                    "id": "NATURAL",
+                    "label": "Natural",
+                    "position": 2
+                }
             },
-            "tag": {
-                "id": 2,
-                "name": "Fire",
-                "imagePath": "img/tag_fire.png"
+            "severity": {
+                "id": "MAJOR",
+                "label": "Major",
+                "color": "#FF8533",
+                "position": 3
+            },
+            "status": {
+                "id": "ACTIVE_ONGOING",
+                "label": "Active/Ongoing",
+                "color": "#07E300",
+                "description": "The event is currently occurring",
+                "position": 2
             },
             "user": {
                 "id": 1,
                 "firstName": "Alan",
                 "lastName": "Walter",
-                "imagePath": "img/user_1.jpg"
+                "imagePath": "media/user/user_1.jpg"
             },
-            "distance": 4.263562194233072
+            "imagePath": "media/event/event_1.jpg",
+            "description": null,
+            "distance": 97.86098476258066
         }
     ]
 }
