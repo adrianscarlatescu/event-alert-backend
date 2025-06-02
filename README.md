@@ -38,7 +38,7 @@ grant all on event_alert.* to 'event_alert_user';
 It will create the required tables and insert some basic data.
 * Push notifications feature (to skip this feature, nothing has to be done):
   * Create a [Firebase](https://console.firebase.google.com/) project and generate the service account private key.
-  This key must be put in `resources` directory according to [app.notification.firebase-service-account-path](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L43) property.
+  This key must be put in `resources` directory according to [app.notification.firebase-service-account-path](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L44) property.
   * Set [app.notification.enabled](https://github.com/adrianscarlatescu/event-alert-backend/blob/master/src/main/resources/application.yml#L43) property to `true`.
 
 ## Database schema
