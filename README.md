@@ -17,8 +17,7 @@ The technology stack consists of:
 The purpose of this project is to provide all the required features for users that may want to be aware of the incidents reported around them.  
 A user must be registered and authenticated in order to access these features.  
 Then he can update his profile and report an event if needed.  
-Also, he can search for the events reported by other users around his location.  
-A user who is an admin can also modify or delete other users, the events reported by them, the comments posted by them, etc.  
+Also, he can search for the events reported by other users around his location. 
 
 ## Run prerequisites
 In order to run the application locally, the following steps must be set:
