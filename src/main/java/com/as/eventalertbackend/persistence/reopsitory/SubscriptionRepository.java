@@ -15,16 +15,12 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
     @Query(value = """
             SELECT * 
             FROM subscription
-            WHERE (
-                ST_Distance_Sphere(point(longitude, latitude), point(:eventLongitude, :eventLatitude)) / 1000 <= radius
-                OR
-                (:eventImpactRadius + radius) >= ST_Distance_Sphere(point(longitude, latitude), point(:eventLongitude, :eventLatitude)) / 1000
-            ) 
+            WHERE ST_Distance_Sphere(point(longitude, latitude), point(:eventLongitude, :eventLatitude)) / 1000 <= radius)
             AND user_id != :userIdToExclude
             AND is_active = true
             """,
             nativeQuery = true)
-    List<Subscription> findByLocation(Double eventLatitude, Double eventLongitude, BigDecimal eventImpactRadius, Long userIdToExclude);
+    List<Subscription> findByLocation(Double eventLatitude, Double eventLongitude, Long userIdToExclude);
 
     boolean existsByUserIdAndDeviceId(Long userId, String deviceId);
 

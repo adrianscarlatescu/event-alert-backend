@@ -23,7 +23,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             AND severity_id IN :severityIds
             AND status_id IN :statusIds
             HAVING distance <= :radius
-            OR (impact_radius + :radius) >= distance
             ORDER BY distance ASC
             """,
             nativeQuery = true)
